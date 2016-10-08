@@ -1,0 +1,1 @@
+window.document.body.innerHTML = "<h1 style='text-align: center; padding-top: 50px;'>Hello from TypeScript!</h1>";
