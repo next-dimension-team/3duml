@@ -1,7 +1,5 @@
 import * as THREE from 'three';
-import { AutoWired, Singleton } from "typescript-ioc";
-import { SequenceDiagram } from './SequenceDiagram/SequenceDiagram';
-import { ProviderInterface as SequenceDiagramProvider } from './SequenceDiagram/Providers/ProviderInterface';
+import { AutoWired, Singleton, Container } from "typescript-ioc";
 
 @Singleton
 export class Application {
@@ -31,10 +29,7 @@ export class Application {
     // Render Application
     window.requestAnimationFrame(this.frameRequestCallback);
   }
-
-  public composeSequenceDiagram(provider: SequenceDiagramProvider): SequenceDiagram {
-    var sequenceDiagram = new SequenceDiagram(this, provider);
-    sequenceDiagram.render();
-    return sequenceDiagram;
-  }
 }
+
+// Export global application instance
+export var App: Application = Container.get(Application);

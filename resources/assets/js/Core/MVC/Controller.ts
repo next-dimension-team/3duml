@@ -1,14 +1,21 @@
 import { Observer } from '../Observer/Observer';
 import { Model } from './Model'; 
+import { View } from './View'; 
 
 export abstract class Controller implements Observer {
-  constructor(protected _model: Model) {
-    _model.registerObserver(this);
-    this.initialize(_model);
-    this.update(_model);
+  public view: View;
+
+  constructor(public model: Model) {
+    model.registerObserver(this);
+    this.initialize();
+    this.update();
   }
 
-  abstract initialize(model: Model): void;
+  public initialize(): void {
+    //
+  }
 
-  abstract update(model: Model): void;
+  public update(): void {
+    //
+  }
 }

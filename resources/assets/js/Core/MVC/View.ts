@@ -1,21 +1,23 @@
+import { App } from '../../Application';
+import { Object3D } from 'three';
 import { Controller } from './Controller';
-import { Renderable } from './Renderable';
-import { Destroyable } from './Destroyable';
 
-export abstract class View implements Renderable, Destroyable {
-  public abstract render(): void;
+export abstract class View extends Object3D {
 
-  public destroy(): void {
-    throw new Error("Destroy method not implemented");
+  constructor(public controller: Controller) {
+    super();
+    this.initialize();
   }
 
-  constructor(protected _controller: Controller) { }
-
-  public getController(): Controller {
-    return this._controller;
+  public initialize(): void {
+    //
   }
 
-  public setController(controller: Controller): void {
-    this._controller = controller;
+  public show() {
+    App.scene.add(this);
+  }
+
+  public hide(): void {
+    App.scene.remove(this);
   }
 }

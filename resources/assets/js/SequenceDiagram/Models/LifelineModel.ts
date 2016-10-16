@@ -4,4 +4,5 @@ import { Controller } from '../../Core/MVC/Controller';
 
 export class LifelineModel extends Model {
   public name: string;
+  public layerNumber: number;
 }
