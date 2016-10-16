@@ -4,7 +4,9 @@
         "noImplicitAny": true,
         "module": "commonjs",
         "target": "es5",
-        "outDir": "built"
+        "outDir": "built",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     },
     "files": [
     	"typings/index.d.ts"
