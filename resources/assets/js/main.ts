@@ -12,5 +12,5 @@ function provideSequenceDiagramModel(): SequenceDiagramModel {
 
 // Compose sequence diagram
 var model: SequenceDiagramModel = provideSequenceDiagramModel();
-var sequenceDiagram: SequenceDiagramController = new SequenceDiagramController(model);
-sequenceDiagram.view.show();
+var sequenceDiagramController: SequenceDiagramController = new SequenceDiagramController(model);
+sequenceDiagramController.view.show();
