@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 export class Application {
   // Singleton instance
-  protected instance: Application;
+  protected static instance: Application;
 
   public scene: THREE.Scene;
   public camera: THREE.Camera;
@@ -31,7 +31,7 @@ export class Application {
     window.requestAnimationFrame(this.frameRequestCallback);
   }
 
-  public getInstance() {
+  public static getInstance(): Application {
     if (this.instance == null) {
       this.instance = new Application;
     }
