@@ -3,7 +3,7 @@ import { DummyProvider as SequenceDiagramProvider } from './SequenceDiagram/Prov
 import { SequenceDiagramModel } from './SequenceDiagram/Models/SequenceDiagramModel';
 import { SequenceDiagramController } from './SequenceDiagram/Controllers/SequenceDiagramController';
 
-// TODO: toto bude implementované niekde inde nejako inak
+// TODO: use SequenceDiagramProvider implementation to get data
 function provideSequenceDiagramModel(): SequenceDiagramModel {
   var sequenceDiagramModel: SequenceDiagramModel = new SequenceDiagramModel;
   sequenceDiagramModel.lifelines = Container.get(SequenceDiagramProvider).getLifelines();
