@@ -8,9 +8,9 @@ export class LifelineController extends Controller {
 
   public initialize(): void {
     this.view = new LifelineView(this);
-    this.view.position.z = -20 -10 * this.model.layerNumber;
-    this.view.position.x = -50 + 20 * this.model.layerNumber;
-    console.log(this.view.position.z);
+    this.view.position.z = this.model.layer.view.getZ();
+    this.view.position.x = -45;
+    this.view.position.y = 40;
     this.view.show();
   }
 }

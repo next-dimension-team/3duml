@@ -10,7 +10,6 @@ export class DummyProvider implements ProviderInterface {
     for (let i = 1; i <= 5; i++) {
       let lifelineModel = new LifelineModel();
       lifelineModel.name = "Lifeline " + i;
-      lifelineModel.layerNumber = i;
       data.push(lifelineModel);
     }
 
