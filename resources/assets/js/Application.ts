@@ -7,8 +7,16 @@ export class Application {
   public scene: THREE.Scene;
   public camera: THREE.Camera;
   public renderer: THREE.WebGLRenderer;
+  public light: THREE.PointLight;
+  
   public frameRequestCallback: FrameRequestCallback = () => {
     requestAnimationFrame(this.frameRequestCallback);
+
+    // Move light with camera
+    this.light.position.x = this.camera.position.x;
+    this.light.position.y = this.camera.position.y;
+    this.light.position.z = this.camera.position.z;
+
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -26,6 +34,14 @@ export class Application {
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.gammaInput = true;
     this.renderer.gammaOutput = true;
+
+    // Initialize main light
+    this.light = new THREE.PointLight(0xffffff, 1, 1000);
+    this.light.position.set(50, 50, 70);
+    this.light.shadow.mapSize.width = 4096;
+    this.light.shadow.mapSize.height = 4096;
+    this.light.castShadow = true;
+    this.scene.add(this.light);
 
     // Render Application
     window.requestAnimationFrame(this.frameRequestCallback);
