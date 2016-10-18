@@ -438,7 +438,7 @@ summary {
  */
 
 canvas {
-  display: inline-block;
+  display: block;
 }
 
 /**
