@@ -8,7 +8,7 @@ import { LifelineController } from '../Controllers/LifelineController';
 export class LifelineView extends View {
 
   public initialize(): void {
-    var planeGeometry = new THREE.BoxGeometry(20, 10, 1);
+    var planeGeometry = new THREE.BoxGeometry(20, 10, 0.4);
     var planeMaterial = new THREE.MeshPhongMaterial({
       color: "#ccc",
       side: THREE.DoubleSide
