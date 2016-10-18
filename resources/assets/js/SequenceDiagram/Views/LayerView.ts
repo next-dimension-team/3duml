@@ -18,6 +18,7 @@ export class LayerView extends View {
     opacity: 0.2,
     transparent: true
   };
+  public planeObject3D: THREE.Mesh;
 
   public initialize(): void {
     var planeGeometry = new THREE.BoxGeometry(
@@ -32,9 +33,6 @@ export class LayerView extends View {
     object.castShadow = true;
     this.add(object);
   }
-
-  public getZ() {
-    return this.position.z + LayerView.LAYERS_MINIMAL_SIZE.depth;
   }
 
 }
