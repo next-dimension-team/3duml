@@ -4,24 +4,15 @@
     "prod": "gulp --production",
     "dev": "gulp watch"
   },
-  "dependencies": {
-    "three": "^0.81.2"
-  },
   "devDependencies": {
-    "bootstrap-sass": "^3.3.7",
-    "buble": "^0.13.2",
-    "buble-loader": "^0.3.1",
     "gulp": "^3.9.1",
     "gulp-uglify": "^2.0.0",
-    "jquery": "^3.1.0",
-    "laravel-elixir": "^6.0.0-9",
+    "laravel-elixir": "^6.0.0-11",
     "laravel-elixir-browsersync-official": "^1.0.0",
-    "laravel-elixir-webpack-official": "^1.0.2",
-    "lodash": "^4.16.2",
-    "source-map-loader": "^0.1.5",
-    "ts-loader": "^0.8.2",
-    "typescript-ioc": "^0.2.4",
-    "webpack": "^1.13.2",
-    "webpack-typescript": "^0.5.6"
+    "laravel-elixir-webpack-official": "^1.0.8",
+    "three": "^0.81.2",
+    "ts-loader": "^0.9.4",
+    "typescript": "^2.0.3",
+    "typescript-ioc": "^0.2.4"
   }
 }
