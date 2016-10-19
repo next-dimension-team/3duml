@@ -14,6 +14,7 @@ const elixir = require('laravel-elixir');
 elixir(mix => {
 	mix.sass(['normalize.css', 'app.scss']);
 	mix.webpack('main.ts');
+	mix.version(['css/app.css', 'js/bundle.js']);
 	mix.browserSync({
 		proxy: '127.0.0.1'
 	});
