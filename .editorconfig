@@ -8,9 +8,9 @@ indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 
-[*.md]
+[*.{diff,md}]
 trim_trailing_whitespace = false
 
-[*.yml]
+[*.{ts,js,css,yml}]
 indent_style = space
 indent_size = 2
