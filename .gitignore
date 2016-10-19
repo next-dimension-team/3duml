@@ -1,10 +1,11 @@
 /node_modules
 /typings
 /vendor
-/public/storage
 /.idea
+/public/build
 /public/css
 /public/js
+/public/storage
 Homestead.json
 Homestead.yaml
 .env
