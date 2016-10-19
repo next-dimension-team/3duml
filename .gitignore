@@ -1,6 +1,7 @@
 /node_modules
-/public/storage
+/typings
 /vendor
+/public/storage
 /.idea
 /public/css
 /public/js
