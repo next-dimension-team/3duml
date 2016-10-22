@@ -33,6 +33,5 @@ export class LayerView extends View {
     object.castShadow = true;
     this.add(object);
   }
-  }
 
 }
