@@ -12,19 +12,21 @@ export class SequenceDiagramController extends Controller {
 
   public initialize(): void {
     this.initializeSequenceDiagram();
-    this.initializeLifelines();
+	this.initializeLifelines();
     // TODO: initialize another elements of the sequence diagram here
   }
-
+	
+	
   protected initializeSequenceDiagram() {
     this.view = new SequenceDiagramView(this);
   }
 
   protected initializeLifelines() {
     this.lifelines = new Array<LifelineController>();
-    
     for (let lifelineModel of this.model.lifelines) {
-      this.lifelines.push(new LifelineController(lifelineModel));
-    }
+
+	 this.lifelines.push(new LifelineController(lifelineModel));
+	 }
+
   }
 }
