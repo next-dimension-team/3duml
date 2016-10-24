@@ -16,12 +16,17 @@ export class SequenceDiagramController extends Controller {
 
   public initialize(): void {
     this.initializeSequenceDiagram();
+<<<<<<< HEAD
     this.initializeLayers();
     this.initializeLifelines();
     this.initializeControls();
+=======
+	this.initializeLifelines();
+>>>>>>> 4093a9292570de7301c51e332bad54d36f1a3d9b
     // TODO: initialize another elements of the sequence diagram here
   }
-
+	
+	
   protected initializeSequenceDiagram() {
     this.view = new SequenceDiagramView(this);
   }
@@ -36,10 +41,11 @@ export class SequenceDiagramController extends Controller {
 
   protected initializeLifelines() {
     this.lifelines = new Array<LifelineController>();
-    
     for (let lifelineModel of this.model.lifelines) {
-      this.lifelines.push(new LifelineController(lifelineModel));
-    }
+
+	 this.lifelines.push(new LifelineController(lifelineModel));
+	 }
+
   }
 
   protected initializeControls() {
