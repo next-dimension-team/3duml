@@ -8,6 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>3D UML</title>
         <link href="{!! elixir('css/app.css') !!}" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="{!! elixir('css/welcome1.css') !!}">
 		<script src='js/functions.js'></script>
     </head>
     <body>
