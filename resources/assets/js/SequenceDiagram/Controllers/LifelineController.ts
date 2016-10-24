@@ -14,3 +14,20 @@ export class LifelineController extends Controller {
     this.view.show();
   }
 }
+
+
+//not ok!
+/*
+	var button = document.getElementById("layer");
+	var i = 0;
+	
+		if (i <=this.model.layerNumber){
+		button.addEventListener("click", function(){
+		
+		i = i + 1;
+		var mod = new LifelineModel();
+		mod.layerNumber = i;
+		var controller = new LifelineController(mod);
+		controller.view.show();
+	})
+		}*/
