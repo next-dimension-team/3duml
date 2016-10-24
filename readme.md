@@ -1,6 +1,6 @@
 # 3D UML
 
-## Next Dimension Tam
+## Next Dimension Team
 
 ### Inštalácia na linuxe
 
@@ -21,4 +21,9 @@ $ php artisan key:generate
 $ npm install
 $ npm install typings --global
 $ typings install
+```
+
+# TSLint sa spúšťa nasledovne
+```
+$ tslint ./resources/assets/js/**/*.ts
 ```
