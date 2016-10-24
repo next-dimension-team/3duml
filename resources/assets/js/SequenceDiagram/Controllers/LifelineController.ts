@@ -5,7 +5,6 @@ import { LifelineView } from '../Views/LifelineView';
 export class LifelineController extends Controller {
   public model: LifelineModel;
   public view: LifelineView;
-<<<<<<< HEAD
 
   public initialize(): void {
     this.view = new LifelineView(this);
@@ -18,20 +17,8 @@ export class LifelineController extends Controller {
 
 
 //not ok!
-/*
-=======
-  
-  public initialize():void{
-  this.view = new LifelineView(this);
-    this.view.position.z = -20 -10 * this.model.layerNumber;
-    this.view.position.x = -50 + 20 * this.model.layerNumber;
-    console.log(this.view.position.z);   
-	this.initializeButtons();
-  }
-  
-  
-  protected initializeButtons() {
->>>>>>> 4093a9292570de7301c51e332bad54d36f1a3d9b
+/* 
+
 	var button = document.getElementById("layer");
 	var i = 0;
 	
@@ -40,14 +27,9 @@ export class LifelineController extends Controller {
 		
 		i = i + 1;
 		var mod = new LifelineModel();
-		mod.layerNumber = i;
+		mod.layer.depth = i;
 		var controller = new LifelineController(mod);
 		controller.view.show();
 	})
-<<<<<<< HEAD
 		}*/
-=======
-		}
-	}
-  }
->>>>>>> 4093a9292570de7301c51e332bad54d36f1a3d9b
+
