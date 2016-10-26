@@ -167,7 +167,7 @@ return [
          * Package Service Providers...
          */
 
-        //
+        App\Providers\JSONAPIServiceProvider::class,
 
         /*
          * Application Service Providers...

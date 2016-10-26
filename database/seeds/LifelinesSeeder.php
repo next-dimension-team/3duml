@@ -1,8 +1,9 @@
 <?php
 
+use App\Lifeline;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class LifelinesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,7 +12,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
-        $this->call(LifelinesSeeder::class);
+        for ($i = 0; $i < 10; $i++)
+        {
+            Lifeline::create([]);
+        }
     }
 }
