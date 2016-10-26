@@ -167,7 +167,7 @@ return [
          * Package Service Providers...
          */
 
-        NilPortugues\Laravel5\JsonApi\Laravel5JsonApiServiceProvider::class,
+        App\Providers\JSONAPIServiceProvider::class,
 
         /*
          * Application Service Providers...
