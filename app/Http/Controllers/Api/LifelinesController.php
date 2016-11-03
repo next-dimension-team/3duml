@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Lifeline;
+use App\Models\Lifeline;
 
 class LifelinesController extends AbstractApiController
 {
