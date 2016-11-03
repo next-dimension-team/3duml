@@ -2,7 +2,7 @@
 
 namespace App\Transformers;
 
-use App\Lifeline;
+use App\Models\Lifeline;
 use NilPortugues\Api\Mappings\JsonApiMapping;
 
 class LifelineTransformer implements JsonApiMapping {
