@@ -12,7 +12,7 @@ class CreateCombinedFragmentsTable extends Migration {
 			$table->timestamps();
 			$table->string('name');
 			$table->string('qualified_name');
-			$table->enum('visibility', array(''));
+			$table->enum('visibility', array('public', 'protected', 'private', 'package'));
 			$table->enum('interaction_operator', array('seq', 'alt', 'opt', 'break', 'par', 'strict', 'loop', 'critical', 'neg', 'assert', 'ignore', 'consider'));
 		});
 	}
