@@ -12,7 +12,7 @@ class CreateGeneralOrderingsTable extends Migration {
 			$table->timestamps();
 			$table->string('name');
 			$table->string('qualified_name');
-			$table->enum('visibility', array(''));
+			$table->enum('visibility', ['public', 'protected', 'private', 'package']);
 			$table->enum('specifications_id', array('message_occurrence_specifications_id', 'execution_occurrence_specifications_id'));
 			$table->enum('specifications_type', array('message_occurrence_specifications', 'execution_occurrence_specification'));
 			$table->enum('orderings_id', array('state_invariants_id', 'interactions_id', 'combined_fragments_id', 'interaction_operands_id'));
