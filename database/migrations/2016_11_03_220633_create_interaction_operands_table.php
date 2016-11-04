@@ -12,7 +12,7 @@ class CreateInteractionOperandsTable extends Migration {
 			$table->timestamps();
 			$table->string('name');
 			$table->string('qualified_name');
-			$table->enum('visibility', array(''));
+			$table->enum('visibility', ['public', 'protected', 'private', 'package']);
 		});
 	}
 
