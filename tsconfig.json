@@ -1,17 +1,13 @@
 {
-    "compilerOptions": {
-        "sourceMap": true,
-        "noImplicitAny": true,
-        "module": "commonjs",
-        "target": "es5",
-        "outDir": "built",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
-    },
-    "files": [
-    	"typings/index.d.ts"
-    ],
-    "include": [
-        "resources/assets/js/**/*"
-    ]
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true
+  }
 }
