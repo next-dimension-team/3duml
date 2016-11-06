@@ -3,7 +3,8 @@
   "scripts": {
     "prod": "gulp --production",
     "dev": "gulp watch",
-    "test": "karma start"
+    "test": "karma start",
+    "lint": "tslint \"resources/assets/js/**/*.ts\""
   },
   "dependencies": {
     "@angular/common": "~2.1.1",
