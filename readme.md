@@ -1,3 +1,5 @@
+<a href="http://team15-16.studenti.fiit.stuba.sk:8085/browse/UML-PROD">Build status: <img src="http://team15-16.studenti.fiit.stuba.sk:8085/plugins/servlet/buildStatusImage/UML-PROD"></a>
+
 # 3D UML
 
 ## Next Dimension Team
