@@ -5,45 +5,45 @@ namespace App\Transformers;
 use App\Lifeline;
 use NilPortugues\Api\Mappings\JsonApiMapping;
 
-class LifelineTransformer implements JsonApiMapping {
-
+class LifelineTransformer implements JsonApiMapping
+{
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getClass()
     {
         return Lifeline::class;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getAlias()
     {
         return 'lifeline';
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getAliasedProperties()
     {
         return [];
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getHideProperties()
     {
         return [];
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getIdProperties()
     {
         return ['id'];
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getUrls()
     {
@@ -53,7 +53,7 @@ class LifelineTransformer implements JsonApiMapping {
         ];
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRelationships()
     {
@@ -68,5 +68,4 @@ class LifelineTransformer implements JsonApiMapping {
     {
         return [];
     }
-
 }

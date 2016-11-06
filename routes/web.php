@@ -15,6 +15,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['namespace' => 'Api'], function() {
-    Route::resource('lifelines', 'LifelinesController');    
+Route::group(['namespace' => 'Api'], function () {
+    Route::resource('lifelines', 'LifelinesController');
 });

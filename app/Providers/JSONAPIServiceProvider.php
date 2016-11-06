@@ -16,15 +16,15 @@ class JSONAPIServiceProvider extends Laravel5JsonApiServiceProvider
      */
     public function register()
     {
-      $this->mergeConfigFrom(base_path(self::DIR.self::PATH), 'jsonapi');
+        $this->mergeConfigFrom(base_path(self::DIR.self::PATH), 'jsonapi');
 
-      $version = '5.0.0';
-      if (class_exists(self::LARAVEL_APPLICATION, true)) {
-          $class = self::LARAVEL_APPLICATION;
-          $version = $class::VERSION;
-      }
+        $version = '5.0.0';
+        if (class_exists(self::LARAVEL_APPLICATION, true)) {
+            $class = self::LARAVEL_APPLICATION;
+            $version = $class::VERSION;
+        }
 
-      switch ($version) {
+        switch ($version) {
           case false !== strpos($version, '5.0.'):
           case false !== strpos($version, '5.1.'):
               $provider = new Laravel51Provider();
@@ -40,6 +40,6 @@ class JSONAPIServiceProvider extends Laravel5JsonApiServiceProvider
               break;
       }
 
-      $this->app->singleton(JsonApiSerializer::class, $provider->provider());
+        $this->app->singleton(JsonApiSerializer::class, $provider->provider());
     }
 }

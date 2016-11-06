@@ -3,11 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateStateInvariantsTable extends Migration {
-
+class CreateStateInvariantsTable extends Migration
+{
     public function up()
     {
-        Schema::create('state_invariants', function(Blueprint $table) {
+        Schema::create('state_invariants', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
             $table->string('name');
