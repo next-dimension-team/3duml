@@ -3,11 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateExecutionOccurrenceSpecificationsTable extends Migration {
-
+class CreateExecutionOccurrenceSpecificationsTable extends Migration
+{
     public function up()
     {
-        Schema::create('execution_occurrence_specifications', function(Blueprint $table) {
+        Schema::create('execution_occurrence_specifications', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
             $table->string('name');

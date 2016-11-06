@@ -3,11 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateInteractionOperandsTable extends Migration {
-
+class CreateInteractionOperandsTable extends Migration
+{
     public function up()
     {
-        Schema::create('interaction_operands', function(Blueprint $table) {
+        Schema::create('interaction_operands', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
             $table->string('name');

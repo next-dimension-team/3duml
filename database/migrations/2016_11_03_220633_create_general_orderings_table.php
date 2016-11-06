@@ -3,11 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateGeneralOrderingsTable extends Migration {
-
+class CreateGeneralOrderingsTable extends Migration
+{
     public function up()
     {
-        Schema::create('general_orderings', function(Blueprint $table) {
+        Schema::create('general_orderings', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
             $table->string('name');
