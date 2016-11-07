@@ -1,13 +1,17 @@
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import * as go from 'gojs';
+import { Datastore } from './Datastore';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [Datastore]
 })
 export class AppComponent implements AfterViewInit {
   @ViewChild('diagram') dragramDiv;
+
+  constructor(private datastore: Datastore) { }
 
   ngAfterViewInit() {
     var $ = go.GraphObject.make;
