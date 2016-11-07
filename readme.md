@@ -8,9 +8,8 @@
 
 Potrebuejete mať nainštalované:
  - PHP > 5.6
- - gulp
- - composer
  - npm
+ - composer
 
 ```
 $ git clone https://github.com/next-dimension-team/3duml
@@ -21,11 +20,14 @@ $ sudo chmod -R 777 bootstrap/cache/
 $ cp .env.example .env
 $ php artisan key:generate
 $ npm install
-$ npm install typings --global
-$ typings install
 ```
 
-# TSLint sa spúšťa nasledovne
+### Build
 ```
-$ tslint ./resources/assets/js/**/*.ts
+$ npm run build
+```
+
+# Codestyle - TSLint
+```
+$ npm run lint
 ```
