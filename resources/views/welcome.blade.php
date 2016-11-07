@@ -8,8 +8,10 @@
         <script type="text/javascript" src="{!! elixir('polyfills.js') !!}"></script>
         <script type="text/javascript" src="{!! elixir('vendor.js') !!}"></script>
         <script type="text/javascript" src="{!! elixir('main.js') !!}"></script>
+		
     </head>
-    <body>
-        <app-root>Loading...</app-root>
-    </body>
+    <body> 
+		<app-root>Loading...</app-root>
+		<menu-root></menu-root>	
+</body>
 </html>

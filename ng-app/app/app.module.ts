@@ -12,6 +12,8 @@ import { ENV_PROVIDERS } from './environment';
 import { ROUTES } from './app.routes';
 // App is our top level component
 import { AppComponent } from './app.component';
+//Component for menu
+import { MenuComponent } from './menu.component';
 import { AppState, InternalStateType } from './app.service';
 
 // Application wide providers
@@ -29,9 +31,10 @@ type StoreType = {
  * `AppModule` is the main entry point into Angular2's bootstraping process
  */
 @NgModule({
-  bootstrap: [ AppComponent ],
+  bootstrap: [ AppComponent, MenuComponent ],
   declarations: [
-    AppComponent
+    AppComponent,
+	MenuComponent,
   ],
   imports: [ // import Angular's modules
     BrowserModule,
