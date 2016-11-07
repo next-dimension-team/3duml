@@ -5,9 +5,11 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>3D UML</title>
-        <link href="{!! elixir('css/app.css') !!}" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="{!! elixir('polyfills.js') !!}"></script>
+        <script type="text/javascript" src="{!! elixir('vendor.js') !!}"></script>
+        <script type="text/javascript" src="{!! elixir('main.js') !!}"></script>
     </head>
     <body>
-        <script type="text/javascript" src="{!! elixir('js/bundle.js') !!}"></script>
+        <app-root>Loading...</app-root>
     </body>
 </html>

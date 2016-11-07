@@ -1,12 +1,9 @@
 /node_modules
-/typings
 /vendor
 /.idea
 /public/build
 /public/css
 /public/js
 /public/storage
-Homestead.json
-Homestead.yaml
 .env
 .php_cs.cache
