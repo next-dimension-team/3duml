@@ -1,8 +1,8 @@
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import * as go from 'gojs';
-import { SequenceDiagramTemplate } from '../app/sequence-diagram/templates/SequenceDiagramTemplate';
-import { LifelineTemplate } from '../app/sequence-diagram/templates/LifelineTemplate';
-import { MessageLinkTemplate } from '../app/sequence-diagram/templates/MessageLinkTemplate';
+import { SequenceDiagramTemplate } from './sequence-diagram/templates/SequenceDiagramTemplate';
+import { LifelineTemplate } from './sequence-diagram/templates/LifelineTemplate';
+import { MessageLinkTemplate } from './sequence-diagram/templates/MessageLinkTemplate';
 
 @Component({
   selector: 'app-root',

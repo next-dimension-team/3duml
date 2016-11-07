@@ -17,7 +17,7 @@ export class MessageLink extends go.Link {
   getLinkPoint(node, port, spot, from, ortho, othernode, otherport) {
     let p = port.getDocumentPoint(go.Spot.Center);
     // let r = new go.Rect(port.getDocumentPoint(go.Spot.TopLeft),
-    //  port.getDocumentPoint(go.Spot.BottomRight));
+    // port.getDocumentPoint(go.Spot.BottomRight));
     let op = otherport.getDocumentPoint(go.Spot.Center);
 
     let data = this.data;
