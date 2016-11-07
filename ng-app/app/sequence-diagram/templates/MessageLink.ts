@@ -1,5 +1,4 @@
 import * as go from 'gojs';
-
 import { ACTIVITY_WIDTH } from './SequenceDiagramTemplate';
 import { Util } from './Util';
 

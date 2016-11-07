@@ -1,8 +1,8 @@
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import * as go from 'gojs';
-import { SequenceDiagramTemplate } from '../app/sequenceDiagram/templates/SequenceDiagramTemplate';
-import { LifelineTemplate } from '../app/sequenceDiagram/templates/LifelineTemplate';
-import { MessageLinkTemplate } from '../app/sequenceDiagram/templates/MessageLinkTemplate';
+import { SequenceDiagramTemplate } from '../app/sequence-diagram/templates/SequenceDiagramTemplate';
+import { LifelineTemplate } from '../app/sequence-diagram/templates/LifelineTemplate';
+import { MessageLinkTemplate } from '../app/sequence-diagram/templates/MessageLinkTemplate';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +31,7 @@ export class AppComponent implements AfterViewInit {
         if (idx < 0) {
           window.document.title += '*';
         }
-      }else {
+      } else {
         if (idx >= 0) {
           window.document.title = window.document.title.substr(0, idx);
         }

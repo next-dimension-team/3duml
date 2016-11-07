@@ -2,7 +2,6 @@ import * as go from 'gojs';
 import { MessagingTool } from './MessagingTool';
 import { Util } from './Util';
 
-
 const $ = go.GraphObject.make;
 const util = new Util();
 

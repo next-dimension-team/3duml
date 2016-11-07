@@ -1,5 +1,4 @@
 import * as go from 'gojs';
-
 import { LINE_PREFIX } from './SequenceDiagramTemplate';
 import { LINE_SUFFIX } from './SequenceDiagramTemplate';
 import { MESSAGE_SPACING } from './SequenceDiagramTemplate';

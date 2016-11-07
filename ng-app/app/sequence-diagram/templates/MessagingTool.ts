@@ -2,6 +2,7 @@ import * as go from 'gojs';
 import { Util } from './Util';
 import { MessageLink } from './MessageLink';
 
+const $ = go.GraphObject.make;
 const util = new Util();
 
 // a custom LinkingTool that fixes the 'time' (i.e. the Y coordinate)
@@ -14,7 +15,6 @@ export class MessagingTool extends go.LinkingTool {
   constructor() {
     super();
 
-    let $ = go.GraphObject.make;
     this.temporaryLink =
       $(MessageLink,
         $(go.Shape, 'Rectangle',
