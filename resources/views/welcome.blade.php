@@ -12,6 +12,5 @@
     </head>
     <body> 
 		<app-root>Loading...</app-root>
-		<menu-root></menu-root>	
 </body>
 </html>
