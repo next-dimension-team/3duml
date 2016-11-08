@@ -1,15 +1,15 @@
 import { Component} from '@angular/core';
 
 @Component({
-  selector: 'menu',
+  selector: 'sidebar-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css']
 })
 
 export class MenuComponent {
 	
-	save(): void {
-    console.log("Diagram save")
+  create(): void {
+    console.log("Diagram created")
 	}
 	
 }
