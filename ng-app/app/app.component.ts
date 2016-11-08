@@ -3,14 +3,18 @@ import * as go from 'gojs';
 import { SequenceDiagramTemplate } from './sequence-diagram/templates/SequenceDiagramTemplate';
 import { LifelineTemplate } from './sequence-diagram/templates/LifelineTemplate';
 import { MessageLinkTemplate } from './sequence-diagram/templates/MessageLinkTemplate';
+import { Datastore } from './Datastore';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [Datastore]
 })
 export class AppComponent implements AfterViewInit {
   @ViewChild('diagram') diagramDiv;
+
+  constructor(private datastore: Datastore) { }
 
   ngAfterViewInit() {
     let myDiagram: go.Diagram;

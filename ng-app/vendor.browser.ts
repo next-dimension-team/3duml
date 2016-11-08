@@ -21,6 +21,7 @@ import 'rxjs/add/operator/mergeMap';
 
 import 'gojs';
 import 'three';
+import 'angular2-jsonapi';
 
 if ('production' === ENV) {
   // Production
