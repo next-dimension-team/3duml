@@ -1,5 +1,8 @@
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import * as go from 'gojs';
+import { SequenceDiagramTemplate } from './sequence-diagram/templates/SequenceDiagramTemplate';
+import { LifelineTemplate } from './sequence-diagram/templates/LifelineTemplate';
+import { MessageLinkTemplate } from './sequence-diagram/templates/MessageLinkTemplate';
 import { Datastore } from './Datastore';
 
 @Component({
@@ -9,48 +12,53 @@ import { Datastore } from './Datastore';
   providers: [Datastore]
 })
 export class AppComponent implements AfterViewInit {
-  @ViewChild('diagram') dragramDiv;
+  @ViewChild('diagram') diagramDiv;
 
   constructor(private datastore: Datastore) { }
 
   ngAfterViewInit() {
-    var $ = go.GraphObject.make;
+    let myDiagram: go.Diagram;
 
-    var myDiagram =
-      $(go.Diagram,
-        this.dragramDiv.nativeElement,
-        {
-          initialContentAlignment: go.Spot.Center,
-          "undoManager.isEnabled": true
+    let sequenceDiagram: SequenceDiagramTemplate = new SequenceDiagramTemplate(this.diagramDiv.nativeElement);
+    let lifeLine: LifelineTemplate = new LifelineTemplate();
+    let messagelink: MessageLinkTemplate = new MessageLinkTemplate();
+
+    myDiagram = sequenceDiagram.getTemplate();
+    myDiagram.groupTemplate = lifeLine.getTemplate();
+    myDiagram.linkTemplate = messagelink.getTemplate();
+
+    myDiagram.addDiagramListener('Modified', function (e) {
+      // let button: HTMLInputElement = document.getElementById('SaveButton');
+      // if (button) button.disabled = !this.sequenceDiagram.isModified;
+      let idx = window.document.title.indexOf('*');
+      if (myDiagram.isModified) {
+        if (idx < 0) {
+          window.document.title += '*';
         }
-      );
+      } else {
+        if (idx >= 0) {
+          window.document.title = window.document.title.substr(0, idx);
+        }
+      }
+    });
 
-    myDiagram.nodeTemplate =
-      $(go.Node, "Auto",
-        $(go.Shape, "RoundedRectangle", { strokeWidth: 0},
-          // Shape.fill is bound to Node.data.color
-          new go.Binding("fill", "color")),
-        $(go.TextBlock,
-          { margin: 8 },  // some room around the text
-          // TextBlock.text is bound to Node.data.key
-          new go.Binding("text", "key"))
-      );
+    // create
+    let nodeDataArray = [
+      { 'key': 'Fred', 'text': 'Fred: Patron', 'isGroup': true, 'loc': '0 0', 'duration': 9 },
+      { 'key': 'Bob', 'text': 'Bob: Waiter', 'isGroup': true, 'loc': '100 0', 'duration': 9 },
+      { 'key': 'Hank', 'text': 'Hank: Cook', 'isGroup': true, 'loc': '200 0', 'duration': 9 },
+      { 'key': 'Renee', 'text': 'Renee: Cashier', 'isGroup': true, 'loc': '500 0', 'duration': 9 }
+    ];
 
-    // but use the default Link template, by not setting Diagram.linkTemplate
-    // create the model data that will be represented by Nodes and Links
-    myDiagram.model = new go.GraphLinksModel(
-    [
-      { key: "Alpha", color: "lightblue" },
-      { key: "Beta", color: "orange" },
-      { key: "Gamma", color: "lightgreen" },
-      { key: "Delta", color: "pink" }
-    ],
-    [
-      { from: "Alpha", to: "Beta" },
-      { from: "Alpha", to: "Gamma" },
-      { from: "Beta", to: "Beta" },
-      { from: "Gamma", to: "Delta" },
-      { from: "Delta", to: "Alpha" }
-    ]);
+    let linkDataArray = [
+      { 'from': 'Fred', 'to': 'Bob', 'text': 'order', 'time': 1 },
+      { 'from': 'Bob', 'to': 'Hank', 'text': 'order food', 'time': 2 },
+      { 'from': 'Bob', 'to': 'Fred', 'text': 'serve drinks', 'time': 3 },
+      { 'from': 'Hank', 'to': 'Bob', 'text': 'finish cooking', 'time': 5 },
+      { 'from': 'Bob', 'to': 'Fred', 'text': 'serve food', 'time': 6 },
+      { 'from': 'Fred', 'to': 'Renee', 'text': 'pay', 'time': 8 }
+    ];
+
+    myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
   }
 }
