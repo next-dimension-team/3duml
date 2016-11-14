@@ -6,7 +6,7 @@ import { MessageLinkTemplate } from './sequence-diagram/templates/MessageLinkTem
 import { Datastore } from './Datastore';
 
 @Component({
-  selector: 'sequence-diagram',
+  selector: 'app-sequence-diagram',
   templateUrl: './sequence.diagram.component.html',
   styleUrls: ['./sequence.diagram.component.css']
 })
