@@ -25,11 +25,26 @@ $ npm install
 ```
 
 ### Build
+- predvolne sa spúšťa development konfigurácia nasledovne
 ```
 $ npm run build
+```
+- spustenie buildu s produkčným nastavením
+```
+$ npm run build:prod
+```
+- následne možno prejsť na localhost ak máme nainštalovaný Apache alebo spustiť Laravel development server
+```
+$ php artisan serve
 ```
 
 ### Codestyle - TSLint
 ```
 $ npm run lint
+```
+
+### Clean
+- príkazom možno prečistiť zložku projektu (node_modules, build)
+```
+$ npm run clean
 ```
