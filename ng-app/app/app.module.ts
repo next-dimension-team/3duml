@@ -17,10 +17,12 @@ import { AppComponent } from './app.component';
 import { MenuComponent } from './menu.component';
 import { SequenceDiagramComponent } from './sequence.diagram.component';
 import { AppState, InternalStateType } from './app.service';
+import { Datastore } from './Datastore';
 
 // Application wide providers
 const APP_PROVIDERS = [
-  AppState
+  AppState,
+  Datastore
 ];
 
 type StoreType = {
