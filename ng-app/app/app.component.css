@@ -1,5 +1,14 @@
-.wrapper {
-  width:100%;
-  height:450px;
-  background-color: #DAE4E4;
+#sidebar-wrapper {
+    display: block;
+    float: left;
+    width: 20%;
+    height: 100vh;
+    background: #000;
+}
+
+#page-content-wrapper {
+    display: block;
+    float: right;
+    width: 80%;
+    height: 100vh;
 }
