@@ -7,9 +7,9 @@ import { Component} from '@angular/core';
 })
 
 export class MenuComponent {
-	
+
   create(): void {
-    console.log("Diagram created")
-	}
-	
+    console.log('Diagram created');
+  }
+
 }

@@ -13,7 +13,7 @@ import { ENV_PROVIDERS } from './environment';
 import { ROUTES } from './app.routes';
 // App is our top level component
 import { AppComponent } from './app.component';
-//Component for menu
+// Component for menu
 import { MenuComponent } from './menu.component';
 import { SequenceDiagramComponent } from './sequence.diagram.component';
 import { AppState, InternalStateType } from './app.service';
@@ -36,8 +36,8 @@ type StoreType = {
   bootstrap: [AppComponent],
   declarations: [
     AppComponent,
-	MenuComponent,
-	SequenceDiagramComponent
+    MenuComponent,
+    SequenceDiagramComponent
   ],
   imports: [ // import Angular's modules
     BrowserModule,
