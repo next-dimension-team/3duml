@@ -1,4 +1,5 @@
-<a href="http://team15-16.studenti.fiit.stuba.sk:8085/browse/UML-PROD">Build status: <img src="http://team15-16.studenti.fiit.stuba.sk:8085/plugins/servlet/buildStatusImage/UML-PROD"></a>
+![Build Status](http://team15-16.studenti.fiit.stuba.sk:8085/plugins/servlet/wittified/build-status/UML-PROD)
+![Production Deployment](http://team15-16.studenti.fiit.stuba.sk:8085/plugins/servlet/wittified/deploy-status/1081345)
 
 # 3D UML
 
@@ -7,6 +8,7 @@
 ### Inštalácia na linuxe
 
 Potrebuejete mať nainštalované:
+ - Apache 2
  - PHP > 5.6
  - npm
  - composer
@@ -23,11 +25,26 @@ $ npm install
 ```
 
 ### Build
+- predvolne sa spúšťa development konfigurácia nasledovne
 ```
 $ npm run build
 ```
+- spustenie buildu s produkčným nastavením
+```
+$ npm run build:prod
+```
+- následne možno prejsť na localhost ak máme nainštalovaný Apache alebo spustiť Laravel development server
+```
+$ php artisan serve
+```
 
-# Codestyle - TSLint
+### Codestyle - TSLint
 ```
 $ npm run lint
+```
+
+### Clean
+- príkazom možno prečistiť zložku projektu (node_modules, build)
+```
+$ npm run clean
 ```
