@@ -12,7 +12,7 @@ class CreateMessagesTable extends Migration
             $table->increments('id');
             $table->timestamp('timestamps');
             $table->string('name');
-            $table->enum('visibility', ['']);
+            $table->enum('visibility', ['public', 'package', 'protected', 'private']);
             $table->integer('interaction_id')->unsigned();
             $table->enum('kind', ['complete', 'found', 'lost', 'unknown']);
             $table->enum('sort', ['synchCall', 'asynchCall', 'asynchSignal', 'createMessage', 'deleteMessage', 'reply']);

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class InteractionOperand extends Model
 {
     protected $table = 'interaction_operands';
-    public $timestamps = false;
+    public $timestamps = true;
 
     public function interactionFragments()
     {

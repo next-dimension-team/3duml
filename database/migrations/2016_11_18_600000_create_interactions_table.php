@@ -12,7 +12,7 @@ class CreateInteractionsTable extends Migration
             $table->increments('id');
             $table->timestamp('timestamps');
             $table->string('name');
-            $table->enum('visibility', ['']);
+            $table->enum('visibility', ['public', 'package', 'protected', 'private']);
         });
     }
 

@@ -24,12 +24,12 @@ class OccurenceSpecification extends Model {
 		return $this->belongsTo('App\Models\Lifeline', 'lifeline_id');
 	}
 
-	public function executionSpecification()
+	public function startExecutionSpecification()
 	{
 		return $this->belongsTo('App\Models\ExecutionSpecification', 'start_occurence_specification_id');
 	}
 
-	public function executionSpecification()
+	public function finishExecutionSpecification()
 	{
 		return $this->belongsTo('App\Models\ExecutionSpecification', 'finish_occurence_specification_id');
 	}

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Lifeline extends Model
 {
     protected $table = 'lifelines';
-    public $timestamps = false;
+    public $timestamps = true;
 
     public function occurenceSpecifications()
     {

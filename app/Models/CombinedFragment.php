@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CombinedFragment extends Model
 {
     protected $table = 'combined_fragments';
-    public $timestamps = false;
+    public $timestamps = true;
 
     public function interactionFragments()
     {
