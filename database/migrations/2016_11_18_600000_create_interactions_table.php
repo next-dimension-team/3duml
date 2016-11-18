@@ -1,23 +1,22 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateMessageEndsTable extends Migration
+class CreateInteractionsTable extends Migration
 {
     public function up()
     {
-        Schema::create('message_ends', function (Blueprint $table) {
+        Schema::create('interactions', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
             $table->string('name');
-            $table->string('qualified_name');
-            $table->enum('visibility', ['public', 'protected', 'private', 'package']);
         });
     }
 
     public function down()
     {
-        Schema::drop('message_ends');
+        Schema::drop('interactions');
     }
 }

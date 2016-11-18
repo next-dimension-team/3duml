@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -11,9 +12,6 @@ class CreateLifelinesTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->string('name');
-            $table->string('qualified_name');
-            $table->enum('visibility', ['public', 'protected', 'private', 'package']);
-            $table->integer('interaction_id')->unsigned();
         });
     }
 

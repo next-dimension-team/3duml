@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -11,9 +12,7 @@ class CreateCombinedFragmentsTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->string('name');
-            $table->string('qualified_name');
-            $table->enum('visibility', ['public', 'protected', 'private', 'package']);
-            $table->enum('interaction_operator', ['seq', 'alt', 'opt', 'break', 'par', 'strict', 'loop', 'critical', 'neg', 'assert', 'ignore', 'consider']);
+            $table->enum('operator', ['alt', 'opt', 'par', 'loop', 'critical', 'neg', 'assert', 'strict', 'seq', 'ignore', 'consider']);
         });
     }
 
