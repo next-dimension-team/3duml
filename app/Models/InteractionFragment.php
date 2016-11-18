@@ -4,24 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class InteractionFragment extends Model {
+class InteractionFragment extends Model
+{
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'interaction_fragments';
 
-	protected $table = 'interaction_fragments';
-	public $timestamps = true;
-
-	public function interactionFragment()
-	{
-		return $this->hasMany('App\Models\InteractionFragment', 'enclosing_fragment_id');
-	}
-
-	public function interactionFragment()
-	{
-		return $this->belongsTo('App\Models\InteractionFragment', 'enclosing_fragment_id');
-	}
-
-	public function fragmentable()
-	{
-		return $this->morphTo();
-	}
-
+    public function fragmentable()
+    {
+        return $this->morphTo();
+    }
 }

@@ -6,21 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class Message extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'messages';
-    public $timestamps = true;
 
     public function interaction()
     {
-        return $this->belongsTo('App\Models\Interaction', 'interaction_id');
+        return $this->belongsTo(Interaction::class);
     }
 
-    public function startOccurenceSpecification()
+    public function sendEvent()
     {
-        return $this->hasOne('App\Models\OccurenceSpecification', 'send_event_id');
+        return $this->belongsTo(OccurenceSpecification::class, 'send_event_id');
     }
 
-    public function finishOccurenceSpecification()
+    public function receiveEvent()
     {
-        return $this->hasOne('App\Models\OccurenceSpecification', 'receive_event_id');
+        return $this->belongsTo(OccurenceSpecification::class, 'receive_event_id');
     }
 }

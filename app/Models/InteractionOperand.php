@@ -6,16 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class InteractionOperand extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'interaction_operands';
-    public $timestamps = true;
 
-    public function interactionFragments()
+    public function fragment()
     {
-        return $this->morphMany('App\Models\InteractionFragment', 'fragmentable');
-    }
-
-    public function combinedFragment()
-    {
-        return $this->belongsTo('App\Models\CombinedFragment');
+        return $this->morphOne(InteractionFragment::class, 'fragmentable');
     }
 }

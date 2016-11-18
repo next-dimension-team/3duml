@@ -6,16 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lifeline extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'lifelines';
-    public $timestamps = true;
 
     public function occurenceSpecifications()
     {
-        return $this->hasMany('App\Models\OccurenceSpecification', 'lifeline_id');
-    }
-
-    public function interaction()
-    {
-        return $this->belongsTo('App\Models\Interaction');
+        return $this->hasMany(OccurenceSpecification::class);
     }
 }

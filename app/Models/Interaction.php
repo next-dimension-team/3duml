@@ -6,21 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Interaction extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'interactions';
-    public $timestamps = true;
 
     public function messages()
     {
-        return $this->hasMany('App\Models\Message', 'interaction_id');
+        return $this->hasMany(Message::class);
     }
 
-    public function interactionFragments()
+    public function fragment()
     {
-        return $this->morphMany('App\Models\InteractionFragment', 'fragmentable');
-    }
-
-    public function lifelines()
-    {
-        return $this->hasMany('App\Models\Lifeline');
+        return $this->morphOne(InteractionFragment::class, 'fragmentable');
     }
 }

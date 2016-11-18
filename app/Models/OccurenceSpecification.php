@@ -4,34 +4,37 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OccurenceSpecification extends Model {
+class OccurenceSpecification extends Model
+{
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'occurence_specifications';
 
-	protected $table = 'occurence_specifications';
-	public $timestamps = true;
+    public function covered()
+    {
+        return $this->belongsTo(Lifeline::class);
+    }
 
-	public function message()
-	{
-		return $this->belongsTo('App\Models\Message', 'send_event_id');
-	}
+    public function sendingEventMessages()
+    {
+        return $this->hasMany(Message::class, 'send_event_id');
+    }
 
-	public function message()
-	{
-		return $this->belongsTo('App\Models\Message', 'receive_event_id');
-	}
+    public function receivingEventMessages()
+    {
+        return $this->hasMany(Message::class, 'receive_event_id');
+    }
 
-	public function lifeline()
-	{
-		return $this->belongsTo('App\Models\Lifeline', 'lifeline_id');
-	}
+    public function startingExecutionSpecifications()
+    {
+        return $this->hasMany(ExecutionSpecification::class, 'start_occurence_specification_id');
+    }
 
-	public function startExecutionSpecification()
-	{
-		return $this->belongsTo('App\Models\ExecutionSpecification', 'start_occurence_specification_id');
-	}
-
-	public function finishExecutionSpecification()
-	{
-		return $this->belongsTo('App\Models\ExecutionSpecification', 'finish_occurence_specification_id');
-	}
-
+    public function finishingExecutionSpecifications()
+    {
+        return $this->hasMany(ExecutionSpecification::class, 'finish_occurence_specification_id');
+    }
 }
