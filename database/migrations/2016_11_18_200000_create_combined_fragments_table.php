@@ -10,7 +10,7 @@ class CreateCombinedFragmentsTable extends Migration
     {
         Schema::create('combined_fragments', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('timestamps');
+            $table->timestamps();
             $table->string('name');
             $table->enum('visibility', ['public', 'package', 'protected', 'private']);
             $table->enum('interaction_operator', ['seq', 'alt', 'opt', 'break', 'par', 'loop', 'critical', 'neg', 'assert', 'strict', 'ignore', 'consider']);

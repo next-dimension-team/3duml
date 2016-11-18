@@ -10,7 +10,7 @@ class CreateLifelinesTable extends Migration
     {
         Schema::create('lifelines', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('timestamps');
+            $table->timestamps();
             $table->string('name');
             $table->enum('visibility', ['public', 'package', 'protected', 'private']);
         });

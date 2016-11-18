@@ -10,7 +10,7 @@ class CreateMessagesTable extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('timestamps');
+            $table->timestamps();
             $table->string('name');
             $table->enum('visibility', ['public', 'package', 'protected', 'private']);
             $table->integer('interaction_id')->unsigned();

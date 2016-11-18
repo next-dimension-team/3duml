@@ -10,7 +10,7 @@ class CreateInteractionsTable extends Migration
     {
         Schema::create('interactions', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('timestamps');
+            $table->timestamps();
             $table->string('name');
             $table->enum('visibility', ['public', 'package', 'protected', 'private']);
         });

@@ -10,7 +10,7 @@ class CreateInteractionFragmentsTable extends Migration
     {
         Schema::create('interaction_fragments', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('timestamps');
+            $table->timestamps();
             $table->integer('enclosing_fragment_id')->unsigned();
             $table->integer('fragmentable_id')->unsigned();
             $table->enum('fragmentable_type', ['combined_fragments', 'interaction_operands', 'interactions', 'execution_specifications']);

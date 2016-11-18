@@ -11,7 +11,7 @@ class CreateInteractionOperandsTable extends Migration
         Schema::create('interaction_operands', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->timestamp('timestamps');
+            $table->timestamps();
             $table->string('constraint');
             $table->enum('visibility', ['public', 'package', 'protected', 'private']);
         });
