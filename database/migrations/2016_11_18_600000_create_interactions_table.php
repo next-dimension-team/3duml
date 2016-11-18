@@ -12,7 +12,6 @@ class CreateInteractionsTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->string('name');
-            $table->enum('visibility', ['public', 'package', 'protected', 'private']);
         });
     }
 

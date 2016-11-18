@@ -12,10 +12,8 @@ class CreateMessagesTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->string('name');
-            $table->enum('visibility', ['public', 'package', 'protected', 'private']);
-            $table->integer('interaction_id')->unsigned();
-            $table->enum('kind', ['complete', 'found', 'lost', 'unknown']);
             $table->enum('sort', ['synchCall', 'asynchCall', 'asynchSignal', 'createMessage', 'deleteMessage', 'reply']);
+            $table->integer('interaction_id')->unsigned();
             $table->integer('send_event_id')->unsigned();
             $table->integer('receive_event_id')->unsigned();
         });

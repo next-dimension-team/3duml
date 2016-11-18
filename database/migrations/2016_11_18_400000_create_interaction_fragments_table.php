@@ -12,8 +12,7 @@ class CreateInteractionFragmentsTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->integer('enclosing_fragment_id')->unsigned();
-            $table->integer('fragmentable_id')->unsigned();
-            $table->enum('fragmentable_type', ['combined_fragments', 'interaction_operands', 'interactions', 'execution_specifications']);
+            $table->morphs('fragmentable');
         });
     }
 
