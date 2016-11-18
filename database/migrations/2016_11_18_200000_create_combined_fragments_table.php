@@ -4,21 +4,21 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateCombinedFragmentsTable extends Migration {
+class CreateCombinedFragmentsTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('combined_fragments', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamp('timestamps');
+            $table->string('name');
+            $table->enum('visibility', ['']);
+            $table->enum('interaction_operator', ['seq', 'alt', 'opt', 'break', 'par', 'loop', 'critical', 'neg', 'assert', 'strict', 'ignore', 'consider']);
+        });
+    }
 
-	public function up()
-	{
-		Schema::create('combined_fragments', function(Blueprint $table) {
-			$table->increments('id');
-			$table->timestamp('timestamps');
-			$table->string('name');
-			$table->enum('visibility', array(''));
-			$table->enum('interaction_operator', array('seq', 'alt', 'opt', 'break', 'par', 'loop', 'critical', 'neg', 'assert', 'strict', 'ignore', 'consider'));
-		});
-	}
-
-	public function down()
-	{
-		Schema::drop('combined_fragments');
-	}
+    public function down()
+    {
+        Schema::drop('combined_fragments');
+    }
 }
