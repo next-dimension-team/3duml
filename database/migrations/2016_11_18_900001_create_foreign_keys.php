@@ -29,7 +29,7 @@ class CreateForeignKeys extends Migration
         });
 
         Schema::table('interaction_fragments', function (Blueprint $table) {
-            $table->foreign('enclosing_fragment_id')
+            $table->foreign('parent_id')
                 ->references('id')
                 ->on('interaction_fragments')
                 ->onDelete('restrict')
@@ -68,7 +68,7 @@ class CreateForeignKeys extends Migration
         });
 
         Schema::table('interaction_fragments', function (Blueprint $table) {
-            $table->dropForeign(['enclosing_fragment_id']);
+            $table->dropForeign(['parent_id']);
         });
 
         Schema::table('execution_specifications', function (Blueprint $table) {

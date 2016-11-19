@@ -11,7 +11,10 @@ class CreateInteractionFragmentsTable extends Migration
         Schema::create('interaction_fragments', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
-            $table->integer('enclosing_fragment_id')->unsigned();
+            $table->integer('parent_id')->unsigned()->nullable();
+            $table->integer('lft')->unsigned()->nullable();
+            $table->integer('rgt')->unsigned()->nullable();
+            $table->integer('depth')->unsigned()->nullable();
             $table->morphs('fragmentable');
         });
     }
