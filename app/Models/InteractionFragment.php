@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Baum\Node;
 
-class InteractionFragment extends Model
+class InteractionFragment extends Node
 {
     /**
      * The table associated with the model.

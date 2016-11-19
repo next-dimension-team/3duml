@@ -166,7 +166,7 @@ return [
         /*
          * Package Service Providers...
          */
-
+        // Baum\Providers\BaumServiceProvider::class,
         App\Providers\JSONAPIServiceProvider::class,
 
         /*
