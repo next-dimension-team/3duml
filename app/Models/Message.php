@@ -20,16 +20,26 @@ class Message extends Model
      */
     protected $appends = ['kind'];
 
+    /**
+    * The enclosing Interaction owning the Message.
+    *
+    * @return Interaction
+    */
     public function interaction()
     {
         return $this->belongsTo(Interaction::class);
     }
-
+    /**
+    * References the Sending of the Message.
+    */
     public function sendEvent()
     {
         return $this->belongsTo(OccurenceSpecification::class, 'send_event_id');
     }
 
+    /**
+    * References the Receiving of the Message.
+    */
     public function receiveEvent()
     {
         return $this->belongsTo(OccurenceSpecification::class, 'receive_event_id');

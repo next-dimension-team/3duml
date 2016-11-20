@@ -13,6 +13,9 @@ class InteractionFragment extends Node
      */
     protected $table = 'interaction_fragments';
 
+    /**
+    *
+    */
     public function fragmentable()
     {
         return $this->morphTo();

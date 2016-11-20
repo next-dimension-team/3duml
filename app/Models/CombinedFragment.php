@@ -13,6 +13,9 @@ class CombinedFragment extends Model
      */
     protected $table = 'combined_fragments';
 
+    /**
+    *
+    */
     public function fragment()
     {
         return $this->morphOne(InteractionFragment::class, 'fragmentable');
