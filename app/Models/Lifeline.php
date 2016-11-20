@@ -15,6 +15,7 @@ class Lifeline extends Model
 
     /**
     *
+    *
     */
     public function occurenceSpecifications()
     {
