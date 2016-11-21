@@ -65,3 +65,9 @@ $factory->define(App\Models\Message::class, function (Faker\Generator $faker) {
         'sort' => $faker->randomElement(['synchCall', 'asynchCall', 'asynchSignal', 'createMessage', 'deleteMessage', 'reply']),
     ];
 });
+
+$factory->define(App\Models\OccurenceSpecification::class, function (Faker\Generator $faker) {
+    return [
+        'time' => $faker->numberBetween(0, 100),
+    ];
+});
