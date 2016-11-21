@@ -2,7 +2,7 @@ import { JsonApiModelConfig, JsonApiModel, Attribute, BelongsTo } from 'angular2
 import { InteractionFragment } from './InteractionFragment';
 
 @JsonApiModelConfig({
-    type: 'CombinedFragment'
+    type: 'combined-fragments'
 })
 export class CombinedFragment extends JsonApiModel {
 

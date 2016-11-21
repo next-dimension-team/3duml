@@ -3,7 +3,7 @@ import { OccurrenceSpecification } from './OccurrenceSpecification';
 import { Interaction } from './Interaction';
 
 @JsonApiModelConfig({
-    type: 'Message'
+    type: 'messages'
 })
 export class Message extends JsonApiModel {
 

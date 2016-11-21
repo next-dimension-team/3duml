@@ -1,7 +1,7 @@
 import { JsonApiModelConfig, JsonApiModel, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
 
 @JsonApiModelConfig({
-    type: 'InteractionFragment'
+    type: 'interaction-fragments'
 })
 export class InteractionFragment extends JsonApiModel {
 

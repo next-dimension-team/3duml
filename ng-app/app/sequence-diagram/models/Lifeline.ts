@@ -2,7 +2,7 @@ import { JsonApiModelConfig, JsonApiModel, Attribute, HasMany } from 'angular2-j
 import { OccurrenceSpecification } from './OccurrenceSpecification';
 
 @JsonApiModelConfig({
-    type: 'Lifeline'
+    type: 'lifelines'
 })
 export class Lifeline extends JsonApiModel {
 

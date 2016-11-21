@@ -3,7 +3,7 @@ import { InteractionFragment } from './InteractionFragment';
 import { OccurrenceSpecification } from './OccurrenceSpecification';
 
 @JsonApiModelConfig({
-    type: 'ExecutionSpecification'
+    type: 'execution-specifications'
 })
 export class ExecutionSpecification extends JsonApiModel {
 

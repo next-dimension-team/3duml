@@ -4,7 +4,7 @@ import { Message } from './Message';
 import { ExecutionSpecification } from './ExecutionSpecification';
 
 @JsonApiModelConfig({
-    type: 'OccurrenceSpecification'
+    type: 'occurrence-specifications'
 })
 export class OccurrenceSpecification extends JsonApiModel {
 

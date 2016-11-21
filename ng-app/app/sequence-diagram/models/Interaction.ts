@@ -3,7 +3,7 @@ import { InteractionFragment } from './InteractionFragment';
 import { Message } from './Message';
 
 @JsonApiModelConfig({
-    type: 'Interaction'
+    type: 'interactions'
 })
 export class Interaction extends JsonApiModel {
 

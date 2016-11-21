@@ -2,7 +2,7 @@ import { JsonApiModelConfig, JsonApiModel, Attribute, BelongsTo } from 'angular2
 import { InteractionFragment } from './InteractionFragment';
 
 @JsonApiModelConfig({
-    type: 'InteractionOperand'
+    type: 'interaction-operands'
 })
 export class InteractionOperand extends JsonApiModel {
 
