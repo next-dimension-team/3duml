@@ -29,3 +29,8 @@ $factory->define(App\Models\CombinedFragment::class, function (Faker\Generator $
         'operator' => $faker->randomElement(['alt', 'opt', 'par', 'loop', 'critical', 'neg', 'assert', 'strict', 'seq', 'ignore', 'consider']),
     ];
 });
+
+$factory->define(App\Models\ExecutionSpecification::class, function (Faker\Generator $faker) {
+    return [
+    ];
+});
