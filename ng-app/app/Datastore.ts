@@ -6,7 +6,7 @@ import { JsonApiDatastoreConfig, JsonApiDatastore } from 'angular2-jsonapi';
 @JsonApiDatastoreConfig({
   baseUrl: 'http://localhost/api/',
   models: {
-    //
+    // add config of models 
   }
 })
 export class Datastore extends JsonApiDatastore {
