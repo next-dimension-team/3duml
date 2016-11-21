@@ -40,3 +40,8 @@ $factory->define(App\Models\Interaction::class, function (Faker\Generator $faker
         'name' => $faker->name,
     ];
 });
+
+$factory->define(App\Models\InteractionFragment::class, function (Faker\Generator $faker) {
+    return [
+    ];
+});
