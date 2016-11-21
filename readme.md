@@ -58,3 +58,10 @@ $ php-cs-fixer fix
 ```
 $ npm run clean
 ```
+
+### Seed sekvenčných diagramov
+#### Minimal
+```
+$ php artisan migrate:refresh
+$ php artisan db:seed --class MinimalSequenceDiagramSeeder
+```
