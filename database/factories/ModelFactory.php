@@ -34,3 +34,9 @@ $factory->define(App\Models\ExecutionSpecification::class, function (Faker\Gener
     return [
     ];
 });
+
+$factory->define(App\Models\Interaction::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->name,
+    ];
+});
