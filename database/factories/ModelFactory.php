@@ -58,3 +58,10 @@ $factory->define(App\Models\Lifeline::class, function (Faker\Generator $faker) {
         'name' => $faker->name,
     ];
 });
+
+$factory->define(App\Models\Message::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->name,
+        'sort' => $faker->randomElement(['synchCall', 'asynchCall', 'asynchSignal', 'createMessage', 'deleteMessage', 'reply']),
+    ];
+});
