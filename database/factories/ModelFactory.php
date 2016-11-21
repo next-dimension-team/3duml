@@ -45,3 +45,10 @@ $factory->define(App\Models\InteractionFragment::class, function (Faker\Generato
     return [
     ];
 });
+
+$factory->define(App\Models\InteractionOperand::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->name,
+        'constraint' => '{'.$faker->name.'}',
+    ];
+});
