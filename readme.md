@@ -43,6 +43,16 @@ $ php artisan serve
 $ npm run lint
 ```
 
+### Codestyle - PHP CS Fixer
+#### Zobrazí problémy štýlu kódu
+```
+$ php-cs-fixer fix --dry-run --diff
+```
+#### Opraví problémy štýlu kódu
+```
+$ php-cs-fixer fix
+```
+
 ### Clean
 - príkazom možno prečistiť zložku projektu (node_modules, build)
 ```
