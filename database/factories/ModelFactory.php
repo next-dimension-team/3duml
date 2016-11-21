@@ -52,3 +52,9 @@ $factory->define(App\Models\InteractionOperand::class, function (Faker\Generator
         'constraint' => '{'.$faker->name.'}',
     ];
 });
+
+$factory->define(App\Models\Lifeline::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->name,
+    ];
+});
