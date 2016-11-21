@@ -14,16 +14,16 @@ class Interaction extends Model
     protected $table = 'interactions';
 
     /**
-    * The Messages contained in this Interaction.
-    */
+     * The Messages contained in this Interaction.
+     */
     public function messages()
     {
         return $this->hasMany(Message::class);
     }
 
     /**
-    * The ordered set of fragments in the Interaction.
-    */
+     * The ordered set of fragments in the Interaction.
+     */
     public function fragment()
     {
         return $this->morphOne(InteractionFragment::class, 'fragmentable');

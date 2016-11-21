@@ -14,7 +14,7 @@ class OccurenceSpecification extends Model
     protected $table = 'occurence_specifications';
 
     /**
-     * References the Lifeline on which the OccurrenceSpecification appears
+     * References the Lifeline on which the OccurrenceSpecification appears.
      *
      * @return Lifeline
      */
@@ -24,33 +24,32 @@ class OccurenceSpecification extends Model
     }
 
     /**
-    *
-    * @return 
-    */
+     * @return 
+     */
     public function sendingEventMessages()
     {
         return $this->hasMany(Message::class, 'send_event_id');
     }
 
     /**
-    *
-    */
+     *
+     */
     public function receivingEventMessages()
     {
         return $this->hasMany(Message::class, 'receive_event_id');
     }
 
     /**
-    *
-    */
+     *
+     */
     public function startingExecutionSpecifications()
     {
         return $this->hasMany(ExecutionSpecification::class, 'start_occurence_specification_id');
     }
 
     /**
-    *
-    */
+     *
+     */
     public function finishingExecutionSpecifications()
     {
         return $this->hasMany(ExecutionSpecification::class, 'finish_occurence_specification_id');

@@ -14,8 +14,8 @@ class InteractionOperand extends Model
     protected $table = 'interaction_operands';
 
     /**
-    * The fragments of the operand.
-    */
+     * The fragments of the operand.
+     */
     public function fragment()
     {
         return $this->morphOne(InteractionFragment::class, 'fragmentable');
