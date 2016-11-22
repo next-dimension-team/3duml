@@ -1,3 +1,10 @@
+/*
+ * Import vendor dependencies
+ */
+import './vendor/css3d.renderer';
+//import './vendor/trackball.controls.ts';
+import './vendor/orbit.controls.ts';
+
 import { NgModule, ApplicationRef } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
