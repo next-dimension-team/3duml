@@ -1,11 +1,13 @@
 <div id="wrapper">
 
     <div id="sidebar-wrapper">
-        <app-sidebar-menu></app-sidebar-menu>
+        <app-sidebar-menu
+            (addLayer)="diagram.addLayer()"
+        ></app-sidebar-menu>
     </div>
 
     <div id="page-content-wrapper">
-        <app-sequence-diagram></app-sequence-diagram>
+        <app-sequence-diagram #diagram></app-sequence-diagram>
     </div>
 
 </div>
