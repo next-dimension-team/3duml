@@ -2,7 +2,6 @@ import { NgModule, ApplicationRef } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { RouterModule } from '@angular/router';
 import { JsonApiModule } from 'angular2-jsonapi';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
 
@@ -10,7 +9,6 @@ import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularcla
  * Platform and Environment providers/directives/pipes
  */
 import { ENV_PROVIDERS } from './environment';
-import { ROUTES } from './app.routes';
 // App is our top level component
 import { AppComponent } from './app.component';
 // Component for menu
@@ -45,8 +43,7 @@ type StoreType = {
     BrowserModule,
     FormsModule,
     HttpModule,
-    JsonApiModule,
-    RouterModule.forRoot(ROUTES, { useHash: true })
+    JsonApiModule
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,

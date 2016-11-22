@@ -17,13 +17,13 @@ class CreateForeignKeys extends Migration
 
             $table->foreign('send_event_id')
                 ->references('id')
-                ->on('occurence_specifications')
+                ->on('occurrence_specifications')
                 ->onDelete('restrict')
                 ->onUpdate('restrict');
 
             $table->foreign('receive_event_id')
                 ->references('id')
-                ->on('occurence_specifications')
+                ->on('occurrence_specifications')
                 ->onDelete('restrict')
                 ->onUpdate('restrict');
         });
@@ -37,20 +37,20 @@ class CreateForeignKeys extends Migration
         });
 
         Schema::table('execution_specifications', function (Blueprint $table) {
-            $table->foreign('start_occurence_specification_id')
+            $table->foreign('start_occurrence_specification_id')
                 ->references('id')
-                ->on('occurence_specifications')
+                ->on('occurrence_specifications')
                 ->onDelete('restrict')
                 ->onUpdate('restrict');
 
-            $table->foreign('finish_occurence_specification_id')
+            $table->foreign('finish_occurrence_specification_id')
                 ->references('id')
-                ->on('occurence_specifications')
+                ->on('occurrence_specifications')
                 ->onDelete('restrict')
                 ->onUpdate('restrict');
         });
 
-        Schema::table('occurence_specifications', function (Blueprint $table) {
+        Schema::table('occurrence_specifications', function (Blueprint $table) {
             $table->foreign('lifeline_id')
                 ->references('id')
                 ->on('lifelines')
@@ -72,11 +72,11 @@ class CreateForeignKeys extends Migration
         });
 
         Schema::table('execution_specifications', function (Blueprint $table) {
-            $table->dropForeign(['start_occurence_specification_id']);
-            $table->dropForeign(['finish_occurence_specification_id']);
+            $table->dropForeign(['start_occurrence_specification_id']);
+            $table->dropForeign(['finish_occurrence_specification_id']);
         });
 
-        Schema::table('occurence_specifications', function (Blueprint $table) {
+        Schema::table('occurrence_specifications', function (Blueprint $table) {
             $table->dropForeign(['lifeline_id']);
         });
     }

@@ -11,8 +11,8 @@ class CreateExecutionSpecificationsTable extends Migration
         Schema::create('execution_specifications', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
-            $table->integer('start_occurence_specification_id')->unsigned();
-            $table->integer('finish_occurence_specification_id')->unsigned();
+            $table->integer('start_occurrence_specification_id')->unsigned();
+            $table->integer('finish_occurrence_specification_id')->unsigned();
         });
     }
 
