@@ -2,17 +2,17 @@
 
 namespace App\Transformers;
 
-use App\Models\Lifeline;
+use App\Models\Interaction;
 use NilPortugues\Api\Mappings\JsonApiMapping;
 
-class LifelineTransformer implements JsonApiMapping
+class InteractionTransformer implements JsonApiMapping
 {
     /**
      * {@inheritdoc}
      */
     public function getClass()
     {
-        return Lifeline::class;
+        return Interaction::class;
     }
 
     /**
@@ -20,7 +20,7 @@ class LifelineTransformer implements JsonApiMapping
      */
     public function getAlias()
     {
-        return 'lifelines';
+        return 'interactions';
     }
 
     /**
@@ -53,8 +53,8 @@ class LifelineTransformer implements JsonApiMapping
     public function getUrls()
     {
         return [
-            'self' => ['name' => 'lifelines.show', 'as_id' => 'id'],
-            'lifelines' => ['name' => 'lifelines.index'],
+            'self' => ['name' => 'interactions.show', 'as_id' => 'id'],
+            'interactions' => ['name' => 'interactions.index'],
         ];
     }
 

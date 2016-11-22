@@ -2,17 +2,17 @@
 
 namespace App\Transformers;
 
-use App\Models\Lifeline;
+use App\Models\ExecutionSpecification;
 use NilPortugues\Api\Mappings\JsonApiMapping;
 
-class LifelineTransformer implements JsonApiMapping
+class ExecutionSpecificationTransformer implements JsonApiMapping
 {
     /**
      * {@inheritdoc}
      */
     public function getClass()
     {
-        return Lifeline::class;
+        return ExecutionSpecification::class;
     }
 
     /**
@@ -20,7 +20,7 @@ class LifelineTransformer implements JsonApiMapping
      */
     public function getAlias()
     {
-        return 'lifelines';
+        return 'execution-specifications';
     }
 
     /**
@@ -53,8 +53,8 @@ class LifelineTransformer implements JsonApiMapping
     public function getUrls()
     {
         return [
-            'self' => ['name' => 'lifelines.show', 'as_id' => 'id'],
-            'lifelines' => ['name' => 'lifelines.index'],
+            'self' => ['name' => 'execution-specifications.show', 'as_id' => 'id'],
+            'execution-specifications' => ['name' => 'execution-specifications.index'],
         ];
     }
 

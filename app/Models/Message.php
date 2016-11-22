@@ -27,12 +27,12 @@ class Message extends Model
 
     public function sendEvent()
     {
-        return $this->belongsTo(OccurenceSpecification::class, 'send_event_id');
+        return $this->belongsTo(OccurrenceSpecification::class, 'send_event_id');
     }
 
     public function receiveEvent()
     {
-        return $this->belongsTo(OccurenceSpecification::class, 'receive_event_id');
+        return $this->belongsTo(OccurrenceSpecification::class, 'receive_event_id');
     }
 
     /**

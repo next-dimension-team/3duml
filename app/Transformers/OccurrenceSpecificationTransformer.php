@@ -2,17 +2,17 @@
 
 namespace App\Transformers;
 
-use App\Models\Lifeline;
+use App\Models\OccurrenceSpecification;
 use NilPortugues\Api\Mappings\JsonApiMapping;
 
-class LifelineTransformer implements JsonApiMapping
+class OccurrenceSpecificationTransformer implements JsonApiMapping
 {
     /**
      * {@inheritdoc}
      */
     public function getClass()
     {
-        return Lifeline::class;
+        return OccurrenceSpecification::class;
     }
 
     /**
@@ -20,7 +20,7 @@ class LifelineTransformer implements JsonApiMapping
      */
     public function getAlias()
     {
-        return 'lifelines';
+        return 'occurrence-specifications';
     }
 
     /**
@@ -53,8 +53,8 @@ class LifelineTransformer implements JsonApiMapping
     public function getUrls()
     {
         return [
-            'self' => ['name' => 'lifelines.show', 'as_id' => 'id'],
-            'lifelines' => ['name' => 'lifelines.index'],
+            'self' => ['name' => 'occurrence-specifications.show', 'as_id' => 'id'],
+            'occurrence-specifications' => ['name' => 'occurrence-specifications.index'],
         ];
     }
 

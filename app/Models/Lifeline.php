@@ -13,8 +13,8 @@ class Lifeline extends Model
      */
     protected $table = 'lifelines';
 
-    public function occurenceSpecifications()
+    public function occurrenceSpecifications()
     {
-        return $this->hasMany(OccurenceSpecification::class);
+        return $this->hasMany(OccurrenceSpecification::class);
     }
 }

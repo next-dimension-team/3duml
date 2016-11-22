@@ -13,6 +13,42 @@ use Illuminate\Http\Request;
 |
 */
 
+/*
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
+*/
+
+Route::group(['namespace' => 'Api'], function () {
+    Route::resource('lifelines', 'LifelineController', [
+        'except' => ['create', 'edit'],
+    ]);
+
+    Route::resource('messages', 'MessageController', [
+        'except' => ['create', 'edit'],
+    ]);
+
+    Route::resource('occurrence-specifications', 'OccurrenceSpecificationController', [
+        'except' => ['create', 'edit'],
+    ]);
+
+    Route::resource('interactions', 'InteractionController', [
+        'except' => ['create', 'edit'],
+    ]);
+
+    Route::resource('interaction-fragments', 'InteractionFragmentController', [
+        'except' => ['create', 'edit'],
+    ]);
+
+    Route::resource('interaction-operands', 'InteractionOperandController', [
+        'except' => ['create', 'edit'],
+    ]);
+
+    Route::resource('combined-fragments', 'CombinedFragmentController', [
+        'except' => ['create', 'edit'],
+    ]);
+
+    Route::resource('execution-specifications', 'ExecutionSpecificationController', [
+        'except' => ['create', 'edit'],
+    ]);
+});
