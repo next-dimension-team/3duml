@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OccurenceSpecification extends Model
+class OccurrenceSpecification extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'occurence_specifications';
+    protected $table = 'occurrence_specifications';
 
     public function covered()
     {
@@ -30,11 +30,11 @@ class OccurenceSpecification extends Model
 
     public function startingExecutionSpecifications()
     {
-        return $this->hasMany(ExecutionSpecification::class, 'start_occurence_specification_id');
+        return $this->hasMany(ExecutionSpecification::class, 'start_occurrence_specification_id');
     }
 
     public function finishingExecutionSpecifications()
     {
-        return $this->hasMany(ExecutionSpecification::class, 'finish_occurence_specification_id');
+        return $this->hasMany(ExecutionSpecification::class, 'finish_occurrence_specification_id');
     }
 }

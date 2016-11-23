@@ -15,12 +15,12 @@ class ExecutionSpecification extends Model
 
     public function start()
     {
-        return $this->belongsTo(OccurenceSpecification::class, 'start_occurence_specification_id');
+        return $this->belongsTo(OccurrenceSpecification::class, 'start_occurrence_specification_id');
     }
 
     public function finish()
     {
-        return $this->belongsTo(OccurenceSpecification::class, 'finish_occurence_specification_id');
+        return $this->belongsTo(OccurrenceSpecification::class, 'finish_occurrence_specification_id');
     }
 
     public function fragment()
