@@ -1,0 +1,15 @@
+<!-- Render lifeline -->
+<div class="lifeline" [style.left]="left + 'px'">
+  <div class="title">{{title}}</div>
+  <div class="line"></div>
+  <div class="executions">
+
+    <!-- Render executions -->
+    <execution
+      *ngFor="let execution of executions"
+      [height]="execution.height"
+      [top]="execution.top"
+    ></execution>
+
+  </div>
+</div>
