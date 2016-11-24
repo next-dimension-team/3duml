@@ -1,0 +1,148 @@
+/* Layers */
+.layer {
+  display: block;
+}
+
+/* Sequence Diagram */
+.sequence-diagram {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.sequence-diagram div,
+.sequence-diagram svg {
+  display: block;
+  position: absolute;
+}
+
+.sequence-diagram :hover {
+  color: blue!important;
+  background-color: red!important;
+}
+
+/* Lifeline */
+.sequence-diagram .lifeline {
+  top: 0;
+  width: 120px;
+  height: 500px;
+}
+
+.sequence-diagram .lifeline .title {
+  width: 88px;
+  height: 18px;
+  border: 1px solid #000;
+  background-color: #fff;
+  text-align: center;
+  padding: 15px;
+  overflow: hidden;
+}
+
+.sequence-diagram .lifeline .line {
+  border-left: 1px dashed #000;
+  top: 0;
+  left: 50%;
+  height: 100%;
+}
+
+/* Lifeline - execution Specifications */
+.sequence-diagram .lifeline .executions {
+  top: 50px;
+  left: 54px;
+}
+
+.sequence-diagram .lifeline .executions .execution {
+  border: 1px solid #000;
+  background-color: #fff;
+  width: 11px;
+}
+
+/* Message - Lines */
+.sequence-diagram .message .line {
+  width: 100%;
+  height: 15px;
+  border-bottom-width: 1px;
+  border-bottom-color: #000;
+}
+
+.sequence-diagram .message.left-to-right.sync .line {
+  border-bottom-style: solid;
+}
+
+.sequence-diagram .message.async .line {
+  border-bottom-style: dashed;
+}
+
+.sequence-diagram .message .line svg {
+  top: 10px;
+}
+
+.sequence-diagram .message.left-to-right .line svg {
+  right: 0;
+}
+
+/* Message - Title */
+.sequence-diagram .message .title {
+  width: 100%;
+  text-align: center;
+}
+
+/* Fragments */
+.sequence-diagram .fragment {
+  border: 1px solid #000;
+  overflow: hidden;
+}
+
+.sequence-diagram .fragment .title {
+  background-color: #fff;
+  padding: 3px 15px;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
+  font-weight: bold;
+}
+
+.sequence-diagram .fragment .operand {
+  position: relative;
+  border-bottom: 1px dashed #000;
+}
+
+.sequence-diagram .fragment .operand:last-child {
+  border-bottom: none;
+}
+
+.sequence-diagram .fragment .operand .constraint {
+  top: 3px;
+  left: 60px;
+}
+
+/* Z-Indexes */
+.sequence-diagram {
+  z-index: 0;
+}
+
+.sequence-diagram .lifeline .title {
+  z-index: 10;
+}
+
+.sequence-diagram .lifeline .executions .execution {
+  z-index: 20;
+}
+
+.sequence-diagram .fragment .title {
+  z-index: 30;
+}
+
+.sequence-diagram .fragment .operand .constraint {
+  z-index: 40;
+}
+
+.sequence-diagram .message {
+  z-index: 50;
+}
+
+.sequence-diagram .message .title {
+  z-index: 51;
+}
