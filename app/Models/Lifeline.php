@@ -17,4 +17,9 @@ class Lifeline extends Model
     {
         return $this->hasMany(OccurrenceSpecification::class);
     }
+
+    public function layer()
+    {
+        return $this->belongsTo(Layer::class);
+    }
 }
