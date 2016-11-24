@@ -1,11 +1,15 @@
 <div id="wrapper">
 
     <div id="sidebar-wrapper">
-        <app-sidebar-menu></app-sidebar-menu>
+        <sidebar-menu
+            (openSequenceDiagram)="openSequenceDiagram($event)"
+        ></sidebar-menu>
     </div>
 
     <div id="page-content-wrapper">
-        <app-sequence-diagram></app-sequence-diagram>
+        <sequence-diagram
+            [rootInteraction]="openedSequenceDiagram"
+        ></sequence-diagram>
     </div>
 
 </div>

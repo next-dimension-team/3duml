@@ -1,4 +1,5 @@
 import { Component} from '@angular/core';
+import { Interaction } from './sequence-diagram/models';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,11 @@ import { Component} from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  //
+
+  public openedSequenceDiagram: Interaction;
+  
+  openSequenceDiagram(sequenceDiagramModel: Interaction) {
+    this.openedSequenceDiagram = sequenceDiagramModel;
+  }
+
 }
