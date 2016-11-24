@@ -1,0 +1,37 @@
+<!-- Render layer -->
+<div class="layer">
+
+  <!-- Render sequence diagram -->
+  <div class="sequence-diagram">
+
+    <!-- Render lifelines -->
+    <lifeline
+      *ngFor="let lifeline of lifelines"
+      [left]="lifeline.left"
+      [title]="lifeline.title"
+      [executions]="lifeline.executions"
+    ></lifeline>
+
+    <!-- Render messages -->
+    <message
+      *ngFor="let message of messages"
+      [direction]="message.direction"
+      [type]="message.type"
+      [title]="message.title"
+      [length]="message.length"
+      [top]="message.top"
+      [left]="message.left"
+    ></message>
+    
+    <!-- Render fragments -->
+    <fragment
+      *ngFor="let fragment of fragments"
+      [title]="fragment.title"
+      [width]="fragment.width"
+      [top]="fragment.top"
+      [left]="fragment.left"
+    ></fragment>
+
+  </div>
+
+</div>
