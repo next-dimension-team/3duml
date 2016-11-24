@@ -1,0 +1,16 @@
+<ul class="sidebar-nav">
+
+	<li class="header">Sequence Diagrams</li>
+	<li
+		*ngFor="let sequenceDiagram of sequenceDiagrams"
+		[class.active]="sequenceDiagram==openedSequenceDiagram"
+	>
+		<a (click)=openSequenceDiagramHandler(sequenceDiagram)>{{sequenceDiagram.name}}</a>
+	</li>
+
+	<li class="header">Other</li>
+	<li>
+		<a (click)="createDiagram()">Create Diagram</a>
+	</li>
+
+</ul>

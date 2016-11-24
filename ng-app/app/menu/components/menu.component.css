@@ -9,6 +9,15 @@
     line-height: 40px;
 }
 
+.sidebar-nav li.header {
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.sidebar-nav li.active {
+    border-left: 3px solid #3498db;
+}
+
 .sidebar-nav li a {
     display: block;
     text-decoration: none;
