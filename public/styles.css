@@ -1,6 +1,18 @@
 /* Layers */
+.layers-wrapper {
+  display: none;
+}
+
 .layer {
   display: block;
+  width: 1200px;
+  height: 500px;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 30px;
+}
+
+.layer:hover {
+  background-color: rgba(0, 0, 255, 0.2);
 }
 
 /* Sequence Diagram */
@@ -11,6 +23,11 @@
   position: relative;
   font-size: 12px;
   font-family: monospace;
+}
+
+.sequence-diagram * {
+  margin: 0;
+  padding: 0;
 }
 
 .sequence-diagram div,

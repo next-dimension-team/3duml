@@ -1,10 +1,10 @@
-import { Component, ViewChild, AfterViewInit, Input } from '@angular/core';
+import { Component, ViewChild, Input, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'layer',
   templateUrl: './layer.component.html'
 })
-export class LayerComponent implements AfterViewInit {
+export class LayerComponent {
 
   @Input()
   public depth;
@@ -18,8 +18,6 @@ export class LayerComponent implements AfterViewInit {
   @Input()
   public fragments;
 
-  ngAfterViewInit() {
-    //
-  }
+  constructor(public element: ElementRef) { }
 
 }

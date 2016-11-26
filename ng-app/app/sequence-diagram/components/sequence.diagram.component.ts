@@ -1,28 +1,24 @@
-//import * as go from 'gojs';
-//import * as THREE from 'three';
-import { Component, ViewChild, AfterViewInit, OnInit, Input, OnChanges } from '@angular/core';
+import * as THREE from 'three';
+import { Component, ViewChild, AfterViewInit, OnInit, Input, OnChanges, ViewChildren, QueryList } from '@angular/core';
 import { Datastore } from '../../datastore';
 import { InteractionService } from '../services';
 import { Interaction } from '../models';
+import { LayerComponent } from './layer.component';
+//import * as Models from '../models';
 
+// TODO: tuto triedu dat niekam inam alebo ju uplne zrusit
 /*
  * Class representing 3D layer
  */
-/*export class Layer extends THREE.CSS3DObject {
-  constructor(depth: number) {
-    // Create HTML div element
-    var element = document.createElement('div');
-    
-    // Add layer class
-    element.className = 'layer';
-
+export class Layer extends THREE.CSS3DObject {
+  constructor(element: HTMLElement, depth: number) {
     // Create CSS3DObject object
     super(element);
 
     // Adjust layer position
-    this.position.z = -250 * depth;
+    this.position.z = -600 * depth;
   }
-}*/
+}
 
 @Component({
   selector: 'sequence-diagram',
@@ -31,9 +27,22 @@ import { Interaction } from '../models';
 })
 export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChanges {
 
+  @ViewChild('scene') sceneDiv;
+
+  // http://stackoverflow.com/questions/40819739/angular-2-template-reference-variable-with-ngfor
+  // http://stackoverflow.com/questions/32693061/angular-2-typescript-get-hold-of-an-element-in-the-template/35209681#35209681
+  @ViewChildren('layerComponents') layerComponents: QueryList<LayerComponent>;
+
+  protected scene: THREE.Scene;
+  protected camera: THREE.Camera;
+  protected renderer: THREE.CSS3DRenderer;
+  protected layerNum: number = 0;
+
   @Input()
   public rootInteraction: Interaction;
 
+  ///////////////////////////////////////////
+  // TODO: tieto polia tu asi nebudu
   public lifelines = [
     {
       left: 0,
@@ -78,43 +87,62 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     }
   ];
 
-  // TODO: multiple layers in 3D
   public layers = [
+    {
+      lifelines: this.lifelines,
+      messages: this.messages,
+      fragments: this.fragments
+    },
+    {
+      lifelines: this.lifelines,
+      messages: this.messages,
+      fragments: this.fragments
+    },
     {
       lifelines: this.lifelines,
       messages: this.messages,
       fragments: this.fragments
     }
   ];
+  ///////////////////////////////////////////
 
-  constructor(private interactionService: InteractionService) {
-    /*// Find interaction
+  constructor(private interactionService: InteractionService, private datastore: Datastore) {
+    /*
+    // Find interaction
     this.datastore.findRecord(Models.Interaction, '1').subscribe(
       (interaction: Models.Interaction) => {
-        console.log(interaction);
+        //console.log(interaction);
+
+        var firstMessage = interaction.messages[0];
+
+        console.log("here it isnt", firstMessage.receiveEvent);
 
         // Find message
         this.datastore.findRecord(Models.Message, interaction.messages[0].id).subscribe(
           (message: Models.Message) => {
-            console.log(message);
+            //console.log(message);
+            console.log("here it should be", message.receiveEvent);
 
             // Find occurence specifications
             this.datastore.findRecord(Models.OccurrenceSpecification, message.receiveEvent.id).subscribe(
               (occurrenceSpecification: Models.OccurrenceSpecification) => {
-                console.log(occurrenceSpecification);
+                //console.log(occurrenceSpecification);
               }
             );
           }
         );
+
+        firstMessage.withRelationships().then(r => {
+          console.log("here we wanna it", r.receiveEvent);
+        });
       }
-    );*/
+    );
+    */
   }
 
+  // TODO: toto bduem mozno portrebovat, ak nie dat to prec,
+  // tato metoda sluzi na nacitavanie dat z datastore (nemalo by to byt v konstruktore)
   ngOnInit() {
-    //
-  }
-
-  ngAfterViewInit() {
     //
   }
 
@@ -124,24 +152,9 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     }
   }
 
-  private refreshRootInteraction() {
-    console.log("Load sequence diagram. The root interaction is ", this.rootInteraction);
-  }
-
-  /*
-  public scene: THREE.Scene;
-  public camera: THREE.Camera;
-  public renderer: THREE.CSS3DRenderer;
-  public controls: THREE.TrackballControls;
-  public layerNum: number = 0;
-
-  @ViewChild('diagram') diagramDiv;
-
+  // TODO: tu by mala byt implementovana funkcionalita na vytvorenie sceny
+  // pri update sa len zmenia veci na scene ale nesmie sa vytvarat nova isntancia kamery, renderera a pod.
   ngAfterViewInit() {
-    this.showScene();
-  }
-
-  showScene() {
     // Calculate canvas size
     let width = window.innerWidth * 0.8;
     let height = window.innerHeight;
@@ -156,16 +169,32 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     // Create renderer
     this.renderer = new THREE.CSS3DRenderer();
     this.renderer.setSize(width, height);
-    this.diagramDiv.nativeElement.appendChild(this.renderer.domElement);
+    this.sceneDiv.nativeElement.appendChild(this.renderer.domElement);
 
     // Adjust camera position
     this.camera.position.z = 800;
 
     // Controls
-    //var orbit = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+    var orbit = new THREE.OrbitControls(this.camera, this.renderer.domElement);
 
     // Render scene
     this.render();
+  }
+
+  /* TODO:
+   * tato metoda sa zovola vzdy ked sa zmeni rootInteraction
+   * treba ju implementovat tak, aby vzdy prekreslila scenu
+   */
+  private refreshRootInteraction() {
+    // TODO: len pomocne
+    console.log("Load sequence diagram. The root interaction is ", this.rootInteraction);
+
+    // Create layers
+    for (let layerComponent of this.layerComponents.toArray()) {
+      var element: HTMLElement = layerComponent.element.nativeElement;
+      var layer: Layer = new Layer(element, this.layerNum++);
+      this.scene.add(layer);
+    }
   }
 
   // Render loop
@@ -178,10 +207,4 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     this.renderer.render(this.scene, this.camera);
   }
 
-  // Menu callbacks
-  public addLayer() {
-    var layer: Layer = new Layer(++this.layerNum);
-    this.scene.add(layer);
-  }
-  */
 }

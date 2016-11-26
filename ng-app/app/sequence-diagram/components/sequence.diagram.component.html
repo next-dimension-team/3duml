@@ -1,7 +1,13 @@
+<!-- Wrapping element for Three.js scene -->
+<div #scene></div>
+
 <!-- Render layers -->
-<layer
-  *ngFor="let layer of layers"
-  [lifelines]="layer.lifelines"
-  [messages]="layer.messages"
-  [fragments]="layer.fragments"
-></layer>
+<div class="layers-wrapper">
+  <layer
+    #layerComponents
+    *ngFor="let layer of layers"
+    [lifelines]="layer.lifelines"
+    [messages]="layer.messages"
+    [fragments]="layer.fragments"
+  ></layer>
+</div>
