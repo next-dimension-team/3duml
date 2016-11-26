@@ -12,6 +12,7 @@
 .sidebar-nav li.header {
     color: #fff;
     text-transform: uppercase;
+    margin-top: 10px;
 }
 
 .sidebar-nav li.active {
