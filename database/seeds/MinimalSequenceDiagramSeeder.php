@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\Interaction;
+use App\Models\Lifeline;
+use App\Models\OccurrenceSpecification;
+use App\Models\Message;
 
 class MinimalSequenceDiagramSeeder extends Seeder
 {
@@ -11,23 +15,21 @@ class MinimalSequenceDiagramSeeder extends Seeder
      */
     public function run()
     {
-        $sequenceDiagramInteraction = factory(\App\Models\Interaction::class)->create();
+        $interaction = factory(Interaction::class)->create();
 
-        $lifelineA = factory(\App\Models\Lifeline::class)->create();
-        $lifelineB = factory(\App\Models\Lifeline::class)->create();
+        $lifelines = factory(Lifeline::class, 2)
+            ->create()
+            ->each(function($lifeline) {
+                $lifeline->occurrenceSpecifications()->save(
+                    factory(OccurrenceSpecification::class)->make()
+                );
+            });
 
-        $occurenceSpecificationA = factory(\App\Models\OccurenceSpecification::class)->create([
-            'lifeline_id' => $lifelineA->id,
-        ]);
+        $message = factory(Message::class)->make();
+        $message->interaction()->associate($interaction);
+        $message->sendEvent()->associate($lifelines->first());
+        $message->receiveEvent()->associate($lifelines->last());
 
-        $occurenceSpecificationB = factory(\App\Models\OccurenceSpecification::class)->create([
-            'lifeline_id' => $lifelineB->id,
-        ]);
-
-        $message = factory(\App\Models\Message::class)->create([
-            'interaction_id' => $sequenceDiagramInteraction->id,
-            'send_event_id' => $lifelineA->id,
-            'receive_event_id' => $lifelineB->id,
-        ]);
+        $message->save();
     }
 }
