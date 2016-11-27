@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -8,8 +8,10 @@ import { Component} from '@angular/core';
 
 export class MenuComponent {
 
-  create(): void {
-    console.log('Diagram created');
+  @Output() public addLayer = new EventEmitter;
+
+  addLayerEvent(): void {
+    this.addLayer.emit();
   }
 
 }

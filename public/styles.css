@@ -1,0 +1,13 @@
+canvas {
+  display: block;
+}
+
+.layer {
+  width: 1000px;
+  height: 500px;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.layer:hover {
+  background-color: rgba(0, 0, 255, 0.3);
+}
