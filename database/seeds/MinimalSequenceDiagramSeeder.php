@@ -19,7 +19,7 @@ class MinimalSequenceDiagramSeeder extends Seeder
 
         $lifelines = factory(Lifeline::class, 2)
             ->create()
-            ->each(function($lifeline) {
+            ->each(function ($lifeline) {
                 $lifeline->occurrenceSpecifications()->save(
                     factory(OccurrenceSpecification::class)->make()
                 );
