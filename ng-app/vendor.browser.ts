@@ -19,7 +19,6 @@ import '@angularclass/hmr';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 
-import 'gojs';
 import 'three';
 import 'angular2-jsonapi';
 
