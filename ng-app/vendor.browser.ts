@@ -20,6 +20,8 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 
 import 'three';
+import 'three.css';
+
 import 'angular2-jsonapi';
 
 if ('production' === ENV) {

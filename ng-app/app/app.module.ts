@@ -1,6 +1,3 @@
-import './vendor/css3d.renderer';
-import './vendor/orbit.controls';
-
 import { NgModule, ApplicationRef } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';

@@ -6,11 +6,14 @@ import { Interaction } from '../models';
 import { LayerComponent } from './layer.component';
 //import * as Models from '../models';
 
+var CSS3D = require('three.css')(THREE);
+var OrbitControls = require('three-orbit-controls')(THREE);
+
 // TODO: tuto triedu dat niekam inam alebo ju uplne zrusit
 /*
  * Class representing 3D layer
  */
-export class Layer extends THREE.CSS3DObject {
+export class Layer extends CSS3D.Object {
   constructor(element: HTMLElement, depth: number) {
     // Create CSS3DObject object
     super(element);
@@ -35,7 +38,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
 
   protected scene: THREE.Scene;
   protected camera: THREE.Camera;
-  protected renderer: THREE.CSS3DRenderer;
+  protected renderer: CSS3D.Renderer;
   protected layerNum: number = 0;
 
   @Input()
@@ -167,7 +170,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 
     // Create renderer
-    this.renderer = new THREE.CSS3DRenderer();
+    this.renderer = new CSS3D.Renderer();
     this.renderer.setSize(width, height);
     this.sceneDiv.nativeElement.appendChild(this.renderer.domElement);
 
@@ -175,7 +178,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     this.camera.position.z = 800;
 
     // Controls
-    var orbit = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+    var orbit = new OrbitControls(this.camera, this.renderer.domElement);
 
     // Render scene
     this.render();
