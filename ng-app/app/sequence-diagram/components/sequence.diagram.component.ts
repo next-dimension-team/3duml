@@ -38,32 +38,32 @@ class SequenceDiagramOrbitControls extends OrbitControls {
     this.mouseScrollingSpeed = mouseScrollingSpeed;
 
     this.enableZoom = false;
-    this.domElement.addEventListener('wheel', function(e) { this.handleMouseWheel(e); }.bind(this), false);
+    this.domElement.addEventListener('wheel', function (e) { this.handleMouseWheel(e); }.bind(this), false);
   }
 
   handleMouseWheel(event) {
     var distance = this.distance(this.target.z, this.object.position.z);
 
-    if (event.deltaY < 0 && distance > this.minDistanceToTarget ) {
-			this.object.position.z -= this.mouseScrollingSpeed;
+    if (event.deltaY < 0 && distance > this.minDistanceToTarget) {
+      this.object.position.z -= this.mouseScrollingSpeed;
 
-		} else if (event.deltaY > 0) {
+    } else if (event.deltaY > 0) {
       this.object.position.z += this.mouseScrollingSpeed;
-		}
-		this.update();
+    }
+    this.update();
   }
 
-  distance(a, b){
+  distance(a, b) {
 
-    if((a >= 0 && b >= 0) || (a <= 0 && b <= 0)){
+    if ((a >= 0 && b >= 0) || (a <= 0 && b <= 0)) {
       return Math.abs(a - b);
     }
 
-    if (a > 0 && b < 0){
+    if (a > 0 && b < 0) {
       return a + Math.abs(b);
     }
 
-    if (a < 0 && b > 0){
+    if (a < 0 && b > 0) {
       return Math.abs(a) + b;
     }
   }
@@ -235,10 +235,10 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     this.controls = new SequenceDiagramOrbitControls(this.camera, this.renderer.domElement, minPolarAngle, maxPolarAngle, minAzimuthAngle, maxAzimuthAngle, mouseScrollingSpeed, minDistanceToTarget);
 
     this.controls.enableRotate = true;
-		this.controls.rotateSpeed = 0.5;
-		this.controls.autoRotate = false;
-		this.controls.autoRotateSpeed = 0.0;
-    
+    this.controls.rotateSpeed = 0.5;
+    this.controls.autoRotate = false;
+    this.controls.autoRotateSpeed = 0.0;
+
     // Render scene
     this.render();
   }
