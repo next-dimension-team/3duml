@@ -4,6 +4,7 @@ import { Datastore } from '../../datastore';
 import { InteractionService } from '../services';
 import { Interaction } from '../models';
 import { LayerComponent } from './layer.component';
+import { SequenceDiagramOrbitControls } from './sequence.diagram.orbit.controls';
 //import * as Models from '../models';
 
 var CSS3D = require('three.css')(THREE);
@@ -38,6 +39,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
 
   protected scene: THREE.Scene;
   protected camera: THREE.Camera;
+  protected controls: SequenceDiagramOrbitControls;
   protected renderer: CSS3D.Renderer;
   protected layerNum: number = 0;
 
@@ -178,7 +180,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     this.camera.position.z = 800;
 
     // Controls
-    var orbit = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls = new SequenceDiagramOrbitControls(this.camera, this.renderer.domElement);
+    this.controls.rotateSpeed = 0.5;
 
     // Render scene
     this.render();
@@ -196,14 +199,21 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     for (let layerComponent of this.layerComponents.toArray()) {
       var element: HTMLElement = layerComponent.element.nativeElement;
       var layer: Layer = new Layer(element, this.layerNum++);
+
+      // TODO: target by mal byt 200px za aktualnym platnom
+      // this.controls.target = new THREE.Vector3(layer.position.x, layer.position.y, layer.position.z -200);
+      // docasna implementacia pre pracu s exampleom
+      this.controls.target = new THREE.Vector3(0, 0, -200);
+
       this.scene.add(layer);
+
     }
   }
 
   // Render loop
   render() {
     var self = this;
-    requestAnimationFrame(function() {
+    requestAnimationFrame(function () {
       self.render();
     });
 
