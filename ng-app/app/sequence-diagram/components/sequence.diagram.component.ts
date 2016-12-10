@@ -4,6 +4,7 @@ import { Datastore } from '../../datastore';
 import { InteractionService } from '../services';
 import { Interaction } from '../models';
 import { LayerComponent } from './layer.component';
+import { SequenceDiagramOrbitControls } from './sequence.diagram.orbit.controls';
 //import * as Models from '../models';
 
 var CSS3D = require('three.css')(THREE);
@@ -23,52 +24,6 @@ export class Layer extends CSS3D.Object {
   }
 }
 
-/*
- * Class for controling camera of sequence diagram
- */
-class SequenceDiagramOrbitControls extends OrbitControls {
-  constructor(object, domElement, minPolarAngle, maxPolarAngle, minAzimuthAngle, maxAzimuthAngle, mouseScrollingSpeed, minDistanceToTarget) {
-    super(object, domElement);
-
-    this.minPolarAngle = minPolarAngle;
-    this.maxPolarAngle = maxPolarAngle;
-    this.minAzimuthAngle = minAzimuthAngle;
-    this.maxAzimuthAngle = maxAzimuthAngle;
-    this.minDistanceToTarget = minDistanceToTarget;
-    this.mouseScrollingSpeed = mouseScrollingSpeed;
-
-    this.enableZoom = false;
-    this.domElement.addEventListener('wheel', function (e) { this.handleMouseWheel(e); }.bind(this), false);
-  }
-
-  handleMouseWheel(event) {
-    var distance = this.distance(this.target.z, this.object.position.z);
-
-    if (event.deltaY < 0 && distance > this.minDistanceToTarget) {
-      this.object.position.z -= this.mouseScrollingSpeed;
-
-    } else if (event.deltaY > 0) {
-      this.object.position.z += this.mouseScrollingSpeed;
-    }
-    this.update();
-  }
-
-  distance(a, b) {
-
-    if ((a >= 0 && b >= 0) || (a <= 0 && b <= 0)) {
-      return Math.abs(a - b);
-    }
-
-    if (a > 0 && b < 0) {
-      return a + Math.abs(b);
-    }
-
-    if (a < 0 && b > 0) {
-      return Math.abs(a) + b;
-    }
-  }
-}
-
 @Component({
   selector: 'sequence-diagram',
   templateUrl: './sequence.diagram.component.html',
@@ -84,7 +39,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
 
   protected scene: THREE.Scene;
   protected camera: THREE.Camera;
-  protected controls: OrbitControls;
+  protected controls: SequenceDiagramOrbitControls;
   protected renderer: CSS3D.Renderer;
   protected layerNum: number = 0;
 
@@ -225,19 +180,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     this.camera.position.z = 800;
 
     // Controls
-    var minPolarAngle = 0.25 * Math.PI; // radians
-    var maxPolarAngle = 0.75 * Math.PI; // radians
-    var minAzimuthAngle = - 0.35 * Math.PI; // radians
-    var maxAzimuthAngle = 0.35 * Math.PI; // radians
-    var minDistanceToTarget = 500;
-    var mouseScrollingSpeed = 50;
-
-    this.controls = new SequenceDiagramOrbitControls(this.camera, this.renderer.domElement, minPolarAngle, maxPolarAngle, minAzimuthAngle, maxAzimuthAngle, mouseScrollingSpeed, minDistanceToTarget);
-
-    this.controls.enableRotate = true;
+    this.controls = new SequenceDiagramOrbitControls(this.camera, this.renderer.domElement);
     this.controls.rotateSpeed = 0.5;
-    this.controls.autoRotate = false;
-    this.controls.autoRotateSpeed = 0.0;
 
     // Render scene
     this.render();
@@ -255,9 +199,12 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     for (let layerComponent of this.layerComponents.toArray()) {
       var element: HTMLElement = layerComponent.element.nativeElement;
       var layer: Layer = new Layer(element, this.layerNum++);
-      // target by mal byt 200px za aktualnym platnom
+
+      // TODO: target by mal byt 200px za aktualnym platnom
       // this.controls.target = new THREE.Vector3(layer.position.x, layer.position.y, layer.position.z -200);
+      // docasna implementacia pre pracu s exampleom
       this.controls.target = new THREE.Vector3(0, 0, -200);
+
       this.scene.add(layer);
 
     }
