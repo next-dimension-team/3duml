@@ -27,7 +27,7 @@ export class SequenceDiagramOrbitControls extends OrbitControls {
 
     handleMouseWheel(event) {
         var distance = this.target.distanceTo(this.object.position);
-        console.log(distance);
+
         if (event.deltaY < 0 && distance > this.minDistanceToTarget) {
             this.object.position.z -= this.mouseScrollingSpeed;
 
