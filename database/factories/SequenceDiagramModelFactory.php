@@ -62,3 +62,9 @@ $factory->define(App\Models\OccurrenceSpecification::class, function (Faker\Gene
         'time' => $faker->numberBetween(0, 100),
     ];
 });
+
+$factory->define(App\Models\Layer::class, function (Faker\Generator $faker) {
+    return [
+        'depth' => $faker->numberBetween(0, 100),
+    ];
+});

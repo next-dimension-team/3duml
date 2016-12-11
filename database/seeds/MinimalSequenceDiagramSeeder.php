@@ -5,6 +5,7 @@ use App\Models\Interaction;
 use App\Models\Lifeline;
 use App\Models\OccurrenceSpecification;
 use App\Models\Message;
+use App\Models\Layer;
 
 class MinimalSequenceDiagramSeeder extends Seeder
 {
@@ -17,9 +18,17 @@ class MinimalSequenceDiagramSeeder extends Seeder
     {
         $interaction = factory(Interaction::class)->create();
 
+        $layer = factory(Layer::class)->create([
+            'depth' => 1,
+        ]);
+
         $lifelines = factory(Lifeline::class, 2)
-            ->create()
-            ->each(function ($lifeline) {
+            ->make()
+            ->each(function ($lifeline) use ($layer) {
+                $lifeline->layer()->associate($layer);
+
+                $lifeline->save();
+
                 $lifeline->occurrenceSpecifications()->save(
                     factory(OccurrenceSpecification::class)->make()
                 );
