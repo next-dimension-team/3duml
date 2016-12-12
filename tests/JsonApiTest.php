@@ -58,7 +58,7 @@ class JsonApiTest extends TestCase
                  'data' => [
                  	'*' => [
                     	'attributes' => [
-                    	'name', 'interaction_id', 'id', 'interaction_id'
+                    	'name', 'interaction_id', 'id'
                     	]
                  	]
                  ]
