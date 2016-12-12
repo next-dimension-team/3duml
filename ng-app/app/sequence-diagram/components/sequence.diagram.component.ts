@@ -48,7 +48,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
   ///////////////////////////////////////////
   // TODO: tieto polia tu asi nebudu
   public lifelines = [
-    {
+    /*{
       left: 0,
       title: "dáminik",
       executions: [
@@ -67,28 +67,28 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
           height: 50,
         },
       ]
-    }
+    }*/
   ];
 
   public messages = [
-    {
+    /*{
       direction: "left-to-right",
       type: "async",
       title: "ahoj()",
       length: 150,
       top: 120,
       left: 50
-    }
+    }*/
   ];
 
   public fragments = [
-    {
+    /*{
       title: "alt",
       width: 320,
       top: 90,
       left: 20,
       // TODO: operands
-    }
+    }*/
   ];
 
   public layers = [
@@ -113,7 +113,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
   constructor(private interactionService: InteractionService, private datastore: Datastore) {
 
     // Find interaction
-    this.datastore.findRecord(Models.Interaction, '1').subscribe(
+    /*this.datastore.findRecord(Models.Interaction, '1').subscribe(
       (interaction: Models.Interaction) => {
         //console.log(interaction);
 
@@ -133,7 +133,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
             }
         );
       }
-    );
+    );*/
   }
 
   // TODO: toto bduem mozno portrebovat, ak nie dat to prec,
@@ -149,7 +149,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
   }
 
   // TODO: tu by mala byt implementovana funkcionalita na vytvorenie sceny
-  // pri update sa len zmenia veci na scene ale nesmie sa vytvarat nova isntancia kamery, renderera a pod.
+  // pri update sa len zmenia veci na scene ale nesmie sa vytvarat nova isra a pod.
   ngAfterViewInit() {
     // Calculate canvas size
     let width = window.innerWidth * 0.8;
@@ -174,6 +174,11 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     this.controls = new SequenceDiagramOrbitControls(this.camera, this.renderer.domElement);
     this.controls.rotateSpeed = 0.5;
 
+    // TODO: target by mal byt 200px za aktualnym platnom
+    // this.controls.target = new THREE.Vector3(layer.position.x, layer.position.y, layer.position.z -200);
+    // docasna implementacia pre pracu s exampleom
+    this.controls.target = new THREE.Vector3(0, 0, -200);
+
     // Render scene
     this.render();
   }
@@ -186,18 +191,43 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     // TODO: len pomocne
     console.log("Load sequence diagram. The root interaction is ", this.rootInteraction);
 
-    // Create layers
+    // Update layers JSON data
+    var self = this;
+    var lifelinesNum = 0;
+
+    function parseLifeline(lifeline: Models.Lifeline) {
+      console.log(lifeline);
+      self.lifelines.push({
+        left: lifelinesNum++ * 150,
+        title: lifeline.name,
+        executions: [
+          /*{
+            top: 50,
+            height: 100,
+          }*/
+        ]
+      });
+    }
+
+    this.rootInteraction._messages.subscribe((messages: Models.Message[]) => {
+      for (let message of messages) {
+        // Parse lifeline from send event
+        message._sendEvent.subscribe((sendEvent: Models.OccurrenceSpecification) => {
+          sendEvent._covered.subscribe(parseLifeline);
+        });
+        // Parse lifeline from recieve event
+        message._receiveEvent.subscribe((receiveEvent: Models.OccurrenceSpecification) => {
+          receiveEvent._covered.subscribe(parseLifeline);
+        });
+      }
+    });
+
+    // Render layers
+    this.layerNum = 0;
     for (let layerComponent of this.layerComponents.toArray()) {
       var element: HTMLElement = layerComponent.element.nativeElement;
       var layer: Layer = new Layer(element, this.layerNum++);
-
-      // TODO: target by mal byt 200px za aktualnym platnom
-      // this.controls.target = new THREE.Vector3(layer.position.x, layer.position.y, layer.position.z -200);
-      // docasna implementacia pre pracu s exampleom
-      this.controls.target = new THREE.Vector3(0, 0, -200);
-
       this.scene.add(layer);
-
     }
   }
 
