@@ -10,7 +10,7 @@ use App\Models\CombinedFragment;
 use App\Models\InteractionFragment;
 use App\Models\ExecutionSpecification;
 
-class Second extends Seeder
+class ComplexSequenceDiagramSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -20,7 +20,7 @@ class Second extends Seeder
     public function run()
     {
         $interaction = factory(Interaction::class)->create();
-		$mainIF = factory (InteractionFragment::class)->create(['fragmentable_id' => $interaction->id,'fragmentable_type' => 'interaction']);
+        $mainIF = factory(InteractionFragment::class)->create(['fragmentable_id' => $interaction->id,'fragmentable_type' => 'interaction']);
 
         /*$lifelines = factory(Lifeline::class, 3)
             ->create()
@@ -38,17 +38,17 @@ class Second extends Seeder
         $occ2 = factory(OccurrenceSpecification::class)->create('lifeline_id' => $lifeline2->id]);
         $occ3 = factory(OccurrenceSpecification::class)->create('lifeline_id' => $lifeline3->id]);*/
 
-		$combinedFragment1 = factory(CombinedFragment::class)->create(['operator' => 'opt']);
-		$interactionOperands1 = factory(InteractionOperand::class)->create(['constraint' => 'N>0']);
-		$interactionFragment1 = factory(InteractionFragment::class)->create(['fragmentable_id' => $combinedFragment1->id,'fragmentable_type' => 'combined_fragment']);
-		$interactionFragment2 = factory(InteractionFragment::class)->create(['fragmentable_id' => $interactionOperands1->id, 'parent_id' => $interactionFragment1->id,'fragmentable_type' => 'interaction_operand']);
-		
-		$combinedFragment2 = factory(CombinedFragment::class)->create(['operator' => 'loop']);
-		$interactionOperands2 = factory(InteractionOperand::class)->create(['constraint' => 'i<N']);
-		$interactionFragment3 = factory(InteractionFragment::class)->create(['fragmentable_id' => $combinedFragment2->id, 'parent_id' => $interactionFragment2->id ,'fragmentable_type' => 'combined_fragment']);
-		$interactionFragment4 = factory(InteractionFragment::class)->create(['fragmentable_id' => $interactionOperands2->id, 'parent_id' => $interactionFragment3->id,'fragmentable_type' => 'interaction_operand']);
-		
-	
+        $combinedFragment1 = factory(CombinedFragment::class)->create(['operator' => 'opt']);
+        $interactionOperands1 = factory(InteractionOperand::class)->create(['constraint' => 'N>0']);
+        $interactionFragment1 = factory(InteractionFragment::class)->create(['fragmentable_id' => $combinedFragment1->id,'fragmentable_type' => 'combined_fragment']);
+        $interactionFragment2 = factory(InteractionFragment::class)->create(['fragmentable_id' => $interactionOperands1->id, 'parent_id' => $interactionFragment1->id,'fragmentable_type' => 'interaction_operand']);
+        
+        $combinedFragment2 = factory(CombinedFragment::class)->create(['operator' => 'loop']);
+        $interactionOperands2 = factory(InteractionOperand::class)->create(['constraint' => 'i<N']);
+        $interactionFragment3 = factory(InteractionFragment::class)->create(['fragmentable_id' => $combinedFragment2->id, 'parent_id' => $interactionFragment2->id ,'fragmentable_type' => 'combined_fragment']);
+        $interactionFragment4 = factory(InteractionFragment::class)->create(['fragmentable_id' => $interactionOperands2->id, 'parent_id' => $interactionFragment3->id,'fragmentable_type' => 'interaction_operand']);
+        
+    
 /*
         $combinedFragments = factory(CombinedFragment::class,5)
             ->create()
@@ -75,7 +75,7 @@ class Second extends Seeder
         $io2 = factory(InteractionOperand::class)->create(['constraint' => 'N<=0']);
         $if4 = factory(InteractionFragment::class)->create(['fragmentable_id' => $io2->id, 'fragmentable_type' => 'interaction_operand', 'parent_id' => $if1->id]);
         $int2 = factory(Interaction::class)->create();
-        $if5 = factory(InteractionFragment::class)->create(['fragmentable_id' => $int2->id, 'fragmentable_type' => 'interaction','parent_id' => $if4->id]); 
+        $if5 = factory(InteractionFragment::class)->create(['fragmentable_id' => $int2->id, 'fragmentable_type' => 'interaction','parent_id' => $if4->id]);
 
 
         $cf1 = factory(CombinedFragment::class)->create(['operator' => 'par']);
@@ -83,12 +83,12 @@ class Second extends Seeder
         $if6 = factory(InteractionFragment::class)->create(['fragmentable_id' => $cf1->id, 'fragmentable_type' => 'combined_fragment', 'parent_id' => $if4->id]);
         $if7 = factory(InteractionFragment::class)->create(['fragmentable_id' => $io3->id, 'fragmentable_type' => 'interaction_operand', 'parent_id' => $if6->id]);
         $int3 = factory(Interaction::class)->create();
-        $if8 = factory(InteractionFragment::class)->create(['fragmentable_id' => $int3->id, 'fragmentable_type' => 'interaction','parent_id' => $if7->id]);         
+        $if8 = factory(InteractionFragment::class)->create(['fragmentable_id' => $int3->id, 'fragmentable_type' => 'interaction','parent_id' => $if7->id]);
 
         $io4 = factory(InteractionOperand::class)->create(['constraint' => '']);
         $if9 = factory(InteractionFragment::class)->create(['fragmentable_id' => $io4->id, 'fragmentable_type' => 'interaction_operand', 'parent_id' => $if6->id]);
         $int4 = factory(Interaction::class)->create();
-        $if10 = factory(InteractionFragment::class)->create(['fragmentable_id' => $int4->id, 'fragmentable_type' => 'interaction','parent_id' => $if9->id]);         
+        $if10 = factory(InteractionFragment::class)->create(['fragmentable_id' => $int4->id, 'fragmentable_type' => 'interaction','parent_id' => $if9->id]);
 
 
 
@@ -196,20 +196,19 @@ class Second extends Seeder
         $ec14 = factory(ExecutionSpecification::class)->create(['start_occurrence_specification_id' => $occSpec18->id, 'finish_occurrence_specification_id' => $occSpec22->id]);
 
 
-        $if11 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec1->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if12 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec2->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if13 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec3->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if14 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec4->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if15 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec5->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if16 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec6->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if17 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec7->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if18 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec8->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if19 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec9->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if20 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec10->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if21 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec11->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if22 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec12->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if23 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec13->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-        $if24 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec14->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);  
-
+        $if11 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec1->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if12 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec2->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if13 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec3->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if14 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec4->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if15 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec5->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if16 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec6->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if17 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec7->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if18 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec8->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if19 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec9->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if20 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec10->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if21 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec11->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if22 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec12->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if23 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec13->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
+        $if24 = factory(InteractionFragment::class)->create(['fragmentable_id' => $ec14->id, 'fragmentable_type' => 'execution_specification','parent_id' => $interaction->id]);
     }
 }
