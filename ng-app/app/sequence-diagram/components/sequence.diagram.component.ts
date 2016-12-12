@@ -5,10 +5,9 @@ import { InteractionService } from '../services';
 import { Interaction } from '../models';
 import { LayerComponent } from './layer.component';
 import { SequenceDiagramOrbitControls } from './sequence.diagram.orbit.controls';
-//import * as Models from '../models';
+import * as Models from '../models';
 
 var CSS3D = require('three.css')(THREE);
-var OrbitControls = require('three-orbit-controls')(THREE);
 
 // TODO: tuto triedu dat niekam inam alebo ju uplne zrusit
 /*
@@ -112,7 +111,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
   ///////////////////////////////////////////
 
   constructor(private interactionService: InteractionService, private datastore: Datastore) {
-    /*
+
     // Find interaction
     this.datastore.findRecord(Models.Interaction, '1').subscribe(
       (interaction: Models.Interaction) => {
@@ -122,27 +121,19 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
 
         console.log("here it isnt", firstMessage.receiveEvent);
 
-        // Find message
-        this.datastore.findRecord(Models.Message, interaction.messages[0].id).subscribe(
-          (message: Models.Message) => {
-            //console.log(message);
-            console.log("here it should be", message.receiveEvent);
-
-            // Find occurence specifications
-            this.datastore.findRecord(Models.OccurrenceSpecification, message.receiveEvent.id).subscribe(
-              (occurrenceSpecification: Models.OccurrenceSpecification) => {
-                //console.log(occurrenceSpecification);
-              }
-            );
-          }
+        firstMessage._sendEvent.subscribe(
+            (occurrenceSpecification: Models.OccurrenceSpecification) => {
+              console.log("sendEvent using observable getter", occurrenceSpecification);
+            }
         );
 
-        firstMessage.withRelationships().then(r => {
-          console.log("here we wanna it", r.receiveEvent);
-        });
+        firstMessage._receiveEvent.subscribe(
+            (occurrenceSpecification: Models.OccurrenceSpecification) => {
+              console.log("receiveEvent using observable getter", occurrenceSpecification);
+            }
+        );
       }
     );
-    */
   }
 
   // TODO: toto bduem mozno portrebovat, ak nie dat to prec,

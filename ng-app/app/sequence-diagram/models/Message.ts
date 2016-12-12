@@ -1,19 +1,13 @@
-import { JsonApiModelConfig, JsonApiModel, Attribute, BelongsTo, JsonApiDatastore } from 'angular2-jsonapi';
+import { JsonApiModelConfig, Attribute, BelongsTo, JsonApiDatastore } from 'angular2-jsonapi';
 import { OccurrenceSpecification } from './OccurrenceSpecification';
 import { Interaction } from './Interaction';
-import { Datastore } from '../../datastore';
+import { BaseJsonApiModel } from './BaseJsonApiModel';
+import { Observable } from 'rxjs/Observable';
 
 @JsonApiModelConfig({
     type: 'messages'
 })
-export class Message extends JsonApiModel {
-
-  protected datastore: JsonApiDatastore;
-
-  constructor(_datastore: JsonApiDatastore, data?: any) {
-    super(_datastore, data);
-    this.datastore = _datastore;
-  }
+export class Message extends BaseJsonApiModel {
 
   @Attribute()
   name: string;
@@ -33,8 +27,16 @@ export class Message extends JsonApiModel {
   @BelongsTo()
   receiveEvent: OccurrenceSpecification;
 
-  public withRelationships(): Promise<Message> {
-    return this.datastore.findRecord(Message, this.id).toPromise();
+  get _interaction(): Observable<Interaction> {
+    return this.lazyLoadRelation('interaction');
+  }
+
+  get _receiveEvent(): Observable<OccurrenceSpecification> {
+    return this.lazyLoadRelation('receiveEvent');
+  }
+
+  get _sendEvent(): Observable<OccurrenceSpecification> {
+    return this.lazyLoadRelation('sendEvent');
   }
 
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Interaction } from '../models';
 import { Datastore } from '../../datastore';
 import 'rxjs/add/operator/toPromise';
+import { JsonApiModel } from 'angular2-jsonapi';
 
 @Injectable()
 export class InteractionService {
