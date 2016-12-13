@@ -26,4 +26,11 @@ export class Interaction extends BaseJsonApiModel {
     return this.lazyLoadRelation('messages');
   }
 
+  get _allMessages(): Observable<any> {
+    return Observable.create(function (observer) {
+      observer.next(42);
+      observer.complete();
+    });
+  }
+
 }

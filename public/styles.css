@@ -7,12 +7,12 @@
   display: block;
   width: 1200px;
   height: 500px;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.1);
   padding: 30px;
 }
 
 .layer:hover {
-  background-color: rgba(0, 0, 255, 0.2);
+  background-color: rgba(0, 0, 255, 0.1);
 }
 
 /* Sequence Diagram */
@@ -38,7 +38,7 @@
 
 .sequence-diagram :hover {
   color: blue!important;
-  background-color: red!important;
+  background-color: rgba(0, 255, 0, 0.1);
 }
 
 /* Lifeline */

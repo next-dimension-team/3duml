@@ -13,13 +13,13 @@ export class Lifeline extends BaseJsonApiModel {
   name: string;
 
   @HasMany()
-  occurrenceSpecifications: OccurrenceSpecification[];
+  occurrence_specifications: OccurrenceSpecification[];
 
   @BelongsTo()
   layer: Layer;
 
   get _occurrenceSpecifications(): Observable<OccurrenceSpecification[]> {
-    return this.lazyLoadRelation('occurrenceSpecifications');
+    return this.lazyLoadRelation('occurrence_specifications');
   }
 
   get _layer(): Observable<Layer> {

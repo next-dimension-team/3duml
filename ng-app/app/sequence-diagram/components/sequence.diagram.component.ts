@@ -6,6 +6,7 @@ import { Interaction } from '../models';
 import { LayerComponent } from './layer.component';
 import { SequenceDiagramOrbitControls } from './sequence.diagram.orbit.controls';
 import * as Models from '../models';
+import { Observable } from 'rxjs';
 
 var CSS3D = require('three.css')(THREE);
 
@@ -45,8 +46,11 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
   @Input()
   public rootInteraction: Interaction;
 
+  public messagesBuffer: Models.Message[];
+
   ///////////////////////////////////////////
   // TODO: tieto polia tu asi nebudu
+  public lifelineIds = [];
   public lifelines = [
     /*{
       left: 0,
@@ -75,9 +79,9 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
       direction: "left-to-right",
       type: "async",
       title: "ahoj()",
-      length: 150,
-      top: 120,
-      left: 50
+      length: 500,
+      top: 280,
+      left: 500 + 60
     }*/
   ];
 
@@ -97,7 +101,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
       messages: this.messages,
       fragments: this.fragments
     },
-    {
+    /*{
       lifelines: this.lifelines,
       messages: this.messages,
       fragments: this.fragments
@@ -106,11 +110,11 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
       lifelines: this.lifelines,
       messages: this.messages,
       fragments: this.fragments
-    }
+    }*/
   ];
   ///////////////////////////////////////////
 
-  constructor(private interactionService: InteractionService, private datastore: Datastore) {
+  constructor(protected interactionService: InteractionService, protected datastore: Datastore) {
 
     // Find interaction
     /*this.datastore.findRecord(Models.Interaction, '1').subscribe(
@@ -181,24 +185,104 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
 
     // Render scene
     this.render();
+
+    // TODO
+    var self = this;
+    setInterval(function() {
+      self.layers.splice(0, 1);
+      /*self.layers.push({
+        lifelines: self.lifelines,
+        messages: self.messages,
+        fragments: self.fragments
+      });*/
+    }, 3000);
   }
 
-  /* TODO:
-   * tato metoda sa zovola vzdy ked sa zmeni rootInteraction
-   * treba ju implementovat tak, aby vzdy prekreslila scenu
-   */
-  private refreshRootInteraction() {
-    // TODO: len pomocne
-    console.log("Load sequence diagram. The root interaction is ", this.rootInteraction);
+  protected getLifelineLeftPixelsByID(lifelineId) {
+    return this.lifelineIds.indexOf(lifelineId) * 500;
+  }
 
-    // Update layers JSON data
-    var self = this;
-    var lifelinesNum = 0;
+  // TODO: Tato metoda sa zavola tolko krat, kolko je lajflajn
+  protected refreshMessages() {
+    // Vymazeme stare messages
+    this.messages = [];
+    this.layers[0].messages = this.messages;
 
-    function parseLifeline(lifeline: Models.Lifeline) {
-      console.log(lifeline);
-      self.lifelines.push({
-        left: lifelinesNum++ * 150,
+    // Vytvorime nove
+    for (let message of this.messagesBuffer) {
+      Observable.zip(
+        message._sendEvent,
+        message._receiveEvent,
+        (send, recieve) => {
+          return {
+            send: send,
+            recieve: recieve
+          }
+        }
+      ).subscribe((data) => {
+        //var fromTime = data.send.time;
+        //var recieveTime = data.recieve.time;
+        var time = data.send.time;
+
+        Observable.zip(
+          data.send._covered,
+          data.recieve._covered,
+          (lifelineA, lifelineB) => {
+            return {
+              lifelineA: lifelineA,
+              lifelineB: lifelineB
+            }
+          }
+        ).subscribe((data) => {
+          var leftA = this.getLifelineLeftPixelsByID(data.lifelineA.id);
+          var leftB = this.getLifelineLeftPixelsByID(data.lifelineB.id);
+          var left = Math.min(leftA, leftB);
+          var length = Math.abs(leftA - leftB);
+
+          if (leftA >= 0 && leftB >= 0) {
+            /*console.log("push message");
+            console.log({
+              direction: "left-to-right",
+              type: "async",
+              title: message.name,
+              length: length,
+              top: time,
+              left: left
+            });*/
+            
+            this.messages.push({
+              direction: "left-to-right",
+              type: "async",
+              title: message.name,
+              length: length,
+              top: time,
+              left: left + 60 // 60 = lifeline.width/2
+            });
+          }
+
+          this.layers[0].messages = this.messages;
+
+          //console.log(this.messages);
+        });
+        
+      });
+    }
+  }
+
+  protected parseLifeline(lifeline: Models.Lifeline) {
+    // Spracovali sme uz lifelinu ? Ak nie, ideme ju spracovat
+    if (this.lifelineIds.indexOf(lifeline.id) == -1) {
+
+      // Poznacime si, ze sme lifelinu spracovali
+      this.lifelineIds.push(lifeline.id);
+
+      /*lifeline._occurrenceSpecifications.subscribe((os: Models.OccurrenceSpecification[]) => {
+        console.log(lifeline, os);
+      });*/
+
+      // TODO: toto je zle, lebo IDecka nemusia ist od 1,2,3 .... vela
+      this.layers[0].lifelines[parseInt(lifeline.id) - 1] = {
+        left: (this.lifelineIds.length - 1) * 500,
         title: lifeline.name,
         executions: [
           /*{
@@ -206,24 +290,54 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
             height: 100,
           }*/
         ]
-      });
-    }
+      };
 
+      console.log(this.layers[0].lifelines);
+
+      this.refreshMessages();
+    }
+  }
+
+  /* TODO:
+   * tato metoda sa zovola vzdy ked sa zmeni rootInteraction
+   * treba ju implementovat tak, aby vzdy prekreslila scenu
+   */
+  protected refreshRootInteraction() {
+    // TODO: len pomocne
+    //console.log("Load sequence diagram. The root interaction is ", this.rootInteraction);
+
+    /*this.rootInteraction._allMessages.subscribe((x) => {
+      console.log("test:", x);
+    });*/
+
+    // Update layers JSON data
     this.rootInteraction._messages.subscribe((messages: Models.Message[]) => {
+
+      this.messagesBuffer = messages;
+
       for (let message of messages) {
+
         // Parse lifeline from send event
         message._sendEvent.subscribe((sendEvent: Models.OccurrenceSpecification) => {
-          sendEvent._covered.subscribe(parseLifeline);
+          sendEvent._covered.subscribe((lifeline: Models.Lifeline) => {
+            this.parseLifeline(lifeline);
+          });
         });
+
         // Parse lifeline from recieve event
         message._receiveEvent.subscribe((receiveEvent: Models.OccurrenceSpecification) => {
-          receiveEvent._covered.subscribe(parseLifeline);
+          receiveEvent._covered.subscribe((lifeline: Models.Lifeline) => {
+            this.parseLifeline(lifeline);
+          });
         });
+
       }
     });
 
+    // TODO: toto by malo byt asi asynchronne, lebo tu zatial nevieme ake su layery alebo vieme ?
     // Render layers
     this.layerNum = 0;
+    //console.log("Number of layer components = ", this.layerComponents.toArray().length);
     for (let layerComponent of this.layerComponents.toArray()) {
       var element: HTMLElement = layerComponent.element.nativeElement;
       var layer: Layer = new Layer(element, this.layerNum++);
