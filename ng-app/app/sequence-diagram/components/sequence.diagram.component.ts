@@ -1,12 +1,9 @@
 import * as THREE from 'three';
 import { Component, ViewChild, AfterViewInit, OnInit, Input, OnChanges, ViewChildren, QueryList } from '@angular/core';
-import { Datastore } from '../../datastore';
-import { InteractionService } from '../services';
-import { Interaction } from '../models';
+import { SequenceDiagramService } from '../services';
 import { LayerComponent } from './layer.component';
 import { SequenceDiagramOrbitControls } from './sequence.diagram.orbit.controls';
-import * as Models from '../models';
-import { Observable } from 'rxjs';
+import * as M from '../models';
 
 var CSS3D = require('three.css')(THREE);
 
@@ -27,7 +24,7 @@ export class Layer extends CSS3D.Object {
 @Component({
   selector: 'sequence-diagram',
   templateUrl: './sequence.diagram.component.html',
-  providers: [InteractionService]
+  providers: [SequenceDiagramService]
 })
 export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChanges {
 
@@ -44,15 +41,12 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
   protected layerNum: number = 0;
 
   @Input()
-  public rootInteraction: Interaction;
-
-  public messagesBuffer: Models.Message[];
+  public rootInteraction: M.Interaction;
 
   ///////////////////////////////////////////
   // TODO: tieto polia tu asi nebudu
-  public lifelineIds = [];
-  public lifelines = [
-    /*{
+  /*public lifelines = [
+    {
       left: 0,
       title: "dáminik",
       executions: [
@@ -71,37 +65,37 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
           height: 50,
         },
       ]
-    }*/
+    }
   ];
 
   public messages = [
-    /*{
+    {
       direction: "left-to-right",
       type: "async",
       title: "ahoj()",
       length: 500,
       top: 280,
       left: 500 + 60
-    }*/
+    }
   ];
 
   public fragments = [
-    /*{
+    {
       title: "alt",
       width: 320,
       top: 90,
       left: 20,
       // TODO: operands
-    }*/
-  ];
+    }
+  ];*/
 
   public layers = [
-    {
+    /*{
       lifelines: this.lifelines,
       messages: this.messages,
       fragments: this.fragments
     },
-    /*{
+    {
       lifelines: this.lifelines,
       messages: this.messages,
       fragments: this.fragments
@@ -114,31 +108,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
   ];
   ///////////////////////////////////////////
 
-  constructor(protected interactionService: InteractionService, protected datastore: Datastore) {
-
-    // Find interaction
-    /*this.datastore.findRecord(Models.Interaction, '1').subscribe(
-      (interaction: Models.Interaction) => {
-        //console.log(interaction);
-
-        var firstMessage = interaction.messages[0];
-
-        console.log("here it isnt", firstMessage.receiveEvent);
-
-        firstMessage._sendEvent.subscribe(
-            (occurrenceSpecification: Models.OccurrenceSpecification) => {
-              console.log("sendEvent using observable getter", occurrenceSpecification);
-            }
-        );
-
-        firstMessage._receiveEvent.subscribe(
-            (occurrenceSpecification: Models.OccurrenceSpecification) => {
-              console.log("receiveEvent using observable getter", occurrenceSpecification);
-            }
-        );
-      }
-    );*/
-  }
+  constructor(protected service: SequenceDiagramService) { }
 
   // TODO: toto bduem mozno portrebovat, ak nie dat to prec,
   // tato metoda sluzi na nacitavanie dat z datastore (nemalo by to byt v konstruktore)
@@ -146,6 +116,9 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     //
   }
 
+  /*
+   * Sleduje zmeny vstupov komponentu.
+   */
   ngOnChanges() {
     if (this.rootInteraction) {
       this.refreshRootInteraction()
@@ -154,6 +127,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
 
   // TODO: tu by mala byt implementovana funkcionalita na vytvorenie sceny
   // pri update sa len zmenia veci na scene ale nesmie sa vytvarat nova isra a pod.
+  // TODO: konstanty vytiahnut von
   ngAfterViewInit() {
     // Calculate canvas size
     let width = window.innerWidth * 0.8;
@@ -185,117 +159,43 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
 
     // Render scene
     this.render();
+  }  
 
-    // TODO
-    var self = this;
-    setInterval(function() {
-      self.layers.splice(0, 1);
-      /*self.layers.push({
-        lifelines: self.lifelines,
-        messages: self.messages,
-        fragments: self.fragments
-      });*/
-    }, 3000);
+  // TODO
+  protected processExecutions(lifeline: M.Lifeline) {
+    return [
+      {
+        top: 50,
+        height: 100,
+      }
+    ];
   }
 
-  protected getLifelineLeftPixelsByID(lifelineId) {
-    return this.lifelineIds.indexOf(lifelineId) * 500;
-  }
+  protected processLifelines(interaction: M.Interaction) {
 
-  // TODO: Tato metoda sa zavola tolko krat, kolko je lajflajn
-  protected refreshMessages() {
-    // Vymazeme stare messages
-    this.messages = [];
-    this.layers[0].messages = this.messages;
+    // Inicializácia výstupného poľa
+    let lifelines = [];
 
-    // Vytvorime nove
-    for (let message of this.messagesBuffer) {
-      Observable.zip(
-        message._sendEvent,
-        message._receiveEvent,
-        (send, recieve) => {
-          return {
-            send: send,
-            recieve: recieve
-          }
-        }
-      ).subscribe((data) => {
-        //var fromTime = data.send.time;
-        //var recieveTime = data.recieve.time;
-        var time = data.send.time;
+    // Poradové číslo lifeliny z ľavej strany
+    let orderNumber = 0;
 
-        Observable.zip(
-          data.send._covered,
-          data.recieve._covered,
-          (lifelineA, lifelineB) => {
-            return {
-              lifelineA: lifelineA,
-              lifelineB: lifelineB
-            }
-          }
-        ).subscribe((data) => {
-          var leftA = this.getLifelineLeftPixelsByID(data.lifelineA.id);
-          var leftB = this.getLifelineLeftPixelsByID(data.lifelineB.id);
-          var left = Math.min(leftA, leftB);
-          var length = Math.abs(leftA - leftB);
-
-          if (leftA >= 0 && leftB >= 0) {
-            /*console.log("push message");
-            console.log({
-              direction: "left-to-right",
-              type: "async",
-              title: message.name,
-              length: length,
-              top: time,
-              left: left
-            });*/
-            
-            this.messages.push({
-              direction: "left-to-right",
-              type: "async",
-              title: message.name,
-              length: length,
-              top: time,
-              left: left + 60 // 60 = lifeline.width/2
-            });
-          }
-
-          this.layers[0].messages = this.messages;
-
-          //console.log(this.messages);
-        });
-        
+    for (let lifeline of interaction.lifelines) {
+      lifelines.push({
+        left: orderNumber++ * 500,
+        title: lifeline.name,
+        executions: this.processExecutions(lifeline)
       });
     }
+
+    return lifelines;
   }
 
-  protected parseLifeline(lifeline: Models.Lifeline) {
-    // Spracovali sme uz lifelinu ? Ak nie, ideme ju spracovat
-    if (this.lifelineIds.indexOf(lifeline.id) == -1) {
+  protected processMessages(interaction: M.Interaction) {
+    return [];
+  }
 
-      // Poznacime si, ze sme lifelinu spracovali
-      this.lifelineIds.push(lifeline.id);
-
-      /*lifeline._occurrenceSpecifications.subscribe((os: Models.OccurrenceSpecification[]) => {
-        console.log(lifeline, os);
-      });*/
-
-      // TODO: toto je zle, lebo IDecka nemusia ist od 1,2,3 .... vela
-      this.layers[0].lifelines[parseInt(lifeline.id) - 1] = {
-        left: (this.lifelineIds.length - 1) * 500,
-        title: lifeline.name,
-        executions: [
-          /*{
-            top: 50,
-            height: 100,
-          }*/
-        ]
-      };
-
-      console.log(this.layers[0].lifelines);
-
-      this.refreshMessages();
-    }
+  protected processFragments(interaction: M.Interaction) {
+    return [];
   }
 
   /* TODO:
@@ -303,36 +203,22 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
    * treba ju implementovat tak, aby vzdy prekreslila scenu
    */
   protected refreshRootInteraction() {
+
     // TODO: len pomocne
-    //console.log("Load sequence diagram. The root interaction is ", this.rootInteraction);
+    console.info("The root interaction is ", this.rootInteraction);
 
-    /*this.rootInteraction._allMessages.subscribe((x) => {
-      console.log("test:", x);
-    });*/
+    // Vykreslíme jeden layer
+    let lifelines = this.processLifelines(this.rootInteraction);
+    let messages = this.processMessages(this.rootInteraction);
+    let fragments = this.processFragments(this.rootInteraction);
 
-    // Update layers JSON data
-    this.rootInteraction._messages.subscribe((messages: Models.Message[]) => {
-
-      this.messagesBuffer = messages;
-
-      for (let message of messages) {
-
-        // Parse lifeline from send event
-        message._sendEvent.subscribe((sendEvent: Models.OccurrenceSpecification) => {
-          sendEvent._covered.subscribe((lifeline: Models.Lifeline) => {
-            this.parseLifeline(lifeline);
-          });
-        });
-
-        // Parse lifeline from recieve event
-        message._receiveEvent.subscribe((receiveEvent: Models.OccurrenceSpecification) => {
-          receiveEvent._covered.subscribe((lifeline: Models.Lifeline) => {
-            this.parseLifeline(lifeline);
-          });
-        });
-
+    this.layers = [
+      {
+        lifelines: lifelines,
+        messages: messages,
+        fragments: fragments
       }
-    });
+    ];
 
     // TODO: toto by malo byt asi asynchronne, lebo tu zatial nevieme ake su layery alebo vieme ?
     // Render layers
