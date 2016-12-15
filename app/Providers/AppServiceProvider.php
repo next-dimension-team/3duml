@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Relation::morphMap([
-            'combnined_fragment' => CombinedFragment::class,
+            'combined_fragment' => CombinedFragment::class,
             'interaction_operand' => InteractionOperand::class,
             'interaction' => Interaction::class,
             'execution_specification' => ExecutionSpecification::class,
