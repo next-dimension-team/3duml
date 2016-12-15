@@ -13,10 +13,8 @@ class InteractionFragment extends Node
      */
     protected $table = 'interaction_fragments';
 
-    // TODO: RUBY: toto som musel zakomentovať, lebo inak
-    // URLka http://localhost/api/interaction-fragments vracala 500
-    /*public function fragmentable()
+    public function fragmentable()
     {
         return $this->morphTo();
-    }*/
+    }
 }
