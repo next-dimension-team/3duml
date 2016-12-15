@@ -1,36 +1,55 @@
-import { JsonApiModelConfig, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
-import { InteractionFragment } from './InteractionFragment';
-import { Message } from './Message';
-import { BaseJsonApiModel } from './BaseJsonApiModel';
-import { Observable } from 'rxjs/Observable';
+import { JsonApiModel, JsonApiModelConfig, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
+import * as M from './';
 
 @JsonApiModelConfig({
     type: 'interactions'
 })
-export class Interaction extends BaseJsonApiModel {
+export class Interaction extends JsonApiModel {
 
   @Attribute()
   name: string;
 
   @BelongsTo()
-  fragment: InteractionFragment;
+  fragment: M.InteractionFragment;
 
   @HasMany()
-  messages: Message[];
+  messages: M.Message[];
 
-  get _fragment(): Observable<InteractionFragment> {
-    return this.lazyLoadRelation('fragment');
-  }
+  /*
+   * Implementácia virtuálneho vzťahu medzi interakciou a lifelinami
+   */
+  get lifelines(): M.Lifeline[] {
+    let lifelinesBuffer = [];
 
-  get _messages(): Observable<Message[]> {
-    return this.lazyLoadRelation('messages');
-  }
+    let processLifeline = (lifeline: M.Lifeline) => {
+      if (lifeline) {
+        lifelinesBuffer[parseInt(lifeline.id)] = lifeline;
+      }
+    };
 
-  get _allMessages(): Observable<any> {
-    return Observable.create(function (observer) {
-      observer.next(42);
-      observer.complete();
-    });
+    // Prejdeme všetky messages v danej interakcii
+    for (let message of this.messages) {
+      let messageSendEvent = message.sendEvent;
+      let messageReceiveEvent = message.receiveEvent;
+
+      if (messageSendEvent) {
+        processLifeline(messageSendEvent.covered);
+      }
+
+      if (messageReceiveEvent) {
+        processLifeline(messageSendEvent.covered);
+      }
+    }
+
+    let lifelines = [];
+
+    for (let lifeline of lifelinesBuffer) {
+      if (lifeline) {
+        lifelines.push(lifeline);
+      }
+    }
+
+    return lifelines;
   }
 
 }

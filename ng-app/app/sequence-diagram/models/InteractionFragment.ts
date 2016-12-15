@@ -1,11 +1,9 @@
-import { JsonApiModelConfig, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
-import { BaseJsonApiModel } from './BaseJsonApiModel';
-import { Observable } from 'rxjs/Observable';
+import { JsonApiModel, JsonApiModelConfig, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
 
 @JsonApiModelConfig({
     type: 'interaction-fragments'
 })
-export class InteractionFragment extends BaseJsonApiModel {
+export class InteractionFragment extends JsonApiModel {
 
   @Attribute()
   name: string;
@@ -18,17 +16,5 @@ export class InteractionFragment extends BaseJsonApiModel {
 
   @HasMany()
   children: InteractionFragment[];
-
-  get _fragmentable(): Observable<any> {
-    return this.lazyLoadRelation('fragmentable');
-  }
-
-  get _parent(): Observable<InteractionFragment> {
-    return this.lazyLoadRelation('parent');
-  }
-
-  get _children(): Observable<InteractionFragment[]> {
-    return this.lazyLoadRelation('children');
-  }
 
 }
