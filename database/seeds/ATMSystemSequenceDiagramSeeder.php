@@ -26,14 +26,14 @@ class ATMSystemSequenceDiagramSeeder extends Seeder
         $layer = factory(Layer::class)->create([
             'depth' => 0,
         ]);
-        
+
         // Create root interaction
         $root = factory(Interaction::class)->create([
             'name' => 'ATM System Sequence Diagram'
         ]);
         $rootF = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $root->id,
-            'fragmentable_type' => 'interactions', // TODO: nema tu byt singular ? "interaction" ?
+            'fragmentable_type' => 'interaction',
         ]);
 
         // Create lifelines
@@ -67,7 +67,7 @@ class ATMSystemSequenceDiagramSeeder extends Seeder
         ]);
         $esA1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esA1->id,
-            'fragmentable_type' => 'execution_specifications',
+            'fragmentable_type' => 'execution_specification',
         ]);
 
         // Lifeline B Occurrence Specifications
@@ -103,7 +103,7 @@ class ATMSystemSequenceDiagramSeeder extends Seeder
         ]);
         $esB1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esB1->id,
-            'fragmentable_type' => 'execution_specifications',
+            'fragmentable_type' => 'execution_specification',
         ]);
 
         // Lifeline C Occurrence Specifications
@@ -131,7 +131,7 @@ class ATMSystemSequenceDiagramSeeder extends Seeder
         ]);
         $esC1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esC1->id,
-            'fragmentable_type' => 'execution_specifications',
+            'fragmentable_type' => 'execution_specification',
         ]);
 
         $esC2 = factory(ExecutionSpecification::class)->create([
@@ -140,7 +140,7 @@ class ATMSystemSequenceDiagramSeeder extends Seeder
         ]);
         $esC2F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esC2->id,
-            'fragmentable_type' => 'execution_specifications',
+            'fragmentable_type' => 'execution_specification',
         ]);
 
         // Messages
@@ -179,18 +179,18 @@ class ATMSystemSequenceDiagramSeeder extends Seeder
         ]);
         $cf1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $cf1->id,
-            'fragmentable_type' => 'combined_fragments',
+            'fragmentable_type' => 'combined_fragment',
         ]);
         $io1 = factory(InteractionOperand::class)->create();
         $cf1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $io1->id,
-            'fragmentable_type' => 'interaction_operands',
+            'fragmentable_type' => 'interaction_operand',
             'parent_id' => $rootF->id
         ]);
         $interaction1 = factory(Interaction::class)->create();
         $interaction1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $interaction1->id,
-            'fragmentable_type' => 'interactions',
+            'fragmentable_type' => 'interaction',
             'parent_id' => $cf1F->id
         ]);
 
