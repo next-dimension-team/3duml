@@ -11,6 +11,10 @@ use App\Models\InteractionFragment;
 use App\Models\ExecutionSpecification;
 use App\Models\Layer;
 
+/*
+ * Original sequence diagram
+ * https://creately.com/diagram/example/gsxb10kl5/ATM+System
+ */
 class ATMSystemSequenceDiagramSeeder extends Seeder
 {
     /**
