@@ -1,4 +1,4 @@
-<div id="wrapper">
+<div id="wrapper" *ngIf="loaded">
 
     <div id="sidebar-wrapper">
         <sidebar-menu
@@ -12,4 +12,7 @@
         ></sequence-diagram>
     </div>
 
+</div>
+<div *ngIf="!loaded" class="loading">
+    <img src="/loading.gif" alt="Loading">
 </div>

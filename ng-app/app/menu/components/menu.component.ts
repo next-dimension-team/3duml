@@ -5,8 +5,7 @@ import { SequenceDiagramService } from '../../sequence-diagram/services';
 @Component({
   selector: 'sidebar-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css'],
-  providers: [SequenceDiagramService]
+  styleUrls: ['./menu.component.css']
 })
 
 export class MenuComponent implements OnInit {
@@ -20,15 +19,13 @@ export class MenuComponent implements OnInit {
   constructor(private sequenceDiagramService: SequenceDiagramService) { }
 
   ngOnInit() {
-    this.sequenceDiagramService.loadRecords().subscribe(() => {
-      this.sequenceDiagrams = this.sequenceDiagramService.sequenceDiagrams;
+    this.sequenceDiagrams = this.sequenceDiagramService.sequenceDiagrams;
 
-      // TODO: toto je len pomocné, neskôr to tam asi nebude
-      // nacitame prvy dostupny diagram, aby sme zakazdym nemuseli klikat
-      if (this.sequenceDiagrams.length > 0) {
-        this.openSequenceDiagramHandler(this.sequenceDiagrams[0]);
-      }
-    });
+    // TODO: toto je len pomocné, neskôr to tam asi nebude
+    // nacitame prvy dostupny diagram, aby sme zakazdym nemuseli klikat
+    if (this.sequenceDiagrams.length > 0) {
+      this.openSequenceDiagramHandler(this.sequenceDiagrams[0]);
+    }
   }
 
   openSequenceDiagramHandler(sequenceDiagram: Interaction) {
