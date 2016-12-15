@@ -187,17 +187,9 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
     let executions = [];
 
-    console.log("lifeline", lifeline);
-
     for (let occurrenceSpecification of lifeline.occurrenceSpecifications) {
-      console.log("occurrenceSpecification", occurrenceSpecification);
       for (let execution of occurrenceSpecification.startingExecutionSpecifications) {
-        console.log("execution", execution);
         let duration = execution.finish.time - execution.start.time;
-        console.log("result", {
-          top: execution.start.time - verticalPadding,
-          height: duration + (2 * verticalPadding)
-        });
         executions.push({
           top: execution.start.time - verticalPadding,
           height: duration + (2 * verticalPadding)
@@ -261,10 +253,10 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     let lifelineALeft = this.mapLifelineModelToJSON[message.sendEvent.covered.id].left;
     let lifelineBLeft = this.mapLifelineModelToJSON[message.receiveEvent.covered.id].left;
 
-    console.log("resolve length");
-    console.log("lifelineALeft", lifelineALeft);
-    console.log("lifelineBLeft", lifelineBLeft);
-    console.log("Math.abs(lifelineALeft - lifelineBLeft)", Math.abs(lifelineALeft - lifelineBLeft));
+    //console.log("resolve length");
+    //console.log("lifelineALeft", lifelineALeft);
+    //console.log("lifelineBLeft", lifelineBLeft);
+    //console.log("Math.abs(lifelineALeft - lifelineBLeft)", Math.abs(lifelineALeft - lifelineBLeft));
 
     // 12 = 2*6; 6 = execution.width/2
     return Math.abs(lifelineALeft - lifelineBLeft) - 12;
@@ -289,9 +281,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   protected processMessages(interaction: M.Interaction) {
     let messages = [];
 
-    // TODO
-    //for (let messageModel of interaction.messages) {
-    for (let messageModel of this.service.getAll(M.Message)) {
+    for (let messageModel of interaction.recursiveMessages) {
       let messagePosition = this.resolveMessagePosition(messageModel);
 
       let message = {
@@ -303,7 +293,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
         left: messagePosition.left
       };
 
-      console.log("push message", message);
+      //console.log("push message", message);
 
       messages.push(message);
     }
