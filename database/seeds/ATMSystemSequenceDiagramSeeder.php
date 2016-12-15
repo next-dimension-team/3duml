@@ -185,18 +185,22 @@ class ATMSystemSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $cf1->id,
             'fragmentable_type' => 'combined_fragment',
         ]);
+        $cf1F->makeChildOf($rootF);
+
         $io1 = factory(InteractionOperand::class)->create();
-        $cf1F = factory(InteractionFragment::class)->create([
+        $io1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $io1->id,
             'fragmentable_type' => 'interaction_operand',
             'parent_id' => $rootF->id
         ]);
+        $io1F->makeChildOf($cf1F);
+        
         $interaction1 = factory(Interaction::class)->create();
         $interaction1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $interaction1->id,
             'fragmentable_type' => 'interaction',
-            'parent_id' => $cf1F->id
         ]);
+        $interaction1F->makeChildOf($io1F);
 
         // Create messages in fragments
         $interaction1message1 = factory(Message::class)->create([
