@@ -280,9 +280,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   protected processMessages(interaction: M.Interaction) {
     let messages = [];
-    let recursiveMessages = interaction.recursiveMessages;
 
-    for (let messageModel of recursiveMessages) {
+    for (let messageModel of interaction.recursiveMessages) {
       let messagePosition = this.resolveMessagePosition(messageModel);
 
       let message = {
@@ -293,8 +292,6 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
         top: messagePosition.top,
         left: messagePosition.left
       };
-
-      //console.log("push message", message);
 
       messages.push(message);
     }
@@ -331,13 +328,13 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
     // Kontroly
     if (minimalTime == null) {
-      console.error("Could not determine minimal time for combined fragment", combinedFragment);
+      console.error("Could not determine minimal time for combined fragment", interactionFragment);
     }
     if (maximalTime == null) {
-      console.error("Could not determine minimal time for combined fragment", combinedFragment);
+      console.error("Could not determine minimal time for combined fragment", interactionFragment);
     }
     if (mostLeft == null || mostRight == null) {
-      console.error("Could not determine width for combined fragment", combinedFragment);
+      console.error("Could not determine width for combined fragment", interactionFragment);
     }
 
     // 50  = lifeline.title.height
@@ -457,7 +454,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.layers = [];
 
     // Render root interaction
-    for (let i = 0; i < 3; i++)
+    //for (let i = 0; i < 3; i++)
     this.layers.push({
       lifelines: this.processLifelines(this.rootInteraction),
       messages: this.processMessages(this.rootInteraction),
@@ -465,7 +462,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     });
 
     // Render all interactions
-    /*for (let interaction of this.service.getAll(M.Interaction)) {
+    for (let interaction of this.service.getAll(M.Interaction)) {
       if (interaction != this.rootInteraction) {
         if (--limit < 0) break;
         this.layers.push({
@@ -474,7 +471,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
           fragments: this.processFragments(interaction)
         });
       }
-    }*/
+    }
 
     /*let secondInteraction = this.service.getRecord(M.Interaction, "2");
     let thirdInteraction = this.service.getRecord(M.Interaction, "6");
