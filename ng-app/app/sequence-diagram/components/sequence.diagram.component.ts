@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Component, ViewChild, AfterViewInit, OnInit, Input, OnChanges, ViewChildren, QueryList } from '@angular/core';
+import { Component, ViewChild, SimpleChanges, Input, ViewChildren, QueryList, AfterViewInit, OnChanges, AfterViewChecked } from '@angular/core';
 import { SequenceDiagramService } from '../services';
 import { LayerComponent } from './layer.component';
 import { SequenceDiagramOrbitControls } from './sequence.diagram.orbit.controls';
@@ -7,7 +7,6 @@ import * as M from '../models';
 
 var CSS3D = require('three.css')(THREE);
 
-// TODO: tuto triedu dat niekam inam alebo ju uplne zrusit
 /*
  * Class representing 3D layer
  */
@@ -26,7 +25,7 @@ export class Layer extends CSS3D.Object {
   templateUrl: './sequence.diagram.component.html',
   providers: [SequenceDiagramService]
 })
-export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChanges {
+export class SequenceDiagramComponent implements AfterViewInit, OnChanges, AfterViewChecked {
 
   @ViewChild('scene') sceneDiv;
 
@@ -38,7 +37,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
   protected camera: THREE.Camera;
   protected controls: SequenceDiagramOrbitControls;
   protected renderer: CSS3D.Renderer;
-  protected layerNum: number = 0;
+  protected diagramChanged = false;
+  protected layerElements = [];
 
   @Input()
   public rootInteraction: M.Interaction;
@@ -110,18 +110,37 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
 
   constructor(protected service: SequenceDiagramService) { }
 
-  // TODO: toto bduem mozno portrebovat, ak nie dat to prec,
-  // tato metoda sluzi na nacitavanie dat z datastore (nemalo by to byt v konstruktore)
-  ngOnInit() {
-    //
+  ngAfterViewChecked() {
+    if (this.diagramChanged) {
+      this.refreshDiagram();
+    }
+  }
+
+  protected refreshDiagram() {
+
+    this.diagramChanged = false;
+    let layerNum = 0;
+
+    // Odstránime staré vrstvy
+    for (let layerElement of this.layerElements) {
+      this.scene.remove(layerElement);
+    }
+
+    // Pridáme nové vrstvy
+    for (let layerComponent of this.layerComponents.toArray()) {
+      var element: HTMLElement = layerComponent.element.nativeElement;
+      var layer: Layer = new Layer(element, layerNum++);
+      this.layerElements.push(layer);
+      this.scene.add(layer);
+    }
   }
 
   /*
    * Sleduje zmeny vstupov komponentu.
    */
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     if (this.rootInteraction) {
-      this.refreshRootInteraction()
+      this.refreshRootInteraction();
     }
   }
 
@@ -174,7 +193,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
   protected processLifelines(interaction: M.Interaction) {
 
     // Inicializácia výstupného poľa
-    let lifelines = [];
+    let lifelines = [];ng
 
     // Poradové číslo lifeliny z ľavej strany
     let orderNumber = 0;
@@ -207,7 +226,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
     // TODO: len pomocne
     console.info("The root interaction is ", this.rootInteraction);
 
-    // Vykreslíme jeden layer
+    // Vykreslíme tri layery
     let lifelines = this.processLifelines(this.rootInteraction);
     let messages = this.processMessages(this.rootInteraction);
     let fragments = this.processFragments(this.rootInteraction);
@@ -217,18 +236,20 @@ export class SequenceDiagramComponent implements AfterViewInit, OnInit, OnChange
         lifelines: lifelines,
         messages: messages,
         fragments: fragments
+      },
+      {
+        lifelines: lifelines,
+        messages: messages,
+        fragments: fragments
+      },
+      {
+        lifelines: lifelines,
+        messages: messages,
+        fragments: fragments
       }
     ];
 
-    // TODO: toto by malo byt asi asynchronne, lebo tu zatial nevieme ake su layery alebo vieme ?
-    // Render layers
-    this.layerNum = 0;
-    //console.log("Number of layer components = ", this.layerComponents.toArray().length);
-    for (let layerComponent of this.layerComponents.toArray()) {
-      var element: HTMLElement = layerComponent.element.nativeElement;
-      var layer: Layer = new Layer(element, this.layerNum++);
-      this.scene.add(layer);
-    }
+    this.diagramChanged = true;
   }
 
   // Render loop

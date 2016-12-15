@@ -37,7 +37,7 @@ export class Interaction extends JsonApiModel {
       }
 
       if (messageReceiveEvent) {
-        processLifeline(messageSendEvent.covered);
+        processLifeline(messageReceiveEvent.covered);
       }
     }
 
