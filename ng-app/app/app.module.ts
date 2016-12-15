@@ -14,6 +14,7 @@ import { LifelineComponent } from './sequence-diagram/components/lifeline.compon
 import { ExecutionComponent } from './sequence-diagram/components/execution.component';
 import { MessageComponent } from './sequence-diagram/components/message.component';
 import { FragmentComponent } from './sequence-diagram/components/fragment.component';
+import { OperandComponent } from './sequence-diagram/components/operand.component';
 import { LayerComponent } from './sequence-diagram/components/layer.component';
 
 // Component for menu
@@ -47,6 +48,7 @@ type StoreType = {
     ExecutionComponent,
     MessageComponent,
     FragmentComponent,
+    OperandComponent,
     LayerComponent
   ],
   imports: [ // import Angular's modules

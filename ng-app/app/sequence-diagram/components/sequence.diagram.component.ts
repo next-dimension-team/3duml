@@ -280,8 +280,9 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   protected processMessages(interaction: M.Interaction) {
     let messages = [];
+    let recursiveMessages = interaction.recursiveMessages;
 
-    for (let messageModel of interaction.recursiveMessages) {
+    for (let messageModel of recursiveMessages) {
       let messagePosition = this.resolveMessagePosition(messageModel);
 
       let message = {
@@ -301,8 +302,122 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     return messages;
   }
 
+  protected envelopeFragment(interactionFragment: M.InteractionFragment) {
+
+    // Inicializácia
+    let minimalTime = null;
+    let maximalTime = null;
+    let mostLeft = null;
+    let mostRight = null;
+
+    // Prejdeme všetky správy v zadanom kombinovanom fragmente
+    for (let message of interactionFragment.recursiveMessages) {
+
+      // Určíme minimálny a maximálny čas
+      if (message.sendEvent.time < minimalTime || minimalTime == null) minimalTime = message.sendEvent.time;
+      if (message.receiveEvent.time < minimalTime || minimalTime == null) minimalTime = message.receiveEvent.time;
+      if (message.sendEvent.time > maximalTime || maximalTime == null) maximalTime = message.sendEvent.time;
+      if (message.receiveEvent.time > maximalTime || maximalTime == null) maximalTime = message.receiveEvent.time;
+
+      // Určíme ľavú a pravú hraincu
+      let lifelineALeft = this.mapLifelineModelToJSON[message.sendEvent.covered.id].left;
+      let lifelineBLeft = this.mapLifelineModelToJSON[message.receiveEvent.covered.id].left;
+
+      if (lifelineALeft < mostLeft || mostLeft == null) mostLeft = lifelineALeft;
+      if (lifelineBLeft < mostLeft || mostLeft == null) mostLeft = lifelineBLeft;
+      if (lifelineALeft > mostRight || mostRight == null) mostRight = lifelineALeft;
+      if (lifelineBLeft > mostRight || mostRight == null) mostRight = lifelineBLeft;
+    }
+
+    // Kontroly
+    if (minimalTime == null) {
+      console.error("Could not determine minimal time for combined fragment", combinedFragment);
+    }
+    if (maximalTime == null) {
+      console.error("Could not determine minimal time for combined fragment", combinedFragment);
+    }
+    if (mostLeft == null || mostRight == null) {
+      console.error("Could not determine width for combined fragment", combinedFragment);
+    }
+
+    // 50  = lifeline.title.height
+    // 120 = lifeline.title.width
+    return {
+      minimalTime: minimalTime + 50,
+      maximalTime: maximalTime + 50,
+      mostLeft: mostLeft,
+      mostRight: mostRight + 120
+    }
+  }
+
+  protected processOperands(combinedFragment: M.CombinedFragment) {
+
+    // TODO: konštanty - vertikálna medzera pred začiatkom a za koncom execution bloku
+    let topPadding = 40;
+    let bottomPadding = 40;
+
+    // Vytrovíme výsledné pole operandov
+    let operands = [];
+
+    // Prejdeme všetkých potomkov
+    for (let childFragment of combinedFragment.fragment.children) {
+
+      // Je potomok typu InteractionOperand ?
+      if (childFragment.fragmentable.constructor.name == "InteractionOperand") {
+        let interactionOperand = childFragment.fragmentable;
+        let envelope = this.envelopeFragment(childFragment);
+
+        operands.push({
+          height: envelope.maximalTime - envelope.minimalTime,
+          constraint: interactionOperand.constraint
+        });
+      }
+    }
+
+    // Pridáme vnútorný okraj prvému operandu
+    if (operands[0]) {
+      operands[0].height += topPadding;
+    }
+
+    // Pridáme vnútorný okraj poslednému operandu
+    let lastIndex = (operands.length - 1);
+    if (operands[lastIndex]) {
+      operands[lastIndex].height += bottomPadding;
+    }
+
+    return operands;
+  }
+
   protected processFragments(interaction: M.Interaction) {
-    return [];
+
+    // TODO: konštanty - vertikálna medzera pred začiatkom a za koncom execution bloku
+    let verticalPadding = 40;   //  |
+    let horizontalPadding = 20; // ---
+
+    // Vytrovíme výsledné pole fragmentov
+    let fragments = [];
+
+    // Prejdeme všetkých potomkov
+    for (let childFragment of interaction.fragment.children) {
+
+      // Je potomok typu CombinedFragment ?
+      if (childFragment.fragmentable.constructor.name == "CombinedFragment") {
+        let combinedFragment = childFragment.fragmentable;
+        let envelope = this.envelopeFragment(childFragment);
+
+        // 60 = lifeline.title.width / 2
+        // 30 = 60 / 2
+        fragments.push({
+          title: combinedFragment.operator,
+          width: envelope.mostRight - envelope.mostLeft - 60,
+          top: envelope.minimalTime - verticalPadding,
+          left: envelope.mostLeft + 30,
+          operands: this.processOperands(combinedFragment)
+        });
+      }
+    }
+
+    return fragments;
   }
 
   /* TODO:

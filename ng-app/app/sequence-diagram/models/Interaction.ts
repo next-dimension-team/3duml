@@ -15,31 +15,8 @@ export class Interaction extends JsonApiModel {
   @HasMany()
   messages: M.Message[];
 
-  /*
-   * Vráti všetky správy danej interakcie a jej potomkov.
-   */
-  protected getRecursiveMessages(fragment: M.InteractionFragment): M.Message[] {
-
-    // Vytvoríme výsledné pole správ
-    let messages = [];
-
-    // Je súčasný fragment interakcia ?
-    if (fragment.fragmentable.constructor.name == "Interaction") {
-
-      // Do výsledného poľa správ uložíme správy, ktoré patria do súčasnej interakcie
-      messages = messages.concat(fragment.fragmentable.messages);
-    }
-
-    // Prejdeme potomkov - fragmenty
-    for (let childFragment of fragment.children) {
-      messages = messages.concat(this.getRecursiveMessages(childFragment));
-    }
-
-    return messages;
-  }
-
   get recursiveMessages(): M.Message[] {
-    return this.getRecursiveMessages(this.fragment);
+    return this.fragment.recursiveMessages;
   }
 
   /*

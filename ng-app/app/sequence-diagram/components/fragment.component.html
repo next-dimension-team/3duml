@@ -7,18 +7,11 @@
 >
   <div class="title">{{title}}</div>
   
-  <div
-    class="operand"
-    style="height: 120px;"
-  >
-    <div class="constraint">a  5</div>
-  </div>
-
-  <div
-    class="operand"
-    style="height: 120px;"
-  >
-    <div class="constraint">a  5</div>
-  </div>
+  <!-- Render operands -->
+  <operand
+    *ngFor="let operand of operands"
+    [height]="operand.height"
+    [constraint]="operand.constraint"
+  ></operand>
 
 </div>

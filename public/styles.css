@@ -170,7 +170,7 @@ input {
   border-bottom: 1px dashed #000;
 }
 
-.sequence-diagram .fragment .operand:last-child {
+.sequence-diagram .fragment operand:last-child .operand {
   border-bottom: none;
 }
 
@@ -192,8 +192,12 @@ input {
   z-index: 20;
 }
 
-.sequence-diagram .fragment .title {
+.sequence-diagram .fragment {
   z-index: 30;
+}
+
+.sequence-diagram .fragment .title {
+  z-index: 31;
 }
 
 .sequence-diagram .fragment .operand .constraint {
