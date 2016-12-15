@@ -193,14 +193,20 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   protected processLifelines(interaction: M.Interaction) {
 
     // Inicializácia výstupného poľa
-    let lifelines = [];ng
+    let lifelines = [];
 
     // Poradové číslo lifeliny z ľavej strany
     let orderNumber = 0;
 
-    for (let lifeline of interaction.lifelines) {
+    // TODO: 1200 = layer.width
+    // TODO: 120  = lifeline.width
+
+    let lifelineModels = interaction.lifelines;
+    let gap = Math.floor((1200-120) / (lifelineModels.length - 1)) || 0;
+
+    for (let lifeline of lifelineModels) {
       lifelines.push({
-        left: orderNumber++ * 500,
+        left: orderNumber++ * gap,
         title: lifeline.name,
         executions: this.processExecutions(lifeline)
       });
@@ -227,7 +233,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     console.info("The root interaction is ", this.rootInteraction);
 
     // Vykreslíme tri layery
-    let lifelines = this.processLifelines(this.rootInteraction);
+    /*let lifelines = this.processLifelines(this.rootInteraction);
     let messages = this.processMessages(this.rootInteraction);
     let fragments = this.processFragments(this.rootInteraction);
 
@@ -247,8 +253,52 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
         messages: messages,
         fragments: fragments
       }
-    ];
+    ];*/
 
+    let limit = 3;
+    this.layers = [];
+
+    // Render root interaction
+    this.layers.push({
+      lifelines: this.processLifelines(this.rootInteraction),
+      messages: this.processMessages(this.rootInteraction),
+      fragments: this.processFragments(this.rootInteraction)
+    });
+
+    // Render all interactions
+    for (let interaction of this.service.getAll(M.Interaction)) {
+      if (interaction != this.rootInteraction) {
+        if (--limit < 0) break;
+        this.layers.push({
+          lifelines: this.processLifelines(interaction),
+          messages: this.processMessages(interaction),
+          fragments: this.processFragments(interaction)
+        });
+      }
+    }
+
+    /*let secondInteraction = this.service.getRecord(M.Interaction, "2");
+    let thirdInteraction = this.service.getRecord(M.Interaction, "6");
+
+    this.layers = [
+      {
+        lifelines: this.processLifelines(this.rootInteraction),
+        messages: this.processMessages(this.rootInteraction),
+        fragments: this.processFragments(this.rootInteraction)
+      },
+      {
+        lifelines: this.processLifelines(secondInteraction),
+        messages: this.processMessages(secondInteraction),
+        fragments: this.processFragments(secondInteraction)
+      },
+      {
+        lifelines: this.processLifelines(thirdInteraction),
+        messages: this.processMessages(thirdInteraction),
+        fragments: this.processFragments(thirdInteraction)
+      }
+    ];*/
+
+    // Upravili sme pole "this.layers", diagram treba znova vyrenderovať
     this.diagramChanged = true;
   }
 

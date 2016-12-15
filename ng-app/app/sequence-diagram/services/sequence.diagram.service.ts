@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Datastore } from '../../datastore';
-import { JsonApiModel } from 'angular2-jsonapi';
+import { JsonApiModel, ModelType } from 'angular2-jsonapi';
 import { Observable } from 'rxjs';
 import * as M from '../models';
 
@@ -161,6 +161,14 @@ export class SequenceDiagramService {
     }*/
 
     return sequenceDiagrams;
+  }
+
+  getRecord<T extends JsonApiModel>(modelType: ModelType<T>, id: string): T {
+    return this.datastore.peekRecord(modelType, id);
+  }
+
+  getAll<T extends JsonApiModel>(modelType: ModelType<T>): T[] {
+    return this.datastore.peekAll(modelType);
   }
 
 }
