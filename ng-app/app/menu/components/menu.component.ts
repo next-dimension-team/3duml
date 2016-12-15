@@ -1,12 +1,12 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Interaction } from '../../sequence-diagram/models';
-import { InteractionService } from '../../sequence-diagram/services';
+import { SequenceDiagramService } from '../../sequence-diagram/services';
 
 @Component({
   selector: 'sidebar-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css'],
-  providers: [InteractionService]
+  providers: [SequenceDiagramService]
 })
 
 export class MenuComponent implements OnInit {
@@ -17,19 +17,18 @@ export class MenuComponent implements OnInit {
   private sequenceDiagrams: Array<Interaction>;
   private openedSequenceDiagram: Interaction;
 
-  constructor(private interactionService: InteractionService) { }
+  constructor(private sequenceDiagramService: SequenceDiagramService) { }
 
   ngOnInit() {
-    this.interactionService.getSequenceDiagrams()
-      .then(sequenceDiagrams => {
-        this.sequenceDiagrams = sequenceDiagrams;
+    this.sequenceDiagramService.loadRecords().subscribe(() => {
+      this.sequenceDiagrams = this.sequenceDiagramService.sequenceDiagrams;
 
-        // TODO: toto je len pomocné, neskôr to tam asi nebude
-        // nacitame prvy dostupny diagram, aby sme zakazdym nemuseli klikat
-        if (this.sequenceDiagrams.length > 0) {
-          this.openSequenceDiagramHandler(this.sequenceDiagrams[0]);
-        }
-      });
+      // TODO: toto je len pomocné, neskôr to tam asi nebude
+      // nacitame prvy dostupny diagram, aby sme zakazdym nemuseli klikat
+      if (this.sequenceDiagrams.length > 0) {
+        this.openSequenceDiagramHandler(this.sequenceDiagrams[0]);
+      }
+    });
   }
 
   openSequenceDiagramHandler(sequenceDiagram: Interaction) {
