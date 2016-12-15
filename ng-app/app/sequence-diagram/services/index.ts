@@ -1,1 +1,1 @@
-export * from './interaction.service';
+export * from './sequence.diagram.service';
