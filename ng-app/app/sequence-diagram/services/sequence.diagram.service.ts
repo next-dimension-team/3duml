@@ -163,7 +163,7 @@ export class SequenceDiagramService {
     return sequenceDiagrams;
   }
 
-  getRecord<T extends JsonApiModel>(modelType: ModelType<T>, id: string): T {
+  getOne<T extends JsonApiModel>(modelType: ModelType<T>, id: string): T {
     return this.datastore.peekRecord(modelType, id);
   }
 

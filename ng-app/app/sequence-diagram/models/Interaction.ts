@@ -15,6 +15,7 @@ export class Interaction extends JsonApiModel {
   @HasMany()
   messages: M.Message[];
 
+  // TODO: toto treba implementovať rekurzívne (alebo spraviť inú rekurzívnu metódu)
   /*
    * Implementácia virtuálneho vzťahu medzi interakciou a lifelinami
    */

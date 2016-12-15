@@ -180,20 +180,41 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.render();
   }  
 
-  // TODO
   protected processExecutions(lifeline: M.Lifeline) {
-    return [
-      {
-        top: 50,
-        height: 100,
+
+    // TODO: konštanta - vertikálna medzera pred začiatkom a za koncom execution bloku
+    let verticalPadding = 10;
+
+    let executions = [];
+
+    console.log("lifeline", lifeline);
+
+    for (let occurrenceSpecification of lifeline.occurrenceSpecifications) {
+      console.log("occurrenceSpecification", occurrenceSpecification);
+      for (let execution of occurrenceSpecification.startingExecutionSpecifications) {
+        console.log("execution", execution);
+        let duration = execution.finish.time - execution.start.time;
+        console.log("result", {
+          top: execution.start.time - verticalPadding,
+          height: duration + (2 * verticalPadding)
+        });
+        executions.push({
+          top: execution.start.time - verticalPadding,
+          height: duration + (2 * verticalPadding)
+        });
       }
-    ];
+    }
+
+    return executions;
   }
+
+  protected mapLifelineModelToJSON = [];
 
   protected processLifelines(interaction: M.Interaction) {
 
     // Inicializácia výstupného poľa
     let lifelines = [];
+    this.mapLifelineModelToJSON = [];
 
     // Poradové číslo lifeliny z ľavej strany
     let orderNumber = 0;
@@ -205,18 +226,89 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     let gap = Math.floor((1200-120) / (lifelineModels.length - 1)) || 0;
 
     for (let lifeline of lifelineModels) {
-      lifelines.push({
+      let lifelineJSON = {
         left: orderNumber++ * gap,
         title: lifeline.name,
         executions: this.processExecutions(lifeline)
-      });
+      };
+
+      this.mapLifelineModelToJSON[lifeline.id] = lifelineJSON;
+
+      lifelines.push(lifelineJSON);
     }
 
     return lifelines;
   }
 
+  // TODO
+  protected resolveMessageDirection(message: M.Message) {
+
+    // Message smeruje z lifelineA do lifelineB
+    let lifelineA = this.mapLifelineModelToJSON[message.sendEvent.covered.id];
+    let lifelineB = this.mapLifelineModelToJSON[message.receiveEvent.covered.id];
+
+    return (lifelineB.left - lifelineA.left >= 0) ? "left-to-right" : "right-to-left";
+  }
+
+  protected resolveMessageType(message: M.Message) {
+    switch (message.sort) {
+      case "synchCall": return "sync";
+      case "asynchCall": return "async";
+    }
+  }
+
+  protected resolveMessageLength(message: M.Message) {
+    let lifelineALeft = this.mapLifelineModelToJSON[message.sendEvent.covered.id].left;
+    let lifelineBLeft = this.mapLifelineModelToJSON[message.receiveEvent.covered.id].left;
+
+    console.log("resolve length");
+    console.log("lifelineALeft", lifelineALeft);
+    console.log("lifelineBLeft", lifelineBLeft);
+    console.log("Math.abs(lifelineALeft - lifelineBLeft)", Math.abs(lifelineALeft - lifelineBLeft));
+
+    // 12 = 2*6; 6 = execution.width/2
+    return Math.abs(lifelineALeft - lifelineBLeft) - 12;
+  }
+
+  protected resolveMessagePosition(message: M.Message) {
+    let lifelineALeft = this.mapLifelineModelToJSON[message.sendEvent.covered.id].left;
+    let lifelineBLeft = this.mapLifelineModelToJSON[message.receiveEvent.covered.id].left;
+    let left = Math.min(lifelineALeft, lifelineBLeft);
+
+    // TODO 60 je polovica zo 120, 120 je šírka lifeliny
+    // 6 = execution.width/2
+
+    // 50 = lifeline-title-height
+    // 15 = message.height/2
+    return {
+      left: left + 60 + 6,
+      top: message.sendEvent.time + 50 - 15
+    }
+  }
+
   protected processMessages(interaction: M.Interaction) {
-    return [];
+    let messages = [];
+
+    // TODO
+    //for (let messageModel of interaction.messages) {
+    for (let messageModel of this.service.getAll(M.Message)) {
+      let messagePosition = this.resolveMessagePosition(messageModel);
+
+      let message = {
+        direction: this.resolveMessageDirection(messageModel),
+        type: this.resolveMessageType(messageModel),
+        title: messageModel.name,
+        length: this.resolveMessageLength(messageModel),
+        top: messagePosition.top,
+        left: messagePosition.left
+      };
+
+      console.log("push message", message);
+
+      messages.push(message);
+    }
+
+    return messages;
   }
 
   protected processFragments(interaction: M.Interaction) {
@@ -255,10 +347,12 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
       }
     ];*/
 
+    // TODO: toto je len pomocné
     let limit = 3;
     this.layers = [];
 
     // Render root interaction
+    for (let i = 0; i < 3; i++)
     this.layers.push({
       lifelines: this.processLifelines(this.rootInteraction),
       messages: this.processMessages(this.rootInteraction),
@@ -266,7 +360,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     });
 
     // Render all interactions
-    for (let interaction of this.service.getAll(M.Interaction)) {
+    /*for (let interaction of this.service.getAll(M.Interaction)) {
       if (interaction != this.rootInteraction) {
         if (--limit < 0) break;
         this.layers.push({
@@ -275,7 +369,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
           fragments: this.processFragments(interaction)
         });
       }
-    }
+    }*/
 
     /*let secondInteraction = this.service.getRecord(M.Interaction, "2");
     let thirdInteraction = this.service.getRecord(M.Interaction, "6");

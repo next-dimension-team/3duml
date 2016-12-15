@@ -1,6 +1,12 @@
 * {
+  backface-visibility: hidden!important;
   -webkit-backface-visibility: hidden!important;
-  outline: 1px solid transparent;
+  outline: 1px solid transparent!important;
+}
+
+input {
+  z-index: 999!important;
+  border: 0;
 }
 
 /* Layers */
@@ -11,13 +17,13 @@
 .layer {
   display: block;
   width: 1200px;
-  height: 500px;
-  background-color: rgba(0, 0, 0, 0.1);
+  height: 600px;
+  background-color: rgba(240, 240, 240, 0.75);
   padding: 30px;
 }
 
 .layer:hover {
-  background-color: rgba(0, 0, 255, 0.1);
+  background-color: rgba(210, 240, 255, 0.75);
 }
 
 /* Sequence Diagram */
@@ -50,7 +56,7 @@
 .sequence-diagram .lifeline {
   top: 0;
   width: 120px;
-  height: 500px;
+  height: 600px;
 }
 
 .sequence-diagram .lifeline .title {
@@ -63,6 +69,31 @@
   overflow: hidden;
 }
 
+.sequence-diagram .lifeline .title input {
+  display: none;
+}
+
+/* Lifeline - Title editing */
+.sequence-diagram .lifeline .title.editingTitle {
+  width: 118px;
+  height: 48px;
+  padding: 0;
+}
+
+.sequence-diagram .lifeline .title.editingTitle input {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  font-size: 14px;
+  background-color: #f1c40f!important;
+}
+
+.sequence-diagram .lifeline .title.editingTitle span {
+  display: none;
+}
+
+/* Lifeline - Line */
 .sequence-diagram .lifeline .line {
   border-left: 1px dashed #000;
   top: 0;
@@ -90,7 +121,7 @@
   border-bottom-color: #000;
 }
 
-.sequence-diagram .message.left-to-right.sync .line {
+.sequence-diagram .message.sync .line {
   border-bottom-style: solid;
 }
 
