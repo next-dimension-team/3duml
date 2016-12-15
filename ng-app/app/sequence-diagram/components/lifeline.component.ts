@@ -1,10 +1,12 @@
-import { Component, ViewChild, AfterViewInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'lifeline',
   templateUrl: './lifeline.component.html'
 })
-export class LifelineComponent implements AfterViewInit {
+export class LifelineComponent {
+
+  protected editingTitle = false;
 
   @Input()
   public left;
@@ -15,9 +17,10 @@ export class LifelineComponent implements AfterViewInit {
   @Input()
   public executions : Array<Object>;
 
-
-  ngAfterViewInit() {
-    //
+  onKeyDown(e) {
+    if (e.key == "Enter") {
+      this.editingTitle = false;
+    }
   }
 
 }
