@@ -29,7 +29,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         // Create root interaction
         $root = factory(Interaction::class)->create([
-            'name' => 'Fragments System Sequence Diagram'
+            'name' => 'Fragments Sequence Diagram'
         ]);
         $rootF = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $root->id,

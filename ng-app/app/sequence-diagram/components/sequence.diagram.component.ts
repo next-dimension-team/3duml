@@ -149,7 +149,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   // TODO: konstanty vytiahnut von
   ngAfterViewInit() {
     // Calculate canvas size
-    let width = window.innerWidth * 0.8;
+    let width = window.innerWidth * 0.85;
     let height = window.innerHeight;
 
     // Create scene
@@ -476,15 +476,17 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.layers = [];
 
     // Render root interaction
-    for (let i = 0; i < 3; i++)
+    //for (let i = 0; i < 3; i++)
     this.layers.push({
       lifelines: this.processLifelines(this.rootInteraction),
       messages: this.processMessages(this.rootInteraction),
       fragments: this.processFragments(this.rootInteraction)
     });
 
+    // TODO: pomocné
     // Render all interactions
-    /*for (let interaction of this.service.getAll(M.Interaction)) {
+    for (let interactionFragment of this.rootInteraction.fragment.getRecursiveFragments("Interaction")) {
+      let interaction = interactionFragment.fragmentable;
       if (interaction != this.rootInteraction) {
         if (--limit < 0) break;
         this.layers.push({
@@ -493,7 +495,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
           fragments: this.processFragments(interaction)
         });
       }
-    }*/
+    }
 
     /*let secondInteraction = this.service.getRecord(M.Interaction, "2");
     let thirdInteraction = this.service.getRecord(M.Interaction, "6");

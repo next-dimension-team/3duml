@@ -153,21 +153,21 @@ input {
 
 /* Fragments */
 .sequence-diagram .fragment {
-  border: 1px solid rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.7);
   overflow: hidden;
 }
 
 .sequence-diagram .fragment .title {
   background-color: #fff;
   padding: 3px 15px;
-  border-right: 1px solid rgba(0, 0, 0, 0.4);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  border-right: 1px solid rgba(0, 0, 0, 0.7);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.7);
   font-weight: bold;
 }
 
 .sequence-diagram .fragment .operand {
   position: relative;
-  border-bottom: 1px dashed rgba(0, 0, 0, 0.4);
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.7);
 }
 
 .sequence-diagram .fragment operand:last-child .operand {

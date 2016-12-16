@@ -152,13 +152,11 @@ export class SequenceDiagramService {
   get sequenceDiagrams(): M.Interaction[] {
     let sequenceDiagrams = [];
 
-    sequenceDiagrams = this.datastore.peekAll(M.Interaction);
-
-    /*for (let interaction of this.datastore.peekAll(M.Interaction)) {
+    for (let interaction of this.datastore.peekAll(M.Interaction)) {
       if (interaction.fragment.parent == null) {
         sequenceDiagrams.push(interaction);
       }
-    }*/
+    }
 
     return sequenceDiagrams;
   }
