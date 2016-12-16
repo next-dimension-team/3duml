@@ -200,13 +200,10 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     return executions;
   }
 
-  protected mapLifelineModelToJSON = [];
-
   protected processLifelines(interaction: M.Interaction) {
 
     // Inicializácia výstupného poľa
     let lifelines = [];
-    this.mapLifelineModelToJSON = [];
 
     // Poradové číslo lifeliny z ľavej strany
     let orderNumber = 0;
@@ -215,16 +212,18 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     // TODO: 120  = lifeline.width
 
     let lifelineModels = interaction.lifelines;
+
+    // Medzery medzi lifelinami sa prispôsobujú podľa ich počtu
     let gap = Math.floor((1200-120) / (lifelineModels.length - 1)) || 0;
 
     for (let lifeline of lifelineModels) {
+      lifeline.leftDistance = orderNumber++ * gap;
+
       let lifelineJSON = {
-        left: orderNumber++ * gap,
+        left: lifeline.leftDistance,
         title: lifeline.name,
         executions: this.processExecutions(lifeline)
       };
-
-      this.mapLifelineModelToJSON[lifeline.id] = lifelineJSON;
 
       lifelines.push(lifelineJSON);
     }
@@ -232,14 +231,13 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     return lifelines;
   }
 
-  // TODO
   protected resolveMessageDirection(message: M.Message) {
 
     // Message smeruje z lifelineA do lifelineB
-    let lifelineA = this.mapLifelineModelToJSON[message.sendEvent.covered.id];
-    let lifelineB = this.mapLifelineModelToJSON[message.receiveEvent.covered.id];
+    let lifelineALeft = message.sendEvent.covered.leftDistance;
+    let lifelineBLeft = message.receiveEvent.covered.leftDistance;
 
-    return (lifelineB.left - lifelineA.left >= 0) ? "left-to-right" : "right-to-left";
+    return (lifelineBLeft - lifelineALeft >= 0) ? "left-to-right" : "right-to-left";
   }
 
   protected resolveMessageType(message: M.Message) {
@@ -250,21 +248,17 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   }
 
   protected resolveMessageLength(message: M.Message) {
-    let lifelineALeft = this.mapLifelineModelToJSON[message.sendEvent.covered.id].left;
-    let lifelineBLeft = this.mapLifelineModelToJSON[message.receiveEvent.covered.id].left;
-
-    //console.log("resolve length");
-    //console.log("lifelineALeft", lifelineALeft);
-    //console.log("lifelineBLeft", lifelineBLeft);
-    //console.log("Math.abs(lifelineALeft - lifelineBLeft)", Math.abs(lifelineALeft - lifelineBLeft));
+    let lifelineALeft = message.sendEvent.covered.leftDistance;
+    let lifelineBLeft = message.receiveEvent.covered.leftDistance;
 
     // 12 = 2*6; 6 = execution.width/2
     return Math.abs(lifelineALeft - lifelineBLeft) - 12;
   }
 
   protected resolveMessagePosition(message: M.Message) {
-    let lifelineALeft = this.mapLifelineModelToJSON[message.sendEvent.covered.id].left;
-    let lifelineBLeft = this.mapLifelineModelToJSON[message.receiveEvent.covered.id].left;
+    let lifelineALeft = message.sendEvent.covered.leftDistance;
+    let lifelineBLeft = message.receiveEvent.covered.leftDistance;
+
     let left = Math.min(lifelineALeft, lifelineBLeft);
 
     // TODO 60 je polovica zo 120, 120 je šírka lifeliny
@@ -317,8 +311,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
       if (message.receiveEvent.time > maximalTime || maximalTime == null) maximalTime = message.receiveEvent.time;
 
       // Určíme ľavú a pravú hraincu
-      let lifelineALeft = this.mapLifelineModelToJSON[message.sendEvent.covered.id].left;
-      let lifelineBLeft = this.mapLifelineModelToJSON[message.receiveEvent.covered.id].left;
+      let lifelineALeft = message.sendEvent.covered.leftDistance;
+      let lifelineBLeft = message.receiveEvent.covered.leftDistance;
 
       if (lifelineALeft < mostLeft || mostLeft == null) mostLeft = lifelineALeft;
       if (lifelineBLeft < mostLeft || mostLeft == null) mostLeft = lifelineBLeft;
@@ -331,20 +325,50 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
       console.error("Could not determine minimal time for combined fragment", interactionFragment);
     }
     if (maximalTime == null) {
-      console.error("Could not determine minimal time for combined fragment", interactionFragment);
+      console.error("Could not determine maximal time for combined fragment", interactionFragment);
     }
     if (mostLeft == null || mostRight == null) {
       console.error("Could not determine width for combined fragment", interactionFragment);
     }
 
+    // Vytvoríme výsledný objekt
     // 50  = lifeline.title.height
     // 120 = lifeline.title.width
-    return {
+    let envelope = {
       minimalTime: minimalTime + 50,
       maximalTime: maximalTime + 50,
       mostLeft: mostLeft,
       mostRight: mostRight + 120
     }
+
+    // TODO: toto je asi nepotrebné
+    // Prejdeme všetky podfragmenty
+    /*for (let childFragment of interactionFragment.children) {
+      let childEnvelope = this.envelopeFragment(childFragment);
+      
+      if (childEnvelope.minimalTime < envelope.minimalTime) envelope.minimalTime = childEnvelope.minimalTime;
+      if (childEnvelope.maximalTime > envelope.maximalTime) envelope.maximalTime = childEnvelope.maximalTime;
+      if (childEnvelope.mostLeft < envelope.mostLeft) envelope.mostLeft = childEnvelope.mostLeft;
+      if (childEnvelope.mostRight > envelope.mostRight) envelope.mostRight = childEnvelope.mostRight;
+    }*/
+
+    let fragmentPadding = 20;
+
+    // TODO: tu to treba implementovat "inteligentne" aby vedel v akom poradi
+    // idu interakcie a podfragmenty a nasledne urci ci ma davat padding zhora/zdola/oboje
+    // Pozn. zlava a zprava bdue padding vzdy
+    if (interactionFragment.getRecursiveFragments("CombinedFragment").length > 0) {
+
+      // TODO: tieto dve tu nebudu vzdy, len niekedy
+      envelope.minimalTime -= fragmentPadding;
+      //envelope.maximalTime += fragmentPadding;
+
+      // TODO: toto tu bdue vzdy
+      envelope.mostLeft -= fragmentPadding;
+      envelope.mostRight += fragmentPadding;
+    }
+
+    return envelope;
   }
 
   protected processOperands(combinedFragment: M.CombinedFragment) {
@@ -365,14 +389,15 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
         let envelope = this.envelopeFragment(childFragment);
 
         operands.push({
-          height: envelope.maximalTime - envelope.minimalTime,
+          height: envelope.maximalTime - envelope.minimalTime + topPadding + bottomPadding,
           constraint: interactionOperand.constraint
         });
       }
     }
 
+    // TODO: Toto asi nepotrebujeme
     // Pridáme vnútorný okraj prvému operandu
-    if (operands[0]) {
+    /*if (operands[0]) {
       operands[0].height += topPadding;
     }
 
@@ -380,7 +405,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     let lastIndex = (operands.length - 1);
     if (operands[lastIndex]) {
       operands[lastIndex].height += bottomPadding;
-    }
+    }*/
 
     return operands;
   }
@@ -395,23 +420,20 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     let fragments = [];
 
     // Prejdeme všetkých potomkov
-    for (let childFragment of interaction.fragment.children) {
+    for (let childFragment of interaction.fragment.getRecursiveFragments("CombinedFragment")) {
 
-      // Je potomok typu CombinedFragment ?
-      if (childFragment.fragmentable.constructor.name == "CombinedFragment") {
-        let combinedFragment = childFragment.fragmentable;
-        let envelope = this.envelopeFragment(childFragment);
+      let combinedFragment = childFragment.fragmentable;
+      let envelope = this.envelopeFragment(childFragment);
 
-        // 60 = lifeline.title.width / 2
-        // 30 = 60 / 2
-        fragments.push({
-          title: combinedFragment.operator,
-          width: envelope.mostRight - envelope.mostLeft - 60,
-          top: envelope.minimalTime - verticalPadding,
-          left: envelope.mostLeft + 30,
-          operands: this.processOperands(combinedFragment)
-        });
-      }
+      // 60 = lifeline.title.width / 2
+      // 30 = 60 / 2
+      fragments.push({
+        title: combinedFragment.operator,
+        width: envelope.mostRight - envelope.mostLeft - 60,
+        top: envelope.minimalTime - verticalPadding,
+        left: envelope.mostLeft + 30,
+        operands: this.processOperands(combinedFragment)
+      });
     }
 
     return fragments;
@@ -454,7 +476,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.layers = [];
 
     // Render root interaction
-    //for (let i = 0; i < 3; i++)
+    for (let i = 0; i < 3; i++)
     this.layers.push({
       lifelines: this.processLifelines(this.rootInteraction),
       messages: this.processMessages(this.rootInteraction),
@@ -462,7 +484,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     });
 
     // Render all interactions
-    for (let interaction of this.service.getAll(M.Interaction)) {
+    /*for (let interaction of this.service.getAll(M.Interaction)) {
       if (interaction != this.rootInteraction) {
         if (--limit < 0) break;
         this.layers.push({
@@ -471,7 +493,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
           fragments: this.processFragments(interaction)
         });
       }
-    }
+    }*/
 
     /*let secondInteraction = this.service.getRecord(M.Interaction, "2");
     let thirdInteraction = this.service.getRecord(M.Interaction, "6");

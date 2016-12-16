@@ -1,7 +1,5 @@
 import { JsonApiModel, JsonApiModelConfig, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
-import { Lifeline } from './Lifeline';
-import { Message } from './Message';
-import { ExecutionSpecification } from './ExecutionSpecification';
+import * as M from './';
 
 @JsonApiModelConfig({
     type: 'occurrence-specifications'
@@ -12,18 +10,18 @@ export class OccurrenceSpecification extends JsonApiModel {
   time: number;
 
   @HasMany()
-  sendingEventMessages: Message[];
+  sendingEventMessages: M.Message[];
 
   @HasMany()
-  receivingEventMessages: Message[];
+  receivingEventMessages: M.Message[];
 
   @HasMany()
-  startingExecutionSpecifications: ExecutionSpecification[];
+  startingExecutionSpecifications: M.ExecutionSpecification[];
 
   @HasMany()
-  finishingExecutionSpecifications: ExecutionSpecification[];
+  finishingExecutionSpecifications: M.ExecutionSpecification[];
 
   @BelongsTo()
-  covered: Lifeline;
+  covered: M.Lifeline;
 
 }

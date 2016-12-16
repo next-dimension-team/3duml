@@ -25,7 +25,7 @@ input {
 .layer {
   display: block;
   width: 1200px;
-  height: 600px;
+  height: 880px;
   background-color: rgba(240, 240, 240, 0.75);
   padding: 30px;
 }
@@ -64,7 +64,7 @@ input {
 .sequence-diagram .lifeline {
   top: 0;
   width: 120px;
-  height: 600px;
+  height: 880px;
 }
 
 .sequence-diagram .lifeline .title {
@@ -153,21 +153,21 @@ input {
 
 /* Fragments */
 .sequence-diagram .fragment {
-  border: 1px solid #000;
+  border: 1px solid rgba(0, 0, 0, 0.4);
   overflow: hidden;
 }
 
 .sequence-diagram .fragment .title {
   background-color: #fff;
   padding: 3px 15px;
-  border-right: 1px solid #000;
-  border-bottom: 1px solid #000;
+  border-right: 1px solid rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
   font-weight: bold;
 }
 
 .sequence-diagram .fragment .operand {
   position: relative;
-  border-bottom: 1px dashed #000;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.4);
 }
 
 .sequence-diagram .fragment operand:last-child .operand {

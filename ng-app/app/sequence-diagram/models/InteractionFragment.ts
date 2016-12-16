@@ -21,8 +21,8 @@ export class InteractionFragment extends JsonApiModel {
   /*
    * Vráti všetky podfragmenty daného typu.
    */
-  public getRecursiveFragments(fragmentType: string, fragment?: M.InteractionFragment, addCurrent?: boolean): M.InteractionFragment[] {
-
+  getRecursiveFragments(fragmentType: string, fragment?: M.InteractionFragment, addCurrent?: boolean): M.InteractionFragment[] {
+    
     // Začiatok rekurzie súčasným frgmentom
     if (fragment == null) {
       fragment = this;
