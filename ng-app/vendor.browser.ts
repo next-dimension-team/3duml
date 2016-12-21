@@ -10,7 +10,7 @@ import '@angular/core';
 import '@angular/common';
 import '@angular/forms';
 import '@angular/http';
-import '@angular/router';
+// import '@angular/router';
 
 // AngularClass
 import '@angularclass/hmr';
@@ -23,6 +23,8 @@ import 'three';
 import 'three.css';
 
 import 'angular2-jsonapi';
+
+import 'reflect-metadata';
 
 if ('production' === ENV) {
   // Production

@@ -4,9 +4,6 @@ import { JsonApiModel, ModelType } from 'angular2-jsonapi';
 import { Observable } from 'rxjs';
 import * as M from '../models';
 
-// TODO
-require('reflect-metadata');
-
 @Injectable()
 export class SequenceDiagramService {
 
