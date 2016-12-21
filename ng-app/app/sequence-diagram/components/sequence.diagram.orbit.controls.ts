@@ -1,5 +1,4 @@
-import * as THREE from 'three';
-const OrbitControls = require('three-orbit-controls')(THREE);
+import { OrbitControls } from 'three';
 
 /*
  * Class for controling camera of sequence diagram

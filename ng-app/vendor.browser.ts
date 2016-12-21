@@ -19,8 +19,12 @@ import '@angularclass/hmr';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 
-import 'three';
-import 'three.css';
+import * as THREE from 'three';
+const CSS3D = require('three.css')(THREE);
+(THREE as any).OrbitControls = require('three-orbit-controls')(THREE);
+(THREE as any).CSS3DObject = CSS3D.Object;
+(THREE as any).CSS3DSprite = CSS3D.Sprite;
+(THREE as any).CSS3DRenderer = CSS3D.Renderer;
 
 import 'angular2-jsonapi';
 

@@ -91,7 +91,7 @@ export class SequenceDiagramService {
       let belongsToAttributes = null;
 
       // Získame inštancie modelov daného typu
-      let modelInstances = this.datastore.peekAll(modelType);
+      let modelInstances = this.datastore.peekAll<JsonApiModel>(modelType);
 
       // Prejdeme všetky inštancie modelu daného typu
       for (let modelInstance of modelInstances) {

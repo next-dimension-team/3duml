@@ -21,7 +21,7 @@ export class InteractionFragment extends JsonApiModel {
   /*
    * Vráti všetky podfragmenty daného typu.
    */
-  getRecursiveFragments(fragmentType: string, fragment?: M.InteractionFragment, addCurrent?: boolean): M.InteractionFragment[] {
+  getRecursiveFragments(fragmentType: string, fragment?: InteractionFragment, addCurrent?: boolean): InteractionFragment[] {
 
     // Začiatok rekurzie súčasným frgmentom
     if (fragment == null) {
@@ -47,7 +47,7 @@ export class InteractionFragment extends JsonApiModel {
   /*
    * Vráti všetky správy danej interakcie a jej potomkov.
    */
-  protected getRecursiveMessages(fragment: M.InteractionFragment): M.Message[] {
+  protected getRecursiveMessages(fragment: InteractionFragment): M.Message[] {
 
     // Vytvoríme výsledné pole správ
     let messages = [];
