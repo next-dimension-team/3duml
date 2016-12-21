@@ -23,11 +23,11 @@ class ComplexSequenceDiagramSeeder extends Seeder
         $layer = factory(Layer::class)->create([
             'depth' => 1,
         ]);
-        
+
         $interaction = factory(Interaction::class)->create();
-        $interaction->name = "Sequence Diagram " . $interaction->id;
+        $interaction->name = 'Sequence Diagram '.$interaction->id;
         $interaction->save();
-        
+
         $mainIF = factory(InteractionFragment::class)->create(['fragmentable_id' => $interaction->id, 'fragmentable_type' => 'interaction']);
 
         $lifelines = factory(Lifeline::class, 3)

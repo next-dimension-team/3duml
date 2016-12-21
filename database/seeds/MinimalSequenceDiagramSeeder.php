@@ -17,7 +17,7 @@ class MinimalSequenceDiagramSeeder extends Seeder
     public function run()
     {
         $interaction = factory(Interaction::class)->create();
-        $interaction->name = "Sequence Diagram " . $interaction->id;
+        $interaction->name = 'Sequence Diagram '.$interaction->id;
         $interaction->save();
 
         $layer = factory(Layer::class)->create([

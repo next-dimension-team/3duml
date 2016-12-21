@@ -29,7 +29,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         // Create root interaction
         $root = factory(Interaction::class)->create([
-            'name' => 'Fragments Sequence Diagram'
+            'name' => 'Fragments Sequence Diagram',
         ]);
         $rootF = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $root->id,
@@ -39,39 +39,39 @@ class FragmentsSequenceDiagramSeeder extends Seeder
         // Create lifelines
         $lifelineA = factory(Lifeline::class)->create([
             'name' => 'john: Person',
-            'layer_id' => $layer->id
+            'layer_id' => $layer->id,
         ]);
         $lifelineB = factory(Lifeline::class)->create([
             'name' => 'anna: Person',
-            'layer_id' => $layer->id
+            'layer_id' => $layer->id,
         ]);
         $lifelineC = factory(Lifeline::class)->create([
             'name' => 'bill: Person',
-            'layer_id' => $layer->id
+            'layer_id' => $layer->id,
         ]);
 
         // Lifeline A Occurrence Specifications
         $ocA1 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineA->id,
-            'time' => 7*$t
+            'time' => 7 * $t,
         ]);
         $ocA2 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineA->id,
-            'time' => 9*$t
+            'time' => 9 * $t,
         ]);
         $ocA3 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineA->id,
-            'time' => 14*$t
+            'time' => 14 * $t,
         ]);
         $ocA4 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineA->id,
-            'time' => 15*$t
+            'time' => 15 * $t,
         ]);
 
         // Lifeline A Execution Specifications
         $esA1 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocA1->id,
-            'finish_occurrence_specification_id' => $ocA1->id
+            'finish_occurrence_specification_id' => $ocA1->id,
         ]);
         $esA1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esA1->id,
@@ -80,7 +80,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esA2 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocA2->id,
-            'finish_occurrence_specification_id' => $ocA2->id
+            'finish_occurrence_specification_id' => $ocA2->id,
         ]);
         $esA2F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esA2->id,
@@ -89,7 +89,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esA3 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocA3->id,
-            'finish_occurrence_specification_id' => $ocA4->id
+            'finish_occurrence_specification_id' => $ocA4->id,
         ]);
         $esA3F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esA3->id,
@@ -99,45 +99,45 @@ class FragmentsSequenceDiagramSeeder extends Seeder
         // Lifeline B Occurrence Specifications
         $ocB1 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineB->id,
-            'time' => 4*$t
+            'time' => 4 * $t,
         ]);
         $ocB2 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineB->id,
-            'time' => 5*$t
+            'time' => 5 * $t,
         ]);
         $ocB3 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineB->id,
-            'time' => 9*$t
+            'time' => 9 * $t,
         ]);
         $ocB4 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineB->id,
-            'time' => 10*$t
+            'time' => 10 * $t,
         ]);
         $ocB5 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineB->id,
-            'time' => 12*$t
+            'time' => 12 * $t,
         ]);
         $ocB6 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineB->id,
-            'time' => 14*$t
+            'time' => 14 * $t,
         ]);
         $ocB7 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineB->id,
-            'time' => 17*$t
+            'time' => 17 * $t,
         ]);
         $ocB8 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineB->id,
-            'time' => 18*$t
+            'time' => 18 * $t,
         ]);
         $ocB9 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineB->id,
-            'time' => 20*$t
+            'time' => 20 * $t,
         ]);
 
         // Lifeline B Execution Specifications
         $esB1 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocB1->id,
-            'finish_occurrence_specification_id' => $ocB2->id
+            'finish_occurrence_specification_id' => $ocB2->id,
         ]);
         $esB1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esB1->id,
@@ -146,7 +146,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esB2 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocB3->id,
-            'finish_occurrence_specification_id' => $ocB4->id
+            'finish_occurrence_specification_id' => $ocB4->id,
         ]);
         $esB2F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esB2->id,
@@ -155,7 +155,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esB3 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocB5->id,
-            'finish_occurrence_specification_id' => $ocB5->id
+            'finish_occurrence_specification_id' => $ocB5->id,
         ]);
         $esB3F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esB3->id,
@@ -164,7 +164,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esB4 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocB6->id,
-            'finish_occurrence_specification_id' => $ocB6->id
+            'finish_occurrence_specification_id' => $ocB6->id,
         ]);
         $esB4F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esB4->id,
@@ -173,7 +173,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esB5 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocB7->id,
-            'finish_occurrence_specification_id' => $ocB8->id
+            'finish_occurrence_specification_id' => $ocB8->id,
         ]);
         $esB5F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esB2->id,
@@ -182,7 +182,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esB6 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocB9->id,
-            'finish_occurrence_specification_id' => $ocB9->id
+            'finish_occurrence_specification_id' => $ocB9->id,
         ]);
         $esB6F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esB6->id,
@@ -192,45 +192,45 @@ class FragmentsSequenceDiagramSeeder extends Seeder
         // Lifeline C Occurrence Specifications
         $ocC1 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineC->id,
-            'time' => 4*$t
+            'time' => 4 * $t,
         ]);
         $ocC2 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineC->id,
-            'time' => 5*$t
+            'time' => 5 * $t,
         ]);
         $ocC3 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineC->id,
-            'time' => 7*$t
+            'time' => 7 * $t,
         ]);
         $ocC4 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineC->id,
-            'time' => 10*$t
+            'time' => 10 * $t,
         ]);
         $ocC5 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineC->id,
-            'time' => 12*$t
+            'time' => 12 * $t,
         ]);
         $ocC6 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineC->id,
-            'time' => 15*$t
+            'time' => 15 * $t,
         ]);
         $ocC7 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineC->id,
-            'time' => 17*$t
+            'time' => 17 * $t,
         ]);
         $ocC8 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineC->id,
-            'time' => 18*$t
+            'time' => 18 * $t,
         ]);
         $ocC9 = factory(OccurrenceSpecification::class)->create([
             'lifeline_id' => $lifelineC->id,
-            'time' => 20*$t
+            'time' => 20 * $t,
         ]);
 
         // Lifeline C Execution Specifications
         $esC1 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC1->id,
-            'finish_occurrence_specification_id' => $ocC1->id
+            'finish_occurrence_specification_id' => $ocC1->id,
         ]);
         $esC1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esC1->id,
@@ -239,7 +239,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esC2 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC2->id,
-            'finish_occurrence_specification_id' => $ocC2->id
+            'finish_occurrence_specification_id' => $ocC2->id,
         ]);
         $esC2F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esC2->id,
@@ -248,7 +248,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esC3 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC3->id,
-            'finish_occurrence_specification_id' => $ocC3->id
+            'finish_occurrence_specification_id' => $ocC3->id,
         ]);
         $esC3F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esC3->id,
@@ -257,7 +257,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esC4 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC4->id,
-            'finish_occurrence_specification_id' => $ocC4->id
+            'finish_occurrence_specification_id' => $ocC4->id,
         ]);
         $esC4F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esC4->id,
@@ -266,7 +266,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esC5 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC5->id,
-            'finish_occurrence_specification_id' => $ocC5->id
+            'finish_occurrence_specification_id' => $ocC5->id,
         ]);
         $esC5F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esC5->id,
@@ -275,7 +275,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esC6 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC6->id,
-            'finish_occurrence_specification_id' => $ocC6->id
+            'finish_occurrence_specification_id' => $ocC6->id,
         ]);
         $esC6F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esC6->id,
@@ -284,7 +284,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esC7 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC7->id,
-            'finish_occurrence_specification_id' => $ocC8->id
+            'finish_occurrence_specification_id' => $ocC8->id,
         ]);
         $esC7F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esC7->id,
@@ -293,7 +293,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         $esC8 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC9->id,
-            'finish_occurrence_specification_id' => $ocC9->id
+            'finish_occurrence_specification_id' => $ocC9->id,
         ]);
         $esC8F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $esC8->id,
@@ -306,21 +306,21 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'sort' => 'synchCall',
             'interaction_id' => $root->id,
             'send_event_id' => $ocA2->id,
-            'receive_event_id' => $ocB3->id
+            'receive_event_id' => $ocB3->id,
         ]);
         factory(Message::class)->create([
             'name' => 'd()',
             'sort' => 'synchCall',
             'interaction_id' => $root->id,
             'send_event_id' => $ocB4->id,
-            'receive_event_id' => $ocC4->id
+            'receive_event_id' => $ocC4->id,
         ]);
 
         // Create fragments
 
         // Opt
         $opt = factory(CombinedFragment::class)->create([
-            'operator' => 'opt'
+            'operator' => 'opt',
         ]);
         $optF = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $opt->id,
@@ -329,7 +329,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
         $optF->makeChildOf($rootF);
 
         $optIO1 = factory(InteractionOperand::class)->create([
-            'constraint' => 'N > 0'
+            'constraint' => 'N > 0',
         ]);
         $optIO1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $optIO1->id,
@@ -347,7 +347,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         // Loop
         $loop = factory(CombinedFragment::class)->create([
-            'operator' => 'loop'
+            'operator' => 'loop',
         ]);
         $loopF = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $loop->id,
@@ -357,7 +357,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         // Loop Operand 1
         $loopIO1 = factory(InteractionOperand::class)->create([
-            'constraint' => 'i < N'
+            'constraint' => 'i < N',
         ]);
         $loopIO1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $loopIO1->id,
@@ -375,7 +375,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         // Alt
         $alt = factory(CombinedFragment::class)->create([
-            'operator' => 'alt'
+            'operator' => 'alt',
         ]);
         $altF = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $alt->id,
@@ -385,7 +385,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         // Alt Operand 1
         $altIO1 = factory(InteractionOperand::class)->create([
-            'constraint' => 'N > 0'
+            'constraint' => 'N > 0',
         ]);
         $altIO1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $altIO1->id,
@@ -403,7 +403,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         // Alt Operand 2
         $altIO2 = factory(InteractionOperand::class)->create([
-            'constraint' => 'N <= 0'
+            'constraint' => 'N <= 0',
         ]);
         $altIO2F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $altIO2->id,
@@ -421,7 +421,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         // Par
         $par = factory(CombinedFragment::class)->create([
-            'operator' => 'par'
+            'operator' => 'par',
         ]);
         $parF = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $par->id,
@@ -431,7 +431,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         // Par Operand 1
         $parIO1 = factory(InteractionOperand::class)->create([
-            'constraint' => ''
+            'constraint' => '',
         ]);
         $parIO1F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $parIO1->id,
@@ -449,7 +449,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
 
         // Par Operand 2
         $parIO2 = factory(InteractionOperand::class)->create([
-            'constraint' => ''
+            'constraint' => '',
         ]);
         $parIO2F = factory(InteractionFragment::class)->create([
             'fragmentable_id' => $parIO2->id,
@@ -473,14 +473,14 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'sort' => 'synchCall',
             'interaction_id' => $interaction2->id,
             'send_event_id' => $ocB1->id,
-            'receive_event_id' => $ocC1->id
+            'receive_event_id' => $ocC1->id,
         ]);
         factory(Message::class)->create([
             'name' => 'b()',
             'sort' => 'synchCall',
             'interaction_id' => $interaction2->id,
             'send_event_id' => $ocB2->id,
-            'receive_event_id' => $ocC2->id
+            'receive_event_id' => $ocC2->id,
         ]);
 
         // Opt messages
@@ -489,7 +489,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'sort' => 'synchCall',
             'interaction_id' => $optI->id,
             'send_event_id' => $ocA1->id,
-            'receive_event_id' => $ocC3->id
+            'receive_event_id' => $ocC3->id,
         ]);
 
         // Alt Operand 1 Messages
@@ -498,7 +498,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'sort' => 'synchCall',
             'interaction_id' => $altIO1I->id,
             'send_event_id' => $ocB5->id,
-            'receive_event_id' => $ocC5->id
+            'receive_event_id' => $ocC5->id,
         ]);
 
         // Alt Operand 2 Messages
@@ -507,14 +507,14 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'sort' => 'synchCall',
             'interaction_id' => $altIO2I->id,
             'send_event_id' => $ocA3->id,
-            'receive_event_id' => $ocB6->id
+            'receive_event_id' => $ocB6->id,
         ]);
         factory(Message::class)->create([
             'name' => 'h()',
             'sort' => 'synchCall',
             'interaction_id' => $altIO2I->id,
             'send_event_id' => $ocA4->id,
-            'receive_event_id' => $ocC6->id
+            'receive_event_id' => $ocC6->id,
         ]);
 
         // Par Operand 1 Messages
@@ -523,14 +523,14 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'sort' => 'synchCall',
             'interaction_id' => $parIO1I->id,
             'send_event_id' => $ocB7->id,
-            'receive_event_id' => $ocC7->id
+            'receive_event_id' => $ocC7->id,
         ]);
         factory(Message::class)->create([
             'name' => 'y()',
             'sort' => 'synchCall',
             'interaction_id' => $parIO1I->id,
             'send_event_id' => $ocC8->id,
-            'receive_event_id' => $ocB8->id
+            'receive_event_id' => $ocB8->id,
         ]);
 
         // Par Operand 2 Messages
@@ -539,7 +539,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'sort' => 'synchCall',
             'interaction_id' => $parIO2I->id,
             'send_event_id' => $ocB9->id,
-            'receive_event_id' => $ocC9->id
+            'receive_event_id' => $ocC9->id,
         ]);
     }
 }
