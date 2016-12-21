@@ -28,7 +28,7 @@ export class SequenceDiagramService {
    * Táto metóda pošle requesty na backend pre všetky entity
    */
   public loadRecords(): Observable<any> {
-    console.info("SequenceDiagramService: Loading records from backend");
+    console.log('SequenceDiagramService: Loading records from backend');
     return Observable.zip(
       this.datastore.query(M.CombinedFragment),
       this.datastore.query(M.InteractionFragment),
@@ -49,12 +49,12 @@ export class SequenceDiagramService {
    * Vráti pole atribútov zadaného objektu so zadaným dekorátorom
    */
   protected getDecoratedAttributes(decoratorName: string, object): string[] {
-    
+
     // Inicializuje výsledné pole
-    var decoratedAttributes = [];
+    let decoratedAttributes = [];
 
     // Získa zoznam anotácií
-    var annotations = Reflect.getMetadata(decoratorName, object) || [];
+    let annotations = Reflect.getMetadata(decoratorName, object) || [];
 
     // Prejde všetky anotácie
     for (let annotation of annotations) {
@@ -71,10 +71,13 @@ export class SequenceDiagramService {
    * ktorý dostane ako vstupný parameter.
    */
   protected peekModel(modelInstance) {
-    if ( ! modelInstance) return null;
+    if (!modelInstance) {
+      return null;
+    }
 
-    var modelType = modelInstance.constructor;
-    var modelId = modelInstance.id;
+    const modelType = modelInstance.constructor;
+    const modelId = modelInstance.id;
+
     return this.datastore.peekRecord(modelType, modelId);
   }
 
@@ -96,14 +99,14 @@ export class SequenceDiagramService {
       // Prejdeme všetky inštancie modelu daného typu
       for (let modelInstance of modelInstances) {
 
-        // Získame zoznam atribútov s dekorátorom "HasMany"
-        if ( ! hasManyAttributes) {
-          hasManyAttributes = this.getDecoratedAttributes("HasMany", modelInstance);
+        // Získame zoznam atribútov s dekorátorom 'HasMany'
+        if (!hasManyAttributes) {
+          hasManyAttributes = this.getDecoratedAttributes('HasMany', modelInstance);
         }
 
-        // Získame zoznam atribútov s dekorátorom "BelongsTo"
-        if ( ! belongsToAttributes) {
-          belongsToAttributes = this.getDecoratedAttributes("BelongsTo", modelInstance);
+        // Získame zoznam atribútov s dekorátorom 'BelongsTo'
+        if (!belongsToAttributes) {
+          belongsToAttributes = this.getDecoratedAttributes('BelongsTo', modelInstance);
         }
 
         // Synchronizujeme "HasMany" vzťahy
@@ -127,7 +130,8 @@ export class SequenceDiagramService {
           } else {
             // Vzťah nebol načítaný
             modelInstance[attribute] = [];
-            //console.error(`Could not peek HasMany model relation with name ${attribute} for model type ${modelInstance.constructor.name}.`);
+            // console.error(`Could not peek HasMany model relation with name
+            // ${attribute} for model type ${modelInstance.constructor.name}.`);
           }
         }
 
@@ -140,7 +144,8 @@ export class SequenceDiagramService {
           } else {
             // Vzťah nebol načítaný
             modelInstance[attribute] = null;
-            //console.error(`Could not peek BelongsTo model relation with name ${attribute} for model type ${modelInstance.constructor.name}.`);
+            // console.error(`Could not peek BelongsTo model relation with name
+            // ${attribute} for model type ${modelInstance.constructor.name}.`);
           }
         }
 

@@ -1,22 +1,22 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'fragment',
+  selector: 'app-fragment',
   templateUrl: './fragment.component.html'
 })
 export class FragmentComponent {
 
   @Input()
-  public title : string;
+  public title: string;
 
   @Input()
-  public width : number;
+  public width: number;
 
   @Input()
-  public top : number;
+  public top: number;
 
   @Input()
-  public left : number;
+  public left: number;
 
   @Input()
   public operands;

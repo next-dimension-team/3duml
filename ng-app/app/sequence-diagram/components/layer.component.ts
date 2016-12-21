@@ -1,7 +1,7 @@
-import { Component, ViewChild, Input, ElementRef } from '@angular/core';
+import { Component, Input, ElementRef } from '@angular/core';
 
 @Component({
-  selector: 'layer',
+  selector: 'app-layer',
   templateUrl: './layer.component.html'
 })
 export class LayerComponent {

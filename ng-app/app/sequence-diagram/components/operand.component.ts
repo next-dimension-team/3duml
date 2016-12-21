@@ -1,15 +1,15 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'operand',
+  selector: 'app-operand',
   templateUrl: './operand.component.html'
 })
 export class OperandComponent {
 
   @Input()
-  public height : number;
+  public height: number;
 
   @Input()
-  public constraint : string;
+  public constraint: string;
 
 }

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'lifeline',
+  selector: 'app-lifeline',
   templateUrl: './lifeline.component.html'
 })
 export class LifelineComponent {
@@ -15,10 +15,10 @@ export class LifelineComponent {
   public title;
 
   @Input()
-  public executions : Array<Object>;
+  public executions: Array<Object>;
 
   onKeyDown(e) {
-    if (e.key == "Enter") {
+    if (e.key === 'Enter') {
       this.editingTitle = false;
     }
   }

@@ -6,12 +6,12 @@
   [style.top]="top + 'px'"
 >
   <div class="title">{{title}}</div>
-  
+
   <!-- Render operands -->
-  <operand
+  <app-operand
     *ngFor="let operand of operands"
     [height]="operand.height"
     [constraint]="operand.constraint"
-  ></operand>
+  ></app-operand>
 
 </div>

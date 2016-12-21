@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-var OrbitControls = require('three-orbit-controls')(THREE);
+const OrbitControls = require('three-orbit-controls')(THREE);
 
 /*
  * Class for controling camera of sequence diagram
@@ -26,7 +26,7 @@ export class SequenceDiagramOrbitControls extends OrbitControls {
     }
 
     handleMouseWheel(event) {
-        var distance = this.target.distanceTo(this.object.position);
+        let distance = this.target.distanceTo(this.object.position);
 
         if (event.deltaY < 0 && distance > this.minDistanceToTarget) {
             this.object.position.z -= this.mouseScrollingSpeed;
@@ -34,6 +34,7 @@ export class SequenceDiagramOrbitControls extends OrbitControls {
         } else if (event.deltaY > 0) {
             this.object.position.z += this.mouseScrollingSpeed;
         }
+
         this.update();
     }
 }

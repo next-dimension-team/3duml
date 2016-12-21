@@ -3,7 +3,7 @@ import { Interaction } from '../../sequence-diagram/models';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
 
 @Component({
-  selector: 'sidebar-menu',
+  selector: 'app-sidebar-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css']
 })

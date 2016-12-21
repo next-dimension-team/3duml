@@ -15,12 +15,13 @@ export class AppComponent {
   public openedSequenceDiagram: Interaction;
 
   constructor(private sequenceDiagramService: SequenceDiagramService) {
-    var self = this;
+    const self = this;
+
     this.sequenceDiagramService.loadRecords().subscribe(() => {
       self.loaded = true;
     });
   }
-  
+
   openSequenceDiagram(sequenceDiagramModel: Interaction) {
     this.openedSequenceDiagram = sequenceDiagramModel;
   }

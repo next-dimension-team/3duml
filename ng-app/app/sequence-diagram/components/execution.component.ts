@@ -1,7 +1,7 @@
-import { Component, ViewChild, AfterViewInit, Input } from '@angular/core';
+import { Component, AfterViewInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'execution',
+  selector: 'app-execution',
   templateUrl: './execution.component.html'
 })
 export class ExecutionComponent implements AfterViewInit {

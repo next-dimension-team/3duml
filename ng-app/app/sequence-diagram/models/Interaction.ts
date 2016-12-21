@@ -27,7 +27,7 @@ export class Interaction extends JsonApiModel {
 
     let processLifeline = (lifeline: M.Lifeline) => {
       if (lifeline) {
-        lifelinesBuffer[parseInt(lifeline.id)] = lifeline;
+        lifelinesBuffer[parseInt(lifeline.id, 10)] = lifeline;
       }
     };
 

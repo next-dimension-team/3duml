@@ -21,10 +21,10 @@ export class Lifeline extends JsonApiModel {
     let interactions = [];
 
     let addInteraction = (interaction: M.Interaction) => {
-      if (interactions.indexOf(interaction) == -1) {
+      if (interactions.indexOf(interaction) === -1) {
         interactions.push(interaction);
-      } 
-    }
+      }
+    };
 
     for (let occurrenceSpecification of this.occurrenceSpecifications) {
       for (let message of occurrenceSpecification.sendingEventMessages) {

@@ -5,15 +5,15 @@
   <div class="sequence-diagram">
 
     <!-- Render lifelines -->
-    <lifeline
+    <app-lifeline
       *ngFor="let lifeline of lifelines"
       [left]="lifeline.left"
       [title]="lifeline.title"
       [executions]="lifeline.executions"
-    ></lifeline>
+    ></app-lifeline>
 
     <!-- Render messages -->
-    <message
+    <app-message
       *ngFor="let message of messages"
       [direction]="message.direction"
       [type]="message.type"
@@ -21,17 +21,17 @@
       [length]="message.length"
       [top]="message.top"
       [left]="message.left"
-    ></message>
-    
+    ></app-message>
+
     <!-- Render fragments -->
-    <fragment
+    <app-fragment
       *ngFor="let fragment of fragments"
       [title]="fragment.title"
       [width]="fragment.width"
       [top]="fragment.top"
       [left]="fragment.left"
       [operands]="fragment.operands"
-    ></fragment>
+    ></app-fragment>
 
   </div>
 

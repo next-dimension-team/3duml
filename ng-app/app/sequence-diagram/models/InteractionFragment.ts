@@ -22,7 +22,7 @@ export class InteractionFragment extends JsonApiModel {
    * Vráti všetky podfragmenty daného typu.
    */
   getRecursiveFragments(fragmentType: string, fragment?: M.InteractionFragment, addCurrent?: boolean): M.InteractionFragment[] {
-    
+
     // Začiatok rekurzie súčasným frgmentom
     if (fragment == null) {
       fragment = this;
@@ -32,7 +32,7 @@ export class InteractionFragment extends JsonApiModel {
     let fragments = [];
 
     // Je súčasný fragment požadovaného typu ?
-    if (addCurrent == true && fragment.fragmentable.constructor.name == fragmentType) {
+    if (addCurrent === true && fragment.fragmentable.constructor.name === fragmentType) {
       fragments.push(fragment);
     }
 
@@ -53,8 +53,7 @@ export class InteractionFragment extends JsonApiModel {
     let messages = [];
 
     // Prejdeme potomkov - fragmenty
-    for (let interactionFragment of this.getRecursiveFragments("Interaction", fragment, true)) {
-      
+    for (let interactionFragment of this.getRecursiveFragments('Interaction', fragment, true)) {
       // Do výsledného poľa správ uložíme správy, ktoré patria do súčasnej interakcie
       messages = messages.concat(interactionFragment.fragmentable.messages);
     }

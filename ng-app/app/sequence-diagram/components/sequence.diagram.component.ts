@@ -1,11 +1,14 @@
 import * as THREE from 'three';
-import { Component, ViewChild, SimpleChanges, Input, ViewChildren, QueryList, AfterViewInit, OnChanges, AfterViewChecked } from '@angular/core';
+import {
+  Component, ViewChild, SimpleChanges, Input, ViewChildren,
+  QueryList, AfterViewInit, OnChanges, AfterViewChecked
+ } from '@angular/core';
 import { SequenceDiagramService } from '../services';
 import { LayerComponent } from './layer.component';
 import { SequenceDiagramOrbitControls } from './sequence.diagram.orbit.controls';
 import * as M from '../models';
 
-var CSS3D = require('three.css')(THREE);
+const CSS3D = require('three.css')(THREE);
 
 /*
  * Class representing 3D layer
@@ -21,7 +24,7 @@ export class Layer extends CSS3D.Object {
 }
 
 @Component({
-  selector: 'sequence-diagram',
+  selector: 'app-sequence-diagram',
   templateUrl: './sequence.diagram.component.html',
   providers: [SequenceDiagramService]
 })
@@ -43,71 +46,6 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   @Input()
   public rootInteraction: M.Interaction;
 
-  ///////////////////////////////////////////
-  // TODO: tieto polia tu asi nebudu
-  /*public lifelines = [
-    {
-      left: 0,
-      title: "dáminik",
-      executions: [
-        {
-          top: 50,
-          height: 100,
-        }
-      ]
-    },
-    {
-      left: 150,
-      title: "zajo",
-      executions: [
-        {
-          top: 0,
-          height: 50,
-        },
-      ]
-    }
-  ];
-
-  public messages = [
-    {
-      direction: "left-to-right",
-      type: "async",
-      title: "ahoj()",
-      length: 500,
-      top: 280,
-      left: 500 + 60
-    }
-  ];
-
-  public fragments = [
-    {
-      title: "alt",
-      width: 320,
-      top: 90,
-      left: 20,
-      // TODO: operands
-    }
-  ];*/
-
-  public layers = [
-    /*{
-      lifelines: this.lifelines,
-      messages: this.messages,
-      fragments: this.fragments
-    },
-    {
-      lifelines: this.lifelines,
-      messages: this.messages,
-      fragments: this.fragments
-    },
-    {
-      lifelines: this.lifelines,
-      messages: this.messages,
-      fragments: this.fragments
-    }*/
-  ];
-  ///////////////////////////////////////////
-
   constructor(protected service: SequenceDiagramService) { }
 
   ngAfterViewChecked() {
@@ -128,8 +66,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
     // Pridáme nové vrstvy
     for (let layerComponent of this.layerComponents.toArray()) {
-      var element: HTMLElement = layerComponent.element.nativeElement;
-      var layer: Layer = new Layer(element, layerNum++);
+      let element: HTMLElement = layerComponent.element.nativeElement;
+      let layer: Layer = new Layer(element, layerNum++);
       this.layerElements.push(layer);
       this.scene.add(layer);
     }
@@ -154,7 +92,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
     // Create scene
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color("#fff");
+    this.scene.background = new THREE.Color('#fff');
 
     // Create camera
     this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
@@ -178,7 +116,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
     // Render scene
     this.render();
-  }  
+  }
 
   protected processExecutions(lifeline: M.Lifeline) {
 
@@ -214,7 +152,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     let lifelineModels = interaction.lifelines;
 
     // Medzery medzi lifelinami sa prispôsobujú podľa ich počtu
-    let gap = Math.floor((1200-120) / (lifelineModels.length - 1)) || 0;
+    let gap = Math.floor((1200 - 120) / (lifelineModels.length - 1)) || 0;
 
     for (let lifeline of lifelineModels) {
       lifeline.leftDistance = orderNumber++ * gap;
@@ -237,13 +175,13 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     let lifelineALeft = message.sendEvent.covered.leftDistance;
     let lifelineBLeft = message.receiveEvent.covered.leftDistance;
 
-    return (lifelineBLeft - lifelineALeft >= 0) ? "left-to-right" : "right-to-left";
+    return (lifelineBLeft - lifelineALeft >= 0) ? 'left-to-right' : 'right-to-left';
   }
 
   protected resolveMessageType(message: M.Message) {
     switch (message.sort) {
-      case "synchCall": return "sync";
-      case "asynchCall": return "async";
+      case 'synchCall': return 'sync';
+      case 'asynchCall': return 'async';
     }
   }
 
@@ -269,7 +207,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     return {
       left: left + 60 + 6,
       top: message.sendEvent.time + 50 - 15
-    }
+    };
   }
 
   protected processMessages(interaction: M.Interaction) {
@@ -305,30 +243,52 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     for (let message of interactionFragment.recursiveMessages) {
 
       // Určíme minimálny a maximálny čas
-      if (message.sendEvent.time < minimalTime || minimalTime == null) minimalTime = message.sendEvent.time;
-      if (message.receiveEvent.time < minimalTime || minimalTime == null) minimalTime = message.receiveEvent.time;
-      if (message.sendEvent.time > maximalTime || maximalTime == null) maximalTime = message.sendEvent.time;
-      if (message.receiveEvent.time > maximalTime || maximalTime == null) maximalTime = message.receiveEvent.time;
+      if (message.sendEvent.time < minimalTime || minimalTime == null) {
+        minimalTime = message.sendEvent.time;
+      }
+
+      if (message.receiveEvent.time < minimalTime || minimalTime == null) {
+        minimalTime = message.receiveEvent.time;
+      }
+
+      if (message.sendEvent.time > maximalTime || maximalTime == null) {
+        maximalTime = message.sendEvent.time;
+      }
+
+      if (message.receiveEvent.time > maximalTime || maximalTime == null) {
+        maximalTime = message.receiveEvent.time;
+      }
 
       // Určíme ľavú a pravú hraincu
       let lifelineALeft = message.sendEvent.covered.leftDistance;
       let lifelineBLeft = message.receiveEvent.covered.leftDistance;
 
-      if (lifelineALeft < mostLeft || mostLeft == null) mostLeft = lifelineALeft;
-      if (lifelineBLeft < mostLeft || mostLeft == null) mostLeft = lifelineBLeft;
-      if (lifelineALeft > mostRight || mostRight == null) mostRight = lifelineALeft;
-      if (lifelineBLeft > mostRight || mostRight == null) mostRight = lifelineBLeft;
+      if (lifelineALeft < mostLeft || mostLeft == null) {
+        mostLeft = lifelineALeft;
+      }
+
+      if (lifelineBLeft < mostLeft || mostLeft == null) {
+        mostLeft = lifelineBLeft;
+      }
+
+      if (lifelineALeft > mostRight || mostRight == null) {
+        mostRight = lifelineALeft;
+      }
+
+      if (lifelineBLeft > mostRight || mostRight == null) {
+        mostRight = lifelineBLeft;
+      }
     }
 
     // Kontroly
     if (minimalTime == null) {
-      console.error("Could not determine minimal time for combined fragment", interactionFragment);
+      console.error('Could not determine minimal time for combined fragment', interactionFragment);
     }
     if (maximalTime == null) {
-      console.error("Could not determine maximal time for combined fragment", interactionFragment);
+      console.error('Could not determine maximal time for combined fragment', interactionFragment);
     }
     if (mostLeft == null || mostRight == null) {
-      console.error("Could not determine width for combined fragment", interactionFragment);
+      console.error('Could not determine width for combined fragment', interactionFragment);
     }
 
     // Vytvoríme výsledný objekt
@@ -339,13 +299,13 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
       maximalTime: maximalTime + 50,
       mostLeft: mostLeft,
       mostRight: mostRight + 120
-    }
+    };
 
     // TODO: toto je asi nepotrebné
     // Prejdeme všetky podfragmenty
     /*for (let childFragment of interactionFragment.children) {
       let childEnvelope = this.envelopeFragment(childFragment);
-      
+
       if (childEnvelope.minimalTime < envelope.minimalTime) envelope.minimalTime = childEnvelope.minimalTime;
       if (childEnvelope.maximalTime > envelope.maximalTime) envelope.maximalTime = childEnvelope.maximalTime;
       if (childEnvelope.mostLeft < envelope.mostLeft) envelope.mostLeft = childEnvelope.mostLeft;
@@ -357,11 +317,11 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     // TODO: tu to treba implementovat "inteligentne" aby vedel v akom poradi
     // idu interakcie a podfragmenty a nasledne urci ci ma davat padding zhora/zdola/oboje
     // Pozn. zlava a zprava bdue padding vzdy
-    if (interactionFragment.getRecursiveFragments("CombinedFragment").length > 0) {
+    if (interactionFragment.getRecursiveFragments('CombinedFragment').length > 0) {
 
       // TODO: tieto dve tu nebudu vzdy, len niekedy
       envelope.minimalTime -= fragmentPadding;
-      //envelope.maximalTime += fragmentPadding;
+      // envelope.maximalTime += fragmentPadding;
 
       // TODO: toto tu bdue vzdy
       envelope.mostLeft -= fragmentPadding;
@@ -374,8 +334,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   protected processOperands(combinedFragment: M.CombinedFragment) {
 
     // TODO: konštanty - vertikálna medzera pred začiatkom a za koncom execution bloku
-    let topPadding = 40;
-    let bottomPadding = 40;
+    const topPadding = 40;
+    const bottomPadding = 40;
 
     // Vytrovíme výsledné pole operandov
     let operands = [];
@@ -384,7 +344,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     for (let childFragment of combinedFragment.fragment.children) {
 
       // Je potomok typu InteractionOperand ?
-      if (childFragment.fragmentable.constructor.name == "InteractionOperand") {
+      if (childFragment.fragmentable.constructor.name === 'InteractionOperand') {
         let interactionOperand = childFragment.fragmentable;
         let envelope = this.envelopeFragment(childFragment);
 
@@ -414,13 +374,13 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
     // TODO: konštanty - vertikálna medzera pred začiatkom a za koncom execution bloku
     let verticalPadding = 40;   //  |
-    let horizontalPadding = 20; // ---
+    // let horizontalPadding = 20; // ---
 
     // Vytrovíme výsledné pole fragmentov
     let fragments = [];
 
     // Prejdeme všetkých potomkov
-    for (let childFragment of interaction.fragment.getRecursiveFragments("CombinedFragment")) {
+    for (let childFragment of interaction.fragment.getRecursiveFragments('CombinedFragment')) {
 
       let combinedFragment = childFragment.fragmentable;
       let envelope = this.envelopeFragment(childFragment);
@@ -446,7 +406,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   protected refreshRootInteraction() {
 
     // TODO: len pomocne
-    console.info("The root interaction is ", this.rootInteraction);
+    console.log('The root interaction is ', this.rootInteraction);
 
     // Vykreslíme tri layery
     /*let lifelines = this.processLifelines(this.rootInteraction);
@@ -476,7 +436,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.layers = [];
 
     // Render root interaction
-    //for (let i = 0; i < 3; i++)
+    // for (let i = 0; i < 3; i++)
     this.layers.push({
       lifelines: this.processLifelines(this.rootInteraction),
       messages: this.processMessages(this.rootInteraction),
@@ -485,10 +445,12 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
     // TODO: pomocné
     // Render all interactions
-    for (let interactionFragment of this.rootInteraction.fragment.getRecursiveFragments("Interaction")) {
+    for (let interactionFragment of this.rootInteraction.fragment.getRecursiveFragments('Interaction')) {
       let interaction = interactionFragment.fragmentable;
-      if (interaction != this.rootInteraction) {
-        if (--limit < 0) break;
+      if (interaction !== this.rootInteraction) {
+        if (--limit < 0) {
+          break;
+        }
         this.layers.push({
           lifelines: this.processLifelines(interaction),
           messages: this.processMessages(interaction),
@@ -497,8 +459,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
       }
     }
 
-    /*let secondInteraction = this.service.getRecord(M.Interaction, "2");
-    let thirdInteraction = this.service.getRecord(M.Interaction, "6");
+    /*let secondInteraction = this.service.getRecord(M.Interaction, '2');
+    let thirdInteraction = this.service.getRecord(M.Interaction, '6');
 
     this.layers = [
       {
@@ -524,7 +486,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   // Render loop
   render() {
-    var self = this;
+    const self = this;
+
     requestAnimationFrame(function () {
       self.render();
     });
