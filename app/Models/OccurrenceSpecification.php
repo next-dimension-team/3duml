@@ -15,7 +15,7 @@ class OccurrenceSpecification extends Model
 
     public function covered()
     {
-        return $this->belongsTo(Lifeline::class);
+        return $this->belongsTo(Lifeline::class, 'lifeline_id');
     }
 
     public function sendingEventMessages()

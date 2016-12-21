@@ -57,6 +57,14 @@ class CreateForeignKeys extends Migration
                 ->onDelete('restrict')
                 ->onUpdate('restrict');
         });
+
+        Schema::table('lifelines', function (Blueprint $table) {
+            $table->foreign('layer_id')
+                ->references('id')
+                ->on('layers')
+                ->onDelete('restrict')
+                ->onUpdate('restrict');
+        });
     }
 
     public function down()
@@ -78,6 +86,10 @@ class CreateForeignKeys extends Migration
 
         Schema::table('occurrence_specifications', function (Blueprint $table) {
             $table->dropForeign(['lifeline_id']);
+        });
+
+        Schema::table('lifelines', function (Blueprint $table) {
+            $table->dropForeign(['layer_id']);
         });
     }
 }

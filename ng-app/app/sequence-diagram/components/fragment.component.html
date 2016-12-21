@@ -1,0 +1,17 @@
+<!-- Render fragment -->
+<div
+  class="fragment"
+  [style.width]="width + 'px'"
+  [style.left]="left + 'px'"
+  [style.top]="top + 'px'"
+>
+  <div class="title">{{title}}</div>
+
+  <!-- Render operands -->
+  <app-operand
+    *ngFor="let operand of operands"
+    [height]="operand.height"
+    [constraint]="operand.constraint"
+  ></app-operand>
+
+</div>

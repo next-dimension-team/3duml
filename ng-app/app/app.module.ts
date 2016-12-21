@@ -5,17 +5,23 @@ import { HttpModule } from '@angular/http';
 import { JsonApiModule } from 'angular2-jsonapi';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
 
-/*
- * Platform and Environment providers/directives/pipes
- */
+// Platform and Environment providers/directives/pipes
 import { ENV_PROVIDERS } from './environment';
-// App is our top level component
+
+// App components
 import { AppComponent } from './app.component';
+import { LifelineComponent } from './sequence-diagram/components/lifeline.component';
+import { ExecutionComponent } from './sequence-diagram/components/execution.component';
+import { MessageComponent } from './sequence-diagram/components/message.component';
+import { FragmentComponent } from './sequence-diagram/components/fragment.component';
+import { OperandComponent } from './sequence-diagram/components/operand.component';
+import { LayerComponent } from './sequence-diagram/components/layer.component';
+
 // Component for menu
-import { MenuComponent } from './menu.component';
-import { SequenceDiagramComponent } from './sequence.diagram.component';
+import { MenuComponent } from './menu/components/menu.component';
+import { SequenceDiagramComponent } from './sequence-diagram/components/sequence.diagram.component';
 import { AppState, InternalStateType } from './app.service';
-import { Datastore } from './Datastore';
+import { Datastore } from './datastore';
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -37,7 +43,13 @@ type StoreType = {
   declarations: [
     AppComponent,
     MenuComponent,
-    SequenceDiagramComponent
+    SequenceDiagramComponent,
+    LifelineComponent,
+    ExecutionComponent,
+    MessageComponent,
+    FragmentComponent,
+    OperandComponent,
+    LayerComponent
   ],
   imports: [ // import Angular's modules
     BrowserModule,

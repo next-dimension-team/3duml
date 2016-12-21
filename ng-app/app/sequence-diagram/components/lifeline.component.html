@@ -1,0 +1,28 @@
+<!-- Render lifeline -->
+<div class="lifeline" [style.left]="left + 'px'">
+
+  <div
+    class="title"
+    [class.editingTitle]="editingTitle"
+    (click)="editingTitle=true;titleInput.focus();">
+    <span>{{title}}</span>
+    <input
+      #titleInput
+      type="text"
+      (click)="titleInput.focus();"
+      (keydown)="onKeyDown($event)"
+      [(ngModel)]="title">
+  </div>
+
+  <div class="line"></div>
+  <div class="executions">
+
+    <!-- Render executions -->
+    <app-execution
+      *ngFor="let execution of executions"
+      [height]="execution.height"
+      [top]="execution.top"
+    ></app-execution>
+
+  </div>
+</div>

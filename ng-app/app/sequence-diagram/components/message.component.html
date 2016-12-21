@@ -1,0 +1,46 @@
+<!-- Render message -->
+<div
+  class="message"
+  [class.left-to-right]="direction=='left-to-right'"
+  [class.right-to-left]="direction=='right-to-left'"
+  [class.sync]="type=='sync'"
+  [class.async]="type=='async'"
+  [style.width]="length + 'px'"
+  [style.top]="top + 'px'"
+  [style.left]="left + 'px'"
+>
+  <div class="title">{{title}}</div>
+  <div class="line">
+
+    <!-- Left to Right -->
+    <svg
+      *ngIf="direction=='left-to-right'"
+      width="15px"
+      height="11px"
+      viewBox="0 0 15 11"
+    >
+      <polyline
+        fill="none"
+        stroke="#000"
+        stroke-width="1"
+        points="3,0 15,5.5 3,11"
+      ></polyline>
+    </svg>
+
+    <!-- Right to Left -->
+    <svg
+      *ngIf="direction=='right-to-left'"
+      width="15px"
+      height="11px"
+      viewBox="0 0 15 11"
+    >
+      <polyline
+        fill="none"
+        stroke="#000"
+        stroke-width="1"
+        points="12,0 0,5.5 12,11"
+      ></polyline>
+    </svg>
+
+  </div>
+</div>

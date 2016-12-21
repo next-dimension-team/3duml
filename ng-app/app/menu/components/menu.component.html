@@ -1,0 +1,21 @@
+<ul class="sidebar-nav">
+
+	<li class="header main">3D UML</li>
+
+	<li class="header">Sequence Diagrams</li>
+	<li
+		*ngFor="let sequenceDiagram of sequenceDiagrams"
+		[class.active]="sequenceDiagram==openedSequenceDiagram"
+	>
+		<a (click)=openSequenceDiagramHandler(sequenceDiagram)>{{sequenceDiagram.name}}</a>
+	</li>
+
+	<li class="header">Other</li>
+	<li>
+		<a (click)="createDiagram()">Create Diagram</a>
+	</li>
+
+	<li class="header">Instructions</li>
+	<li class="info">Edit lifeline title by double-clicking on it, then submit by pressing Enter key.</li>
+
+</ul>

@@ -51,4 +51,8 @@ Route::group(['namespace' => 'Api'], function () {
     Route::resource('execution-specifications', 'ExecutionSpecificationController', [
         'except' => ['create', 'edit'],
     ]);
+
+    Route::resource('layers', 'LayerController', [
+        'except' => ['create', 'edit'],
+    ]);
 });

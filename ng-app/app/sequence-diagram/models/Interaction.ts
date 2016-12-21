@@ -1,6 +1,5 @@
-import { JsonApiModelConfig, JsonApiModel, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
-import { InteractionFragment } from './InteractionFragment';
-import { Message } from './Message';
+import { JsonApiModel, JsonApiModelConfig, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
+import * as M from './';
 
 @JsonApiModelConfig({
     type: 'interactions'
@@ -11,9 +10,50 @@ export class Interaction extends JsonApiModel {
   name: string;
 
   @BelongsTo()
-  fragment: InteractionFragment;
+  fragment: M.InteractionFragment;
 
   @HasMany()
-  messages: Message[];
+  messages: M.Message[];
+
+  get recursiveMessages(): M.Message[] {
+    return this.fragment.recursiveMessages;
+  }
+
+  /*
+   * Implementácia virtuálneho vzťahu medzi interakciou a lifelinami
+   */
+  get lifelines(): M.Lifeline[] {
+    let lifelinesBuffer = [];
+
+    let processLifeline = (lifeline: M.Lifeline) => {
+      if (lifeline) {
+        lifelinesBuffer[parseInt(lifeline.id, 10)] = lifeline;
+      }
+    };
+
+    // Prejdeme všetky messages v danej interakcii
+    for (let message of this.messages) {
+      let messageSendEvent = message.sendEvent;
+      let messageReceiveEvent = message.receiveEvent;
+
+      if (messageSendEvent) {
+        processLifeline(messageSendEvent.covered);
+      }
+
+      if (messageReceiveEvent) {
+        processLifeline(messageReceiveEvent.covered);
+      }
+    }
+
+    let lifelines = [];
+
+    for (let lifeline of lifelinesBuffer) {
+      if (lifeline) {
+        lifelines.push(lifeline);
+      }
+    }
+
+    return lifelines;
+  }
 
 }

@@ -8,6 +8,7 @@ use App\Transformers\InteractionFragmentTransformer;
 use App\Transformers\InteractionOperandTransformer;
 use App\Transformers\CombinedFragmentTransformer;
 use App\Transformers\ExecutionSpecificationTransformer;
+use App\Transformers\LayerTransformer;
 
 return [
     LifelineTransformer::class,
@@ -18,4 +19,5 @@ return [
     InteractionOperandTransformer::class,
     CombinedFragmentTransformer::class,
     ExecutionSpecificationTransformer::class,
+    LayerTransformer::class,
 ];

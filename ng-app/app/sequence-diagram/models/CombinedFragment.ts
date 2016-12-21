@@ -1,4 +1,4 @@
-import { JsonApiModelConfig, JsonApiModel, Attribute, BelongsTo } from 'angular2-jsonapi';
+import { JsonApiModel, JsonApiModelConfig, Attribute, BelongsTo } from 'angular2-jsonapi';
 import { InteractionFragment } from './InteractionFragment';
 
 @JsonApiModelConfig({
