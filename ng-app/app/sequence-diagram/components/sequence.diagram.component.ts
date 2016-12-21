@@ -31,7 +31,6 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   @ViewChild('scene') sceneDiv;
 
   // http://stackoverflow.com/questions/40819739/angular-2-template-reference-variable-with-ngfor
-  // http://stackoverflow.com/questions/32693061/angular-2-typescript-get-hold-of-an-element-in-the-template/35209681#35209681
   @ViewChildren('layerComponents') layerComponents: QueryList<LayerComponent>;
 
   protected scene: THREE.Scene;
@@ -110,7 +109,9 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.controls.rotateSpeed = 0.5;
 
     // TODO: target by mal byt 200px za aktualnym platnom
-    // this.controls.target = new THREE.Vector3(layer.position.x, layer.position.y, layer.position.z -200);
+    // this.controls.target = new THREE.Vector3(
+    //     layer.position.x, layer.position.y, layer.position.z -200
+    // );
     // docasna implementacia pre pracu s exampleom
     this.controls.target = new THREE.Vector3(0, 0, -200);
 
@@ -180,8 +181,9 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   protected resolveMessageType(message: M.Message) {
     switch (message.sort) {
-      case 'synchCall': return 'sync';
       case 'asynchCall': return 'async';
+      case 'synchCall': return 'sync';
+      default: return 'unknown';
     }
   }
 
@@ -306,10 +308,18 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     /*for (let childFragment of interactionFragment.children) {
       let childEnvelope = this.envelopeFragment(childFragment);
 
-      if (childEnvelope.minimalTime < envelope.minimalTime) envelope.minimalTime = childEnvelope.minimalTime;
-      if (childEnvelope.maximalTime > envelope.maximalTime) envelope.maximalTime = childEnvelope.maximalTime;
-      if (childEnvelope.mostLeft < envelope.mostLeft) envelope.mostLeft = childEnvelope.mostLeft;
-      if (childEnvelope.mostRight > envelope.mostRight) envelope.mostRight = childEnvelope.mostRight;
+      if (childEnvelope.minimalTime < envelope.minimalTime) {
+        envelope.minimalTime = childEnvelope.minimalTime;
+      }
+      if (childEnvelope.maximalTime > envelope.maximalTime) {
+        envelope.maximalTime = childEnvelope.maximalTime;
+      }
+      if (childEnvelope.mostLeft < envelope.mostLeft) {
+        envelope.mostLeft = childEnvelope.mostLeft;
+      }
+      if (childEnvelope.mostRight > envelope.mostRight) {
+        envelope.mostRight = childEnvelope.mostRight;
+      }
     }*/
 
     let fragmentPadding = 20;
@@ -445,7 +455,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
     // TODO: pomocné
     // Render all interactions
-    for (let interactionFragment of this.rootInteraction.fragment.getRecursiveFragments('Interaction')) {
+    for (let interactionFragment of
+      this.rootInteraction.fragment.getRecursiveFragments('Interaction')) {
       let interaction = interactionFragment.fragmentable;
       if (interaction !== this.rootInteraction) {
         if (--limit < 0) {

@@ -21,7 +21,10 @@ export class SequenceDiagramOrbitControls extends OrbitControls {
         this.mouseScrollingSpeed = mouseScrollingSpeed;
 
         this.enableZoom = false;
-        this.domElement.addEventListener('wheel', function (e) { this.handleMouseWheel(e); }.bind(this), false);
+
+        this.domElement.addEventListener('wheel', function (e) {
+          this.handleMouseWheel(e);
+        }.bind(this), false);
     }
 
     handleMouseWheel(event) {
