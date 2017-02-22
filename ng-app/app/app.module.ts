@@ -23,6 +23,9 @@ import { SequenceDiagramComponent } from './sequence-diagram/components/sequence
 import { AppState, InternalStateType } from './app.service';
 import { Datastore } from './datastore';
 
+// Global styles
+import '../styles/styles.scss';
+
 // Application wide providers
 const APP_PROVIDERS = [
   AppState,
