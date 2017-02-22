@@ -63,9 +63,13 @@ type StoreType = {
   ]
 })
 export class AppModule {
-  constructor(public appRef: ApplicationRef, public appState: AppState) { }
 
-  hmrOnInit(store: StoreType) {
+  constructor(
+    public appRef: ApplicationRef,
+    public appState: AppState
+  ) {}
+
+  public hmrOnInit(store: StoreType) {
     if (!store || !store.state) {
       return;
     }
@@ -83,20 +87,20 @@ export class AppModule {
     delete store.restoreInputValues;
   }
 
-  hmrOnDestroy(store: StoreType) {
-    const cmpLocation = this.appRef.components.map(cmp => cmp.location.nativeElement);
+  public hmrOnDestroy(store: StoreType) {
+    const cmpLocation = this.appRef.components.map((cmp) => cmp.location.nativeElement);
     // save state
     const state = this.appState._state;
     store.state = state;
     // recreate root elements
     store.disposeOldHosts = createNewHosts(cmpLocation);
     // save input values
-    store.restoreInputValues = createInputTransfer();
+    store.restoreInputValues  = createInputTransfer();
     // remove styles
     removeNgStyles();
   }
 
-  hmrAfterDestroy(store: StoreType) {
+  public hmrAfterDestroy(store: StoreType) {
     // display new elements
     store.disposeOldHosts();
     delete store.disposeOldHosts;

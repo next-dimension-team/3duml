@@ -4,6 +4,7 @@
 
 const helpers = require('./helpers');
 const webpackMerge = require('webpack-merge'); // used to merge webpack configs
+const webpackMergeDll = webpackMerge.strategy({plugins: 'replace'});
 const commonConfig = require('./webpack.common.js'); // the settings that are common to prod and dev
 
 /**
@@ -26,6 +27,9 @@ const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
   ENV: ENV,
   HMR: HMR
 });
+
+
+const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
 
 /**
  * Webpack configuration
@@ -71,7 +75,7 @@ module.exports = function (options) {
        *
        * See: http://webpack.github.io/docs/configuration.html#output-sourcemapfilename
        */
-      sourceMapFilename: '[name].map',
+      sourceMapFilename: '[file].map',
 
       /** The filename of non-entry chunks as relative path
        * inside the output.path directory.
@@ -82,6 +86,48 @@ module.exports = function (options) {
 
       library: 'ac_[name]',
       libraryTarget: 'var',
+    },
+
+    module: {
+
+      rules: [
+       {
+         test: /\.ts$/,
+         use: [
+           {
+             loader: 'tslint-loader',
+             options: {
+               configFile: 'tslint.json'
+             }
+           }
+         ],
+         exclude: [/\.(spec|e2e)\.ts$/]
+       },
+
+        /*
+         * css loader support for *.css files (styles directory only)
+         * Loads external css styles into the DOM, supports HMR
+         *
+         */
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader'],
+          include: [helpers.root('ng-app', 'styles')]
+        },
+
+        /*
+         * sass loader support for *.scss files (styles directory only)
+         * Loads external sass styles into the DOM, supports HMR
+         *
+         */
+        {
+          test: /\.scss$/,
+          use: ['style-loader', 'css-loader', 'sass-loader'],
+          include: [helpers.root('ng-app', 'styles')]
+        },
+
+      ]
+
     },
 
     plugins: [
@@ -106,13 +152,49 @@ module.exports = function (options) {
         }
       }),
 
+      new DllBundlesPlugin({
+        bundles: {
+          polyfills: [
+            'core-js',
+            {
+              name: 'zone.js',
+              path: 'zone.js/dist/zone.js'
+            },
+            {
+              name: 'zone.js',
+              path: 'zone.js/dist/long-stack-trace-zone.js'
+            },
+          ],
+          vendor: [
+            '@angular/platform-browser',
+            '@angular/platform-browser-dynamic',
+            '@angular/core',
+            '@angular/common',
+            '@angular/forms',
+            '@angular/http',
+            '@angular/router',
+            '@angularclass/hmr',
+            'rxjs',
+            'three',
+            'three.css',
+            'three-orbit-controls',
+            'angular2-jsonapi'
+          ]
+        },
+        dllDir: helpers.root('public/build/dll'),
+        webpackConfig: webpackMergeDll(commonConfig({env: ENV}), {
+          devtool: 'cheap-module-source-map',
+          plugins: []
+        })
+      }),
+
       /**
        * Plugin: NamedModulesPlugin (experimental)
        * Description: Uses file names as module name.
        *
        * See: https://github.com/webpack/webpack/commit/a04ffb928365b19feb75087c63f13cadfc08e1eb
        */
-      new NamedModulesPlugin(),
+      // new NamedModulesPlugin(),
 
       /**
        * Plugin LoaderOptionsPlugin (experimental)
@@ -122,18 +204,6 @@ module.exports = function (options) {
       new LoaderOptionsPlugin({
         debug: true,
         options: {
-
-          /**
-           * Static analysis linter for TypeScript advanced options configuration
-           * Description: An extensible linter for the TypeScript language.
-           *
-           * See: https://github.com/wbuchwalter/tslint-loader
-           */
-          tslint: {
-            emitErrors: false,
-            failOnHint: false,
-            resourcePath: 'ng-app'
-          },
 
         }
       }),
@@ -155,8 +225,7 @@ module.exports = function (options) {
       watchOptions: {
         aggregateTimeout: 300,
         poll: 1000
-      },
-      outputPath: helpers.root('public/build')
+      }
     },
 
     /*

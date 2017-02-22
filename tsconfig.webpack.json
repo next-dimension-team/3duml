@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "commonjs",
+    "module": "es2015",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -12,28 +12,32 @@
     "importHelpers": true,
     "strictNullChecks": false,
     "lib": [
-      "dom",
-      "es6"
+      "es2015",
+      "dom"
     ],
     "typeRoots": [
       "node_modules/@types"
     ],
     "types": [
       "hammerjs",
-      "jasmine",
-      "node",
-      "source-map",
-      "uglify-js",
-      "webpack"
+      "node"
     ]
   },
+  "include": [
+    "ng-app/**/*"
+  ],
   "exclude": [
     "node_modules",
-    "public/build"
+    "ng-app/**/*.spec.ts",
+    "ng-app/**/*.e2e.ts"
   ],
   "awesomeTypescriptLoaderOptions": {
     "forkChecker": true,
     "useWebpackText": true
+  },
+  "angularCompilerOptions": {
+    "genDir": "./public/build",
+    "skipMetadataEmit": true
   },
   "compileOnSave": false,
   "buildOnSave": false,
