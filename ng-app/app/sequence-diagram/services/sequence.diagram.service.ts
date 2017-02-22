@@ -155,7 +155,7 @@ export class SequenceDiagramService {
     let sequenceDiagrams = [];
 
     for (let interaction of this.datastore.peekAll(M.Interaction)) {
-      if (interaction.fragment.parent == null) {
+      if (interaction.fragment && interaction.fragment.parent == null) {
         sequenceDiagrams.push(interaction);
       }
     }
