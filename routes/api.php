@@ -19,40 +19,18 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 */
 
-Route::group(['namespace' => 'Api'], function () {
-    Route::resource('lifelines', 'LifelineController', [
-        'except' => ['create', 'edit'],
-    ]);
-
-    Route::resource('messages', 'MessageController', [
-        'except' => ['create', 'edit'],
-    ]);
-
-    Route::resource('occurrence-specifications', 'OccurrenceSpecificationController', [
-        'except' => ['create', 'edit'],
-    ]);
-
-    Route::resource('interactions', 'InteractionController', [
-        'except' => ['create', 'edit'],
-    ]);
-
-    Route::resource('interaction-fragments', 'InteractionFragmentController', [
-        'except' => ['create', 'edit'],
-    ]);
-
-    Route::resource('interaction-operands', 'InteractionOperandController', [
-        'except' => ['create', 'edit'],
-    ]);
-
-    Route::resource('combined-fragments', 'CombinedFragmentController', [
-        'except' => ['create', 'edit'],
-    ]);
-
-    Route::resource('execution-specifications', 'ExecutionSpecificationController', [
-        'except' => ['create', 'edit'],
-    ]);
-
-    Route::resource('layers', 'LayerController', [
-        'except' => ['create', 'edit'],
-    ]);
-});
+Route::prefix('v1')
+     ->middleware('json-api:v1')
+     ->namespace('Api')
+     ->as('api-v1::')
+     ->group(function() {
+         JsonApi::resource('lifelines');
+         JsonApi::resource('messages');
+         JsonApi::resource('occurrence-specifications');
+         JsonApi::resource('interactions');
+         JsonApi::resource('interaction-fragments');
+         JsonApi::resource('interaction-operands');
+         JsonApi::resource('combined-fragments');
+         JsonApi::resource('execution-specifications');
+         JsonApi::resource('layers');
+     });
