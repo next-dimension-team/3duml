@@ -167,8 +167,8 @@ return [
          * Package Service Providers...
          */
         // Baum\Providers\BaumServiceProvider::class,
-        App\Providers\JSONAPIServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
+        CloudCreativity\LaravelJsonApi\ServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -227,6 +227,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+
+        'JsonApi' => CloudCreativity\LaravelJsonApi\Facade::class,
 
     ],
 
