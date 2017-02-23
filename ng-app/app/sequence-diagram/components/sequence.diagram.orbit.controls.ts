@@ -1,4 +1,5 @@
-import { OrbitControls } from 'three';
+import * as THREE from 'three';
+let OrbitControls: typeof THREE.OrbitControls = require('three-orbit-controls')(THREE);
 
 /*
  * Class for controling camera of sequence diagram

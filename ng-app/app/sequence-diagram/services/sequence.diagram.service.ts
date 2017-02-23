@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Injectable } from '@angular/core';
 import { Datastore } from '../../datastore';
 import { JsonApiModel, ModelType } from 'angular2-jsonapi';

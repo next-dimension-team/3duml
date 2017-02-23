@@ -7,6 +7,12 @@
         <title>3D UML</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css" />
         <link rel="stylesheet" href="/styles.css" />
+        @foreach (Symfony\Component\Finder\Finder::create()
+            ->files()
+            ->name('*.dll.js')
+            ->in(public_path('build/dll')) as $file)
+            <script type="text/javascript" src="/build/dll/{!! $file->getFilename() !!}"></script>
+        @endforeach
         <script type="text/javascript" src="{!! mix('polyfills.bundle.js', 'build') !!}"></script>
         <script type="text/javascript" src="{!! mix('vendor.bundle.js', 'build') !!}"></script>
         <script type="text/javascript" src="{!! mix('main.bundle.js', 'build') !!}"></script>

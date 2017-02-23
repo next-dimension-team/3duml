@@ -8,10 +8,15 @@ import { LayerComponent } from './layer.component';
 import { SequenceDiagramOrbitControls } from './sequence.diagram.orbit.controls';
 import * as M from '../models';
 
+let { Object: CSS3DObject, Renderer: CSS3DRenderer } : {
+    Object: typeof THREE.CSS3DObject,
+    Renderer: typeof THREE.CSS3DRenderer
+} = require('three.css')(THREE);
+
 /*
  * Class representing 3D layer
  */
-export class Layer extends THREE.CSS3DObject {
+export class Layer extends CSS3DObject {
   constructor(element: HTMLElement, depth: number) {
     // Create CSS3DObject object
     super(element);
@@ -97,7 +102,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 
     // Create renderer
-    this.renderer = new THREE.CSS3DRenderer();
+    this.renderer = new CSS3DRenderer();
     this.renderer.setSize(width, height);
     this.sceneDiv.nativeElement.appendChild(this.renderer.domElement);
 
