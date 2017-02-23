@@ -16,6 +16,12 @@ export class Message extends JsonApiModel {
   @Attribute()
   sort: string;
 
+  @Attribute()
+  created_at: Date;
+
+  @Attribute()
+  updated_at: Date;
+
   @BelongsTo()
   interaction: Interaction;
 

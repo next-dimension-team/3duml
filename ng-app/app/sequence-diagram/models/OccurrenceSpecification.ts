@@ -9,6 +9,12 @@ export class OccurrenceSpecification extends JsonApiModel {
   @Attribute()
   time: number;
 
+  @Attribute()
+  created_at: Date;
+
+  @Attribute()
+  updated_at: Date;
+
   @HasMany()
   sendingEventMessages: M.Message[];
 

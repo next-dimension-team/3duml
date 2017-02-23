@@ -8,7 +8,10 @@ import { OccurrenceSpecification } from './OccurrenceSpecification';
 export class ExecutionSpecification extends JsonApiModel {
 
   @Attribute()
-  name: string;
+  created_at: Date;
+
+  @Attribute()
+  updated_at: Date;
 
   @BelongsTo()
   fragment: InteractionFragment;

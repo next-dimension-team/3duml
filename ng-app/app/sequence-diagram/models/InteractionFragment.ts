@@ -9,6 +9,12 @@ export class InteractionFragment extends JsonApiModel {
   @Attribute()
   name: string;
 
+  @Attribute()
+  created_at: Date;
+
+  @Attribute()
+  updated_at: Date;
+
   @BelongsTo()
   fragmentable: any;
 

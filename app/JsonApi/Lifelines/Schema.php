@@ -21,6 +21,17 @@ class Schema extends EloquentSchema
     ];
 
     /**
+     * Whether resource member names are hyphenated
+     *
+     * The JSON API spec recommends using hyphens for resource member names, so this package
+     * uses this as the default. If you do not want to follow the recommendation, set this
+     * to `false`.
+     *
+     * @var bool
+     */
+    protected $hyphenated = false;
+
+    /**
      * @return string
      */
     public function getResourceType()
@@ -41,7 +52,7 @@ class Schema extends EloquentSchema
         }
 
         return [
-            'occurrence-specifications' => [
+            'occurrenceSpecifications' => [
                 self::SHOW_SELF => true,
                 self::SHOW_RELATED => true,
                 self::DATA => $resource->occurrenceSpecifications,

@@ -12,6 +12,12 @@ export class InteractionOperand extends JsonApiModel {
   @Attribute()
   constraint: string;
 
+  @Attribute()
+  created_at: Date;
+
+  @Attribute()
+  updated_at: Date;
+
   @BelongsTo()
   fragment: InteractionFragment;
 

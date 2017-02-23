@@ -22,6 +22,17 @@ class Schema extends EloquentSchema
     ];
 
     /**
+     * Whether resource member names are hyphenated
+     *
+     * The JSON API spec recommends using hyphens for resource member names, so this package
+     * uses this as the default. If you do not want to follow the recommendation, set this
+     * to `false`.
+     *
+     * @var bool
+     */
+    protected $hyphenated = false;
+
+    /**
      * @return string
      */
     public function getResourceType()
@@ -49,17 +60,17 @@ class Schema extends EloquentSchema
                     ? $resource->interaction
                     : $this->createBelongsToIdentity($resource, 'interaction'),
             ],
-            'send-event' => [
+            'sendEvent' => [
                 self::SHOW_SELF => true,
                 self::SHOW_RELATED => true,
-                self::DATA => isset($includeRelationships['send-event'])
+                self::DATA => isset($includeRelationships['sendEvent'])
                     ? $resource->sendEvent
                     : $this->createBelongsToIdentity($resource, 'sendEvent'),
             ],
-            'receive-event' => [
+            'receiveEvent' => [
                 self::SHOW_SELF => true,
                 self::SHOW_RELATED => true,
-                self::DATA => isset($includeRelationships['receive-event'])
+                self::DATA => isset($includeRelationships['receiveEvent'])
                     ? $resource->receiveEvent
                     : $this->createBelongsToIdentity($resource, 'receiveEvent'),
             ],
