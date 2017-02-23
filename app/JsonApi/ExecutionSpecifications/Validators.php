@@ -7,7 +7,6 @@ use CloudCreativity\LaravelJsonApi\Validators\AbstractValidatorProvider;
 
 class Validators extends AbstractValidatorProvider
 {
-
     /**
      * Get the validation rules for the resource attributes.
      *
@@ -38,5 +37,4 @@ class Validators extends AbstractValidatorProvider
     {
         //
     }
-
 }
