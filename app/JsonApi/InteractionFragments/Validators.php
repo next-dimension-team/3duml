@@ -37,4 +37,14 @@ class Validators extends AbstractValidatorProvider
     {
         //
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function filterRules($resourceType)
+    {
+        return [
+            'roots' => 'boolean',
+        ];
+    }
 }

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {
   Component, ViewChild, SimpleChanges, Input, ViewChildren,
-  QueryList, AfterViewInit, OnChanges, AfterViewChecked
+  QueryList, AfterViewInit, OnChanges, AfterViewChecked, NgZone
  } from '@angular/core';
 import { SequenceDiagramService } from '../services';
 import { LayerComponent } from './layer.component';
@@ -50,7 +50,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   public layers = [];
 
-  constructor(protected service: SequenceDiagramService) { }
+  constructor(private _ngZone: NgZone, protected service: SequenceDiagramService) { }
 
   ngAfterViewChecked() {
     if (this.diagramChanged) {
@@ -121,7 +121,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.controls.target = new THREE.Vector3(0, 0, -200);
 
     // Render scene
-    this.render();
+    this._ngZone.runOutsideAngular(() => this.render());
   }
 
   protected processExecutions(lifeline: M.Lifeline) {
@@ -502,11 +502,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   // Render loop
   render() {
-    const self = this;
-
-    requestAnimationFrame(function () {
-      self.render();
-    });
+    requestAnimationFrame(() => this.render());
 
     this.renderer.render(this.scene, this.camera);
   }

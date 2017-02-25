@@ -9,7 +9,6 @@ use CloudCreativity\LaravelJsonApi\Search\SearchAll;
 
 final class InteractionsController extends EloquentController
 {
-
     /**
      * InteractionsController constructor.
      *
@@ -28,5 +27,4 @@ final class InteractionsController extends EloquentController
     {
         return Interactions\Request::class;
     }
-
 }

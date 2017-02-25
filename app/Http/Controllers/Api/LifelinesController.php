@@ -9,7 +9,6 @@ use CloudCreativity\LaravelJsonApi\Search\SearchAll;
 
 final class LifelinesController extends EloquentController
 {
-
     /**
      * LifelinesController constructor.
      *
@@ -28,5 +27,4 @@ final class LifelinesController extends EloquentController
     {
         return Lifelines\Request::class;
     }
-
 }

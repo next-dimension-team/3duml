@@ -9,7 +9,6 @@ use CloudCreativity\LaravelJsonApi\Search\SearchAll;
 
 final class LayersController extends EloquentController
 {
-
     /**
      * LayersController constructor.
      *
@@ -28,5 +27,4 @@ final class LayersController extends EloquentController
     {
         return Layers\Request::class;
     }
-
 }

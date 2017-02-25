@@ -9,7 +9,6 @@ use CloudCreativity\LaravelJsonApi\Search\SearchAll;
 
 final class OccurrenceSpecificationsController extends EloquentController
 {
-
     /**
      * OccurrenceSpecificationsController constructor.
      *
@@ -28,5 +27,4 @@ final class OccurrenceSpecificationsController extends EloquentController
     {
         return OccurrenceSpecifications\Request::class;
     }
-
 }

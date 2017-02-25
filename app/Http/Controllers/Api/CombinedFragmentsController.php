@@ -9,7 +9,6 @@ use CloudCreativity\LaravelJsonApi\Search\SearchAll;
 
 final class CombinedFragmentsController extends EloquentController
 {
-
     /**
      * CombinedFragmentsController constructor.
      *
@@ -28,5 +27,4 @@ final class CombinedFragmentsController extends EloquentController
     {
         return CombinedFragments\Request::class;
     }
-
 }

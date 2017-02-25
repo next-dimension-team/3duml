@@ -9,7 +9,6 @@ use CloudCreativity\LaravelJsonApi\Search\SearchAll;
 
 final class ExecutionSpecificationsController extends EloquentController
 {
-
     /**
      * ExecutionSpecificationsController constructor.
      *
@@ -28,5 +27,4 @@ final class ExecutionSpecificationsController extends EloquentController
     {
         return ExecutionSpecifications\Request::class;
     }
-
 }

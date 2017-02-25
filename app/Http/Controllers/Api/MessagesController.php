@@ -9,7 +9,6 @@ use CloudCreativity\LaravelJsonApi\Search\SearchAll;
 
 final class MessagesController extends EloquentController
 {
-
     /**
      * MessagesController constructor.
      *
@@ -28,5 +27,4 @@ final class MessagesController extends EloquentController
     {
         return Messages\Request::class;
     }
-
 }
