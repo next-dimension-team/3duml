@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Datastore } from '../../datastore';
 import { JsonApiModel, ModelType } from 'angular2-jsonapi';
 import { Observable } from 'rxjs';
+import * as _ from 'lodash';
 import * as M from '../models';
 
 @Injectable()
@@ -150,24 +151,13 @@ export class SequenceDiagramService {
     }
   }
 
-  // TODO: vrati take interakcie, ktore NEMAJU rodica
-  get sequenceDiagrams(): M.Interaction[] {
-    let sequenceDiagrams = [];
-
-    for (let interaction of this.datastore.peekAll(M.Interaction)) {
-      if (interaction.fragment && interaction.fragment.parent == null) {
-        sequenceDiagrams.push(interaction);
-      }
-    }
-
-    this.datastore.query(M.InteractionFragment, {
+  public getSequenceDiagrams(): Observable<M.Interaction[]> {
+    return this.datastore.query(M.InteractionFragment, {
       include: 'fragmentable',
       filter: { roots: 1 }
-    }).subscribe(
-      (fragments: M.InteractionFragment[]) => console.log(fragments)
+    }).map(
+      (fragments: M.InteractionFragment[]) => _.map(fragments, 'fragmentable')
     );
-
-    return sequenceDiagrams;
   }
 
   getOne<T extends JsonApiModel>(modelType: ModelType<T>, id: string): T {

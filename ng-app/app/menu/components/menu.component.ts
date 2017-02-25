@@ -13,22 +13,28 @@ export class MenuComponent implements OnInit {
   @Output()
   public openSequenceDiagram = new EventEmitter;
 
-  private sequenceDiagrams: Array<Interaction>;
+  private sequenceDiagrams: Interaction[];
   private openedSequenceDiagram: Interaction;
 
   constructor(private sequenceDiagramService: SequenceDiagramService) { }
 
   ngOnInit() {
-    this.sequenceDiagrams = this.sequenceDiagramService.sequenceDiagrams;
-
-    // TODO: toto je len pomocné, neskôr to tam asi nebude
-    // nacitame prvy dostupny diagram, aby sme zakazdym nemuseli klikat
-    if (this.sequenceDiagrams.length > 0) {
-      this.openSequenceDiagramHandler(this.sequenceDiagrams[0]);
-    }
+    this.loadSequenceDiagrams();
   }
 
-  openSequenceDiagramHandler(sequenceDiagram: Interaction) {
+  private loadSequenceDiagrams() {
+    this.sequenceDiagramService.getSequenceDiagrams().subscribe(
+      (diagrams: Interaction[]) => {
+        this.sequenceDiagrams = diagrams;
+
+        if (this.sequenceDiagrams.length > 0) {
+          // this.openSequenceDiagramHandler(this.sequenceDiagrams[0]);
+        }
+      }
+    );
+  }
+
+  private openSequenceDiagramHandler(sequenceDiagram: Interaction) {
     this.openedSequenceDiagram = sequenceDiagram;
     this.openSequenceDiagram.emit(this.openedSequenceDiagram);
   }
