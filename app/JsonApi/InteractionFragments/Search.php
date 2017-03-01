@@ -4,10 +4,25 @@ namespace App\JsonApi\InteractionFragments;
 
 use CloudCreativity\LaravelJsonApi\Search\AbstractSearch;
 use Illuminate\Database\Eloquent\Builder;
+use Neomerx\JsonApi\Contracts\Encoder\Parameters\EncodingParametersInterface;
 use Illuminate\Support\Collection;
 
 class Search extends AbstractSearch
 {
+    /**
+     * @inheritdoc
+     */
+    public function search(Builder $builder, EncodingParametersInterface $parameters)
+    {
+        $filters = new Collection((array) $parameters->getFilteringParameters());
+
+        if ($filters->has('descendants')) {
+            return $builder->find($filters->get('descendants'))->getDescendantsAndSelf();
+        }
+
+        return parent::search($builder, $parameters);
+    }
+
     /**
      * @param Builder $builder
      * @param Collection $filters

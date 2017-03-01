@@ -130,7 +130,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     let verticalPadding = 10;
 
     let executions = [];
-
+/*
     for (let occurrenceSpecification of lifeline.occurrenceSpecifications) {
       for (let execution of occurrenceSpecification.startingExecutionSpecifications) {
         let duration = execution.finish.time - execution.start.time;
@@ -140,7 +140,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
         });
       }
     }
-
+*/
     return executions;
   }
 

@@ -44,6 +44,7 @@ class Request extends RequestHandler
     protected $allowedFilteringParameters = [
         'id',
         'roots',
+        'descendants',
     ];
 
     /**

@@ -154,9 +154,29 @@ export class SequenceDiagramService {
   public getSequenceDiagrams(): Observable<M.Interaction[]> {
     return this.datastore.query(M.InteractionFragment, {
       include: 'fragmentable',
-      filter: { roots: 1 }
+      filter: {
+        roots: 1
+      }
     }).map(
       (fragments: M.InteractionFragment[]) => _.map(fragments, 'fragmentable')
+    );
+  }
+
+  public loadSequenceDiagramTree(interaction: M.Interaction): Observable<M.Interaction> {
+    let id = interaction.fragment.id;
+
+    return this.datastore.query(M.InteractionFragment, {
+      include: _.join([
+        'fragmentable.messages.sendEvent.covered.layer',
+        'fragmentable.messages.receiveEvent.covered.layer',
+        'fragmentable.start.covered.layer',
+        'fragmentable.finish.covered.layer'
+      ]),
+      filter: {
+        descendants: id
+      }
+    }).map(
+      (fragments: M.InteractionFragment[]) => _.find(fragments, ['id', id]).fragmentable
     );
   }
 

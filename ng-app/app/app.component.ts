@@ -14,16 +14,14 @@ export class AppComponent {
 
   public openedSequenceDiagram: Interaction;
 
-  constructor(private sequenceDiagramService: SequenceDiagramService) {
-    const self = this;
-
-    this.sequenceDiagramService.loadRecords().subscribe(() => {
-      self.loaded = true;
-    });
+  constructor(private service: SequenceDiagramService) {
+    this.loaded = true;
   }
 
-  openSequenceDiagram(sequenceDiagramModel: Interaction) {
-    this.openedSequenceDiagram = sequenceDiagramModel;
+  openSequenceDiagram(diagram: Interaction) {
+    this.service.loadSequenceDiagramTree(diagram).subscribe(
+      (interaction: Interaction) => this.openedSequenceDiagram = interaction
+    );
   }
 
 }

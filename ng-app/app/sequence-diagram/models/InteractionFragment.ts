@@ -1,5 +1,6 @@
-import { JsonApiModel, JsonApiModelConfig, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
+import { JsonApiModel, JsonApiModelConfig, JsonApiDatastore, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
 import * as M from './';
+import * as _ from 'lodash';
 
 @JsonApiModelConfig({
     type: 'interaction-fragments'
@@ -21,8 +22,40 @@ export class InteractionFragment extends JsonApiModel {
   @BelongsTo()
   parent: InteractionFragment;
 
-  @HasMany()
-  children: InteractionFragment[];
+  @HasMany({
+    key: 'children'
+  })
+  _children: InteractionFragment[];
+
+  private _childrenKeys: string[];
+
+  constructor(private __datastore: JsonApiDatastore, data?: any) {
+    super(__datastore, data);
+
+    if (data && data.relationships) {
+      this._childrenKeys = _.map(data.relationships.children.data, 'id');
+    }
+  }
+
+  public syncRelationships(data: any, included: any, level: number): void {
+    // Ak chceme relacie synchronizovat az po vrstvy musime zmenit level
+    super.syncRelationships(
+      data,
+      included,
+      _.some(included, { type: 'layers' }) ? -2 : level
+    );
+  }
+
+  get children(): InteractionFragment[] {
+    if (this._children) {
+      return this._children;
+    }
+
+    return _.map(
+      this._childrenKeys,
+      (key: string) => this.__datastore.peekRecord(InteractionFragment, key)
+    );
+  }
 
   /*
    * Vráti všetky podfragmenty daného typu.
