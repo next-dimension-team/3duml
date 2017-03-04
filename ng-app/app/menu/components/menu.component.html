@@ -10,9 +10,13 @@
 		<a (click)=openSequenceDiagramHandler(sequenceDiagram)>{{sequenceDiagram.name}}</a>
 	</li>
 
-	<li class="header">Other</li>
+	<li class="header">Create</li>
 	<li>
 		<a (click)="createDiagram()">Create Diagram</a>
+	</li>
+	<li
+		*ngIf="openedSequenceDiagram != null">
+		<a (click)="createLayerHandler()">Create Layer</a>
 	</li>
 
 	<li class="header">Instructions</li>

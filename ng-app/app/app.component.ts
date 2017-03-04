@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Interaction } from './sequence-diagram/models';
 import { SequenceDiagramService } from './sequence-diagram/services';
+import { SequenceDiagramComponent } from './sequence-diagram/components';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,11 @@ export class AppComponent {
     this.service.loadSequenceDiagramTree(diagram).subscribe(
       (interaction: Interaction) => this.openedSequenceDiagram = interaction
     );
+  }
+
+  createLayer(sequenceDiagramComponent: SequenceDiagramComponent) {
+
+    
   }
 
 }

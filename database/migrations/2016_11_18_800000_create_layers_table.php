@@ -11,6 +11,7 @@ class CreateLayersTable extends Migration
         Schema::create('layers', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
+            $table->string('name');
             $table->integer('depth')->unsigned();
         });
     }

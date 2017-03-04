@@ -3,11 +3,13 @@
     <div id="sidebar-wrapper">
         <app-sidebar-menu
             (openSequenceDiagram)="openSequenceDiagram($event)"
+            (createLayer)="createLayer(SequenceDiagramComponent)"
         ></app-sidebar-menu>
     </div>
 
     <div id="page-content-wrapper">
         <app-sequence-diagram
+            #SequenceDiagramComponent
             [rootInteraction]="openedSequenceDiagram"
         ></app-sequence-diagram>
     </div>

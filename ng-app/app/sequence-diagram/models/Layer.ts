@@ -7,6 +7,9 @@ import { Lifeline } from './Lifeline';
 export class Layer extends JsonApiModel {
 
   @Attribute()
+  name: string;
+
+  @Attribute()
   depth: number;
 
   @Attribute()

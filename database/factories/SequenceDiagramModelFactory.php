@@ -65,6 +65,7 @@ $factory->define(App\Models\OccurrenceSpecification::class, function (Faker\Gene
 
 $factory->define(App\Models\Layer::class, function (Faker\Generator $faker) {
     return [
+        'name' => $faker->word,
         'depth' => $faker->numberBetween(0, 100),
     ];
 });
