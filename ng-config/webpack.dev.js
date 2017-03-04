@@ -19,15 +19,15 @@ const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
  */
 const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
 const HOST = process.env.HOST || 'localhost';
-const PORT = process.env.PORT || 3000;
-const HMR = helpers.hasProcessFlag('hot');
+const PORT = helpers.isWebpackDevServer() ? 8080 : (process.env.PORT || 80);
+const HMR = helpers.detectHotReloading(helpers.root('public/build/hot'));
 const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
   host: HOST,
   port: PORT,
   ENV: ENV,
-  HMR: HMR
+  HMR: HMR,
+  API_URL: `http://${HOST}:${PORT}`,
 });
-
 
 const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
 
@@ -37,7 +37,13 @@ const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
  * See: http://webpack.github.io/docs/configuration.html#cli
  */
 module.exports = function (options) {
-  return webpackMerge(commonConfig({env: ENV}), {
+  return webpackMerge(commonConfig({
+    env: ENV,
+    assets: [
+      `public/build/dll/${DllBundlesPlugin.resolveFile('polyfills')}`,
+      `public/build/dll/${DllBundlesPlugin.resolveFile('vendor')}`
+    ]
+  }), {
 
     /**
      * Developer tool to enhance debugging
@@ -86,6 +92,8 @@ module.exports = function (options) {
 
       library: 'ac_[name]',
       libraryTarget: 'var',
+
+      publicPath: helpers.isWebpackDevServer() ? METADATA.API_URL : '/build/',
     },
 
     module: {
@@ -145,10 +153,12 @@ module.exports = function (options) {
       new DefinePlugin({
         'ENV': JSON.stringify(METADATA.ENV),
         'HMR': METADATA.HMR,
+        'API_URL': JSON.stringify(METADATA.API_URL),
         'process.env': {
           'ENV': JSON.stringify(METADATA.ENV),
           'NODE_ENV': JSON.stringify(METADATA.ENV),
           'HMR': METADATA.HMR,
+          'API_URL': JSON.stringify(METADATA.API_URL),
         }
       }),
 
@@ -225,7 +235,12 @@ module.exports = function (options) {
       watchOptions: {
         aggregateTimeout: 300,
         poll: 1000
-      }
+      },
+      proxy: [{
+        path: '!/dll/*',
+        changeOrigin: true,
+        target: 'http://127.0.0.1:8000'
+      }]
     },
 
     /*

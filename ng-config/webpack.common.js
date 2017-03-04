@@ -24,11 +24,6 @@ const ngcWebpack = require('ngc-webpack');
  */
 const HMR = helpers.hasProcessFlag('hot');
 const AOT = helpers.hasNpmFlag('aot');
-const METADATA = {
-  title: '3D UML',
-  baseUrl: '/',
-  isDevServer: helpers.isWebpackDevServer()
-};
 
 /*
  * Webpack configuration
@@ -204,15 +199,15 @@ module.exports = function (options) {
     plugins: [
       new StatsWriterPlugin({
         filename: 'mix-manifest.json',
-        transform: function (stats, options) {
+        transform: function (stats, opts) {
           let flattenedPaths = [].concat.apply(
-            [], objectValues(stats.assetsByChunkName)
+            options.assets || [], objectValues(stats.assetsByChunkName)
           );
 
           let manifest = {};
 
           flattenedPaths.forEach(path => {
-            path = path.replace(new RegExp('^public'), '').replace(/\\/g, '/');
+            path = path.replace(new RegExp('^public/build'), '').replace(/\\/g, '/');
 
             if (! path.startsWith('/')) path = ('/'+path);
 
