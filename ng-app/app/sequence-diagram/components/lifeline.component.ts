@@ -9,6 +9,9 @@ export class LifelineComponent {
   protected editingTitle = false;
 
   @Input()
+  public id: string;
+
+  @Input()
   public left;
 
   @Input()

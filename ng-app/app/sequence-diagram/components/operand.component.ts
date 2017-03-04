@@ -7,6 +7,9 @@ import { Component, Input } from '@angular/core';
 export class OperandComponent {
 
   @Input()
+  public id: string;
+
+  @Input()
   public height: number;
 
   @Input()

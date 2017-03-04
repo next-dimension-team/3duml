@@ -1,6 +1,7 @@
 <!-- Render message -->
 <div
   class="message"
+  [selectable]="{type: 'Message', id: id}"
   [class.left-to-right]="direction=='left-to-right'"
   [class.right-to-left]="direction=='right-to-left'"
   [class.sync]="type=='sync'"

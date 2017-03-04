@@ -7,6 +7,9 @@ import { Component, AfterViewInit, Input } from '@angular/core';
 export class ExecutionComponent implements AfterViewInit {
 
   @Input()
+  public id: string;
+
+  @Input()
   public height;
 
   @Input()

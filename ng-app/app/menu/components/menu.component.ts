@@ -28,7 +28,7 @@ export class MenuComponent implements OnInit {
         this.sequenceDiagrams = diagrams;
 
         if (this.sequenceDiagrams.length > 0) {
-          // this.openSequenceDiagramHandler(this.sequenceDiagrams[0]);
+          this.openSequenceDiagramHandler(this.sequenceDiagrams[0]);
         }
       }
     );

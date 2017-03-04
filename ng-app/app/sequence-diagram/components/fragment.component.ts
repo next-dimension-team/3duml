@@ -7,6 +7,9 @@ import { Component, Input } from '@angular/core';
 export class FragmentComponent {
 
   @Input()
+  public id: string;
+
+  @Input()
   public title: string;
 
   @Input()

@@ -1,6 +1,7 @@
 <!-- Render fragment -->
 <div
   class="fragment"
+  [selectable]="{type: 'CombinedFragment', id: id}"
   [style.width]="width + 'px'"
   [style.left]="left + 'px'"
   [style.top]="top + 'px'"
@@ -10,6 +11,7 @@
   <!-- Render operands -->
   <app-operand
     *ngFor="let operand of operands"
+    [id]="operand.id"
     [height]="operand.height"
     [constraint]="operand.constraint"
   ></app-operand>

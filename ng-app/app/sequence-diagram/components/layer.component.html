@@ -1,5 +1,7 @@
 <!-- Render layer -->
-<div class="layer">
+<div
+  class="layer"
+  [selectable]="{type: 'Layer', id: id}">
 
   <!-- Render sequence diagram -->
   <div class="sequence-diagram">
@@ -7,6 +9,7 @@
     <!-- Render lifelines -->
     <app-lifeline
       *ngFor="let lifeline of lifelines"
+      [id]="lifeline.id"
       [left]="lifeline.left"
       [title]="lifeline.title"
       [executions]="lifeline.executions"
@@ -15,6 +18,7 @@
     <!-- Render messages -->
     <app-message
       *ngFor="let message of messages"
+      [id]="message.id"
       [direction]="message.direction"
       [type]="message.type"
       [title]="message.title"
@@ -26,6 +30,7 @@
     <!-- Render fragments -->
     <app-fragment
       *ngFor="let fragment of fragments"
+      [id]="fragment.id"
       [title]="fragment.title"
       [width]="fragment.width"
       [top]="fragment.top"

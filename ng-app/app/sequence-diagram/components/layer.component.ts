@@ -7,6 +7,9 @@ import { Component, Input, ElementRef } from '@angular/core';
 export class LayerComponent {
 
   @Input()
+  public id: string;
+
+  @Input()
   public depth;
 
   @Input()
