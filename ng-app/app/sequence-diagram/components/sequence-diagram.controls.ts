@@ -4,7 +4,7 @@ let OrbitControls: typeof THREE.OrbitControls = require('three-orbit-controls')(
 /*
  * Class for controling camera of sequence diagram
  */
-export class SequenceDiagramOrbitControls extends OrbitControls {
+export class SequenceDiagramControls extends OrbitControls {
 
     minDistanceToTarget: number;
     mouseScrollingSpeed: number;

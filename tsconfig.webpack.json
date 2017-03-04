@@ -20,7 +20,10 @@
     ],
     "types": [
       "hammerjs",
-      "node"
+      "node",
+      "three",
+      "lodash",
+      "reflect-metadata"
     ]
   },
   "include": [

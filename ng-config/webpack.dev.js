@@ -175,10 +175,10 @@ module.exports = function (options) {
             '@angular/router',
             '@angularclass/hmr',
             'rxjs',
+            'angular2-jsonapi',
             'three',
             'three.css',
-            'three-orbit-controls',
-            'angular2-jsonapi'
+            'three-orbit-controls'
           ]
         },
         dllDir: helpers.root('public/build/dll'),

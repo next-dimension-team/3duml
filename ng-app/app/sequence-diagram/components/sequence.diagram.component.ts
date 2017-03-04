@@ -5,7 +5,7 @@ import {
  } from '@angular/core';
 import { SequenceDiagramService } from '../services';
 import { LayerComponent } from './layer.component';
-import { SequenceDiagramOrbitControls } from './sequence.diagram.orbit.controls';
+import { SequenceDiagramControls } from './sequence-diagram.controls';
 import * as M from '../models';
 
 let { Object: CSS3DObject, Renderer: CSS3DRenderer } : {
@@ -40,7 +40,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   protected scene: THREE.Scene;
   protected camera: THREE.Camera;
-  protected controls: SequenceDiagramOrbitControls;
+  protected controls: SequenceDiagramControls;
   protected renderer: THREE.CSS3DRenderer;
   protected diagramChanged = false;
   protected layerElements = [];
@@ -110,8 +110,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.camera.position.z = 800;
 
     // Controls
-    this.controls = new SequenceDiagramOrbitControls(this.camera, this.renderer.domElement);
-    this.controls.rotateSpeed = 0.5;
+    this.controls = new SequenceDiagramControls(this.camera, this.renderer.domElement);
 
     // TODO: target by mal byt 200px za aktualnym platnom
     // this.controls.target = new THREE.Vector3(

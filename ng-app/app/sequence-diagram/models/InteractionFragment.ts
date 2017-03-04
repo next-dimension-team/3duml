@@ -33,7 +33,7 @@ export class InteractionFragment extends JsonApiModel {
     super(__datastore, data);
 
     if (data && data.relationships) {
-      this._childrenKeys = _.map(data.relationships.children.data, 'id');
+      this._childrenKeys = _.map<{}, string>(data.relationships.children.data, 'id');
     }
   }
 
