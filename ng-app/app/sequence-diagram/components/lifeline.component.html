@@ -1,5 +1,8 @@
 <!-- Render lifeline -->
-<div class="lifeline" [style.left]="left + 'px'">
+<div
+  class="lifeline"
+  [selectable]="{type: 'Lifeline', id: id}"
+  [style.left]="left + 'px'">
 
   <div
     class="title"
@@ -20,6 +23,7 @@
     <!-- Render executions -->
     <app-execution
       *ngFor="let execution of executions"
+      [id]="execution.id"
       [height]="execution.height"
       [top]="execution.top"
     ></app-execution>
