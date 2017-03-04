@@ -507,7 +507,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
           fragments: []
         });
     console.log("Vytvoril si layer s nazvom " + name);
-// Upravili sme pole "this.layers", diagram treba znova vyrenderovať
+    
+    // Upravili sme pole "this.layers", diagram treba znova vyrenderovať
     this.diagramChanged = true;
   }
 
