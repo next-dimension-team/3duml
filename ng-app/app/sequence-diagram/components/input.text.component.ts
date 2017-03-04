@@ -23,6 +23,9 @@ export class InputTextComponent {
   @Input()
   public inputTextType: String;
 
+  @Input()
+  public inputTextMessage: String;
+
   onEnter(value: string) {
     switch (this.inputTextType) {
       case "diagram" :

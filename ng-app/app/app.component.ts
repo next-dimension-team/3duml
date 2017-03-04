@@ -17,7 +17,7 @@ export class AppComponent {
   public currentSequenceDiagramComponent: SequenceDiagramComponent;
   public showInputTextDialog_: Boolean = false;
   public inputTextType: String;
-
+  public inputTextMessage: String;
 
   constructor(private service: SequenceDiagramService) {
     this.loaded = true;
@@ -39,8 +39,9 @@ export class AppComponent {
     this.showInputTextDialog_ = false;
   }
 
-  showInputTextDialog(inputType: String, sequenceDiagramComponent: SequenceDiagramComponent) {
-    this.inputTextType = inputType;
+  showInputTextDialog(type: String, message: String, sequenceDiagramComponent: SequenceDiagramComponent) {
+    this.inputTextType = type;
+    this.inputTextMessage = message;
     this.showInputTextDialog_ = true;
     this.currentSequenceDiagramComponent = sequenceDiagramComponent;    
   }

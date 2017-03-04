@@ -3,7 +3,7 @@
     <div id="sidebar-wrapper">
         <app-sidebar-menu
             (openSequenceDiagram)="openSequenceDiagram($event)"
-            (showInputTextDialog)="showInputTextDialog($event, sequenceDiagramComponent)"
+            (showInputTextDialog)="showInputTextDialog($event.type, $event.message, sequenceDiagramComponent)"
         ></app-sidebar-menu>
     </div>
 
@@ -15,6 +15,7 @@
         <app-input-text
             *ngIf="showInputTextDialog_ == true"
             [inputTextType]="inputTextType"
+            [inputTextMessage]="inputTextMessage"
             (inputTextLayerName)="confirmCreateLayer($event)"
             (inputTextLifelineName)="confirmCreateLifeline($event)"
         ></app-input-text>

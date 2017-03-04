@@ -46,7 +46,7 @@ export class MenuComponent implements OnInit {
     if (this.openedSequenceDiagram != null) {
       //var layerName = prompt("Zdajte názov plátna");
       //this.createLayer.emit(layerName);
-      this.showInputTextDialog.emit("layer");
+      this.showInputTextDialog.emit({ type:"layer", message: "Zadajte názov plátna" });
     }
   }
 
@@ -54,7 +54,7 @@ export class MenuComponent implements OnInit {
     if (this.openedSequenceDiagram != null) {
       //var layerName = prompt("Zdajte názov plátna");
       //this.createLayer.emit(layerName);
-      this.showInputTextDialog.emit("lifeline");
+      this.showInputTextDialog.emit({ type:"lifeline", message: "Zadajte názov lifeliny" });
     }
   }
 
