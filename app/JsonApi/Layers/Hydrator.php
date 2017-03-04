@@ -10,7 +10,8 @@ class Hydrator extends EloquentHydrator
      * @var array
      */
     protected $attributes = [
-        //
+        'name',
+        'depth',
     ];
 
     /**
@@ -19,4 +20,8 @@ class Hydrator extends EloquentHydrator
     protected $relationships = [
         //
     ];
+    
+    // protected function hydrateRelationshipsLifelines(RelationshipInterface $relationship, $record) {
+    // }
+    
 }

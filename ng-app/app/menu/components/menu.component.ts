@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { Interaction } from '../../sequence-diagram/models';
+import { Interaction, Layer } from '../../sequence-diagram/models';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
 
 @Component({
@@ -13,8 +13,11 @@ export class MenuComponent implements OnInit {
   @Output()
   public openSequenceDiagram = new EventEmitter;
 
+  @Output()
+  public createLayer = new EventEmitter;
+
   private sequenceDiagrams: Interaction[];
-  private openedSequenceDiagram: Interaction;
+  private openedSequenceDiagram: Interaction = null;
 
   constructor(private sequenceDiagramService: SequenceDiagramService) { }
 
@@ -39,9 +42,15 @@ export class MenuComponent implements OnInit {
     this.openSequenceDiagram.emit(this.openedSequenceDiagram);
   }
 
+   private createLayerHandler(): void {
+    if (this.openedSequenceDiagram != null) {
+      var layerName = prompt("Zdajte názov plátna");
+      this.createLayer.emit(layerName);
+    }
+  }
+
   createDiagram(): void {
     // TODO
     console.log('Menu component said: Clicked on "Create Diagram" link');
   }
-
 }

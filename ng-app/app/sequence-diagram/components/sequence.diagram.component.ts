@@ -46,7 +46,11 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   protected layerElements = [];
 
   @Input()
+  public rootInteractionInput: M.Interaction = null;
   public rootInteraction: M.Interaction;
+
+  @Input()
+  public createLayerName: String = null;
 
   public layers = [];
 
@@ -81,9 +85,20 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
    * Sleduje zmeny vstupov komponentu.
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (this.rootInteraction) {
+    if (this.rootInteractionInput != null) {
+      this.rootInteraction = this.rootInteractionInput;
       this.refreshRootInteraction();
+      this.rootInteractionInput = null;
     }
+
+    if (this.createLayerName != null) {
+      this.createLayer(this.createLayerName);
+      this.createLayerName = null;
+    }
+  }
+
+  createLayer(name: String){
+    console.log("Vytvorenie plátna s názvom " + this.createLayerName);
   }
 
   // TODO: tu by mala byt implementovana funkcionalita na vytvorenie sceny

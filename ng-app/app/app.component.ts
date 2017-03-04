@@ -13,6 +13,7 @@ export class AppComponent {
   protected loaded: boolean = false;
 
   public openedSequenceDiagram: Interaction;
+  public createLayerName: String;
 
   constructor(private service: SequenceDiagramService) {
     this.loaded = true;
@@ -24,4 +25,7 @@ export class AppComponent {
     );
   }
 
+  createLayer(layerName: String) {
+    this.createLayerName = layerName;
+  }
 }

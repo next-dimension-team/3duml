@@ -188,4 +188,15 @@ export class SequenceDiagramService {
     return this.datastore.peekAll(modelType);
   }
 
+  //TODO: Pridanie platna... problem pretoze ak platno neobsahuje lifeline tak nevie k akemu patri sekv. diagramu
+  public createLayer(name: String) {
+    // let layer = this.datastore.createRecord(M.Layer, {
+    //   name: name
+    // });
+
+    // let lifeline = this.datastore.createRecord(M.Lifeline, {
+    //   name: 'New Lifeline',
+    //   layer: layer
+    // });
+  }
 }

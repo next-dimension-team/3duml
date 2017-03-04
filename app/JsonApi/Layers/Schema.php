@@ -16,6 +16,7 @@ class Schema extends EloquentSchema
      * @var array
      */
     protected $attributes = [
+        'name',
         'depth',
     ];
 
