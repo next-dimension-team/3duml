@@ -10,4 +10,4 @@
 .env
 .php_cs.cache
 npm-debug.log
-composer.log
+composer.lock
