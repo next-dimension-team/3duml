@@ -12,6 +12,12 @@ export class CombinedFragment extends JsonApiModel {
   @Attribute()
   operator: string;
 
+  @Attribute()
+  created_at: Date;
+
+  @Attribute()
+  updated_at: Date;
+
   @BelongsTo()
   fragment: InteractionFragment;
 

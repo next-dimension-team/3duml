@@ -17,26 +17,4 @@ class InteractionFragment extends Node
     {
         return $this->morphTo();
     }
-
-    // TODO: docasny fix
-    /**
-    * Parent relation (self-referential) 1-1.
-    *
-    * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-    */
-    public function parent()
-    {
-        return $this->belongsTo(get_class($this), $this->getParentColumnName());
-    }
-
-    /**
-     * Children relation (self-referential) 1-N.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function children()
-    {
-        return $this->hasMany(get_class($this), $this->getParentColumnName())
-                    ->orderBy($this->getOrderColumnName());
-    }
 }

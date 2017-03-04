@@ -4,6 +4,7 @@
 
 const helpers = require('./helpers');
 const webpackMerge = require('webpack-merge'); // used to merge webpack configs
+const webpackMergeDll = webpackMerge.strategy({plugins: 'replace'});
 const commonConfig = require('./webpack.common.js'); // the settings that are common to prod and dev
 
 /**
@@ -18,14 +19,17 @@ const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
  */
 const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
 const HOST = process.env.HOST || 'localhost';
-const PORT = process.env.PORT || 3000;
-const HMR = helpers.hasProcessFlag('hot');
+const PORT = helpers.isWebpackDevServer() ? 8080 : (process.env.PORT || 80);
+const HMR = helpers.detectHotReloading(helpers.root('public/build/hot'));
 const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
   host: HOST,
   port: PORT,
   ENV: ENV,
-  HMR: HMR
+  HMR: HMR,
+  API_URL: `http://${HOST}:${PORT}/`,
 });
+
+const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
 
 /**
  * Webpack configuration
@@ -33,7 +37,13 @@ const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
  * See: http://webpack.github.io/docs/configuration.html#cli
  */
 module.exports = function (options) {
-  return webpackMerge(commonConfig({env: ENV}), {
+  return webpackMerge(commonConfig({
+    env: ENV,
+    assets: [
+      `public/build/dll/${DllBundlesPlugin.resolveFile('polyfills')}`,
+      `public/build/dll/${DllBundlesPlugin.resolveFile('vendor')}`
+    ]
+  }), {
 
     /**
      * Developer tool to enhance debugging
@@ -71,7 +81,7 @@ module.exports = function (options) {
        *
        * See: http://webpack.github.io/docs/configuration.html#output-sourcemapfilename
        */
-      sourceMapFilename: '[name].map',
+      sourceMapFilename: '[file].map',
 
       /** The filename of non-entry chunks as relative path
        * inside the output.path directory.
@@ -82,6 +92,50 @@ module.exports = function (options) {
 
       library: 'ac_[name]',
       libraryTarget: 'var',
+
+      publicPath: helpers.isWebpackDevServer() ? METADATA.API_URL : '/build/',
+    },
+
+    module: {
+
+      rules: [
+       {
+         test: /\.ts$/,
+         use: [
+           {
+             loader: 'tslint-loader',
+             options: {
+               configFile: 'tslint.json'
+             }
+           }
+         ],
+         exclude: [/\.(spec|e2e)\.ts$/]
+       },
+
+        /*
+         * css loader support for *.css files (styles directory only)
+         * Loads external css styles into the DOM, supports HMR
+         *
+         */
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader'],
+          include: [helpers.root('ng-app', 'styles')]
+        },
+
+        /*
+         * sass loader support for *.scss files (styles directory only)
+         * Loads external sass styles into the DOM, supports HMR
+         *
+         */
+        {
+          test: /\.scss$/,
+          use: ['style-loader', 'css-loader', 'sass-loader'],
+          include: [helpers.root('ng-app', 'styles')]
+        },
+
+      ]
+
     },
 
     plugins: [
@@ -99,11 +153,49 @@ module.exports = function (options) {
       new DefinePlugin({
         'ENV': JSON.stringify(METADATA.ENV),
         'HMR': METADATA.HMR,
+        'API_URL': JSON.stringify(METADATA.API_URL),
         'process.env': {
           'ENV': JSON.stringify(METADATA.ENV),
           'NODE_ENV': JSON.stringify(METADATA.ENV),
           'HMR': METADATA.HMR,
+          'API_URL': JSON.stringify(METADATA.API_URL),
         }
+      }),
+
+      new DllBundlesPlugin({
+        bundles: {
+          polyfills: [
+            'core-js',
+            {
+              name: 'zone.js',
+              path: 'zone.js/dist/zone.js'
+            },
+            {
+              name: 'zone.js',
+              path: 'zone.js/dist/long-stack-trace-zone.js'
+            },
+          ],
+          vendor: [
+            '@angular/platform-browser',
+            '@angular/platform-browser-dynamic',
+            '@angular/core',
+            '@angular/common',
+            '@angular/forms',
+            '@angular/http',
+            '@angular/router',
+            '@angularclass/hmr',
+            'rxjs',
+            'angular2-jsonapi',
+            'three',
+            'three.css',
+            'three-orbit-controls'
+          ]
+        },
+        dllDir: helpers.root('public/build/dll'),
+        webpackConfig: webpackMergeDll(commonConfig({env: ENV}), {
+          devtool: 'cheap-module-source-map',
+          plugins: []
+        })
       }),
 
       /**
@@ -112,7 +204,7 @@ module.exports = function (options) {
        *
        * See: https://github.com/webpack/webpack/commit/a04ffb928365b19feb75087c63f13cadfc08e1eb
        */
-      new NamedModulesPlugin(),
+      // new NamedModulesPlugin(),
 
       /**
        * Plugin LoaderOptionsPlugin (experimental)
@@ -122,18 +214,6 @@ module.exports = function (options) {
       new LoaderOptionsPlugin({
         debug: true,
         options: {
-
-          /**
-           * Static analysis linter for TypeScript advanced options configuration
-           * Description: An extensible linter for the TypeScript language.
-           *
-           * See: https://github.com/wbuchwalter/tslint-loader
-           */
-          tslint: {
-            emitErrors: false,
-            failOnHint: false,
-            resourcePath: 'ng-app'
-          },
 
         }
       }),
@@ -156,7 +236,11 @@ module.exports = function (options) {
         aggregateTimeout: 300,
         poll: 1000
       },
-      outputPath: helpers.root('public/build')
+      proxy: [{
+        path: '!/dll/*',
+        changeOrigin: true,
+        target: 'http://127.0.0.1:8000'
+      }]
     },
 
     /*

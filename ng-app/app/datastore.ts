@@ -5,7 +5,7 @@ import * as sd from './sequence-diagram/models';
 
 @Injectable()
 @JsonApiDatastoreConfig({
-  baseUrl: 'http://team15-16.studenti.fiit.stuba.sk:8888/api/',
+  baseUrl: process.env.API_URL + 'api/v1/',
   models: {
     'combined-fragments': sd.CombinedFragment,
     'execution-specifications': sd.ExecutionSpecification,

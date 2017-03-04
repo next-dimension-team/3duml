@@ -10,6 +10,12 @@ export class Lifeline extends JsonApiModel {
   @Attribute()
   name: string;
 
+  @Attribute()
+  created_at: Date;
+
+  @Attribute()
+  updated_at: Date;
+
   @HasMany()
   occurrenceSpecifications: M.OccurrenceSpecification[];
 

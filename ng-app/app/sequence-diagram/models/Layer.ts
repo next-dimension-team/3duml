@@ -9,6 +9,12 @@ export class Layer extends JsonApiModel {
   @Attribute()
   depth: number;
 
+  @Attribute()
+  created_at: Date;
+
+  @Attribute()
+  updated_at: Date;
+
   @HasMany()
   lifelines: Lifeline[];
 

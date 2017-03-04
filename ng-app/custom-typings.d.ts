@@ -59,6 +59,7 @@ declare module 'modern-lru' {
 // Extra variables that live on Global that will be replaced by webpack DefinePlugin
 declare var ENV: string;
 declare var HMR: boolean;
+declare var API_URL: string;
 declare var System: SystemJS;
 
 interface SystemJS {
@@ -68,6 +69,7 @@ interface SystemJS {
 interface GlobalEnvironment {
   ENV: string;
   HMR: boolean;
+  API_URL: string;
   SystemJS: SystemJS;
   System: SystemJS;
 }
@@ -85,7 +87,6 @@ type AsyncRoutes = {
                 FactoryEs6PromiseLoader |
                          FactoryPromise
 };
-
 
 type IdleCallbacks = Es6PromiseLoader |
                              Function |
@@ -108,7 +109,6 @@ interface WebpackModule {
   };
 }
 
-
 interface WebpackRequire {
     (id: string): any;
     (paths: string[], callback: (...modules: any[]) => void): void;
@@ -123,7 +123,6 @@ interface WebpackContext extends WebpackRequire {
 interface ErrorStackTraceLimit {
   stackTraceLimit: number;
 }
-
 
 // Extend typings
 interface NodeRequire extends WebpackRequire {}

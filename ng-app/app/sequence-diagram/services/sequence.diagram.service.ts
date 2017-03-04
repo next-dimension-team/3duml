@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Datastore } from '../../datastore';
 import { JsonApiModel, ModelType } from 'angular2-jsonapi';
 import { Observable } from 'rxjs';
+import * as _ from 'lodash';
 import * as M from '../models';
 
 @Injectable()
@@ -150,17 +151,33 @@ export class SequenceDiagramService {
     }
   }
 
-  // TODO: vrati take interakcie, ktore NEMAJU rodica
-  get sequenceDiagrams(): M.Interaction[] {
-    let sequenceDiagrams = [];
-
-    for (let interaction of this.datastore.peekAll(M.Interaction)) {
-      if (interaction.fragment && interaction.fragment.parent == null) {
-        sequenceDiagrams.push(interaction);
+  public getSequenceDiagrams(): Observable<M.Interaction[]> {
+    return this.datastore.query(M.InteractionFragment, {
+      include: 'fragmentable',
+      filter: {
+        roots: 1
       }
-    }
+    }).map(
+      (fragments: M.InteractionFragment[]) => _.map(fragments, 'fragmentable')
+    );
+  }
 
-    return sequenceDiagrams;
+  public loadSequenceDiagramTree(interaction: M.Interaction): Observable<M.Interaction> {
+    let id = interaction.fragment.id;
+
+    return this.datastore.query(M.InteractionFragment, {
+      include: _.join([
+        'fragmentable.messages.sendEvent.covered.layer',
+        'fragmentable.messages.receiveEvent.covered.layer',
+        'fragmentable.start.covered.layer',
+        'fragmentable.finish.covered.layer'
+      ]),
+      filter: {
+        descendants: id
+      }
+    }).map(
+      (fragments: M.InteractionFragment[]) => _.find(fragments, ['id', id]).fragmentable
+    );
   }
 
   getOne<T extends JsonApiModel>(modelType: ModelType<T>, id: string): T {

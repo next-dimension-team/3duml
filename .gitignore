@@ -5,5 +5,8 @@
 /public/css
 /public/js
 /public/storage
+/public/hot
+/storage/*.key
 .env
 .php_cs.cache
+npm-debug.log

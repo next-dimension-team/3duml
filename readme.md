@@ -24,10 +24,21 @@ $ php artisan key:generate
 $ npm install
 ```
 
+### Development server
+- pri vývoji možno spustiť development server s možnosťou detekcie zmien,
+rekompilácie a automatického reloadu v prehliadači bez potreby spúšťania buildu (hot module replacement)
+- spúsťa sa na `http://localhost:8080/` súčasne s Laravel development serverom ako proxy pre backend na `http://127.0.0.1:8000`
+```
+$ npm run start:hmr
+```
 ### Build
 - predvolne sa spúšťa development konfigurácia nasledovne
 ```
 $ npm run build
+```
+- pre zmenu url pre požiadavky na backend API (predvolene: `http://localhost/`) ak chceme spustiť aplikáciu napríklad na Laravel development serveri
+```
+$ HOST=127.0.0.1 PORT=8000 npm run build
 ```
 - spustenie buildu s produkčným nastavením
 ```

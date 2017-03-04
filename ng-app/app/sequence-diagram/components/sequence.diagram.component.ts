@@ -1,17 +1,22 @@
 import * as THREE from 'three';
 import {
   Component, ViewChild, SimpleChanges, Input, ViewChildren,
-  QueryList, AfterViewInit, OnChanges, AfterViewChecked
+  QueryList, AfterViewInit, OnChanges, AfterViewChecked, NgZone
  } from '@angular/core';
 import { SequenceDiagramService } from '../services';
 import { LayerComponent } from './layer.component';
-import { SequenceDiagramOrbitControls } from './sequence.diagram.orbit.controls';
+import { SequenceDiagramControls } from './sequence-diagram.controls';
 import * as M from '../models';
+
+let { Object: CSS3DObject, Renderer: CSS3DRenderer } : {
+    Object: typeof THREE.CSS3DObject,
+    Renderer: typeof THREE.CSS3DRenderer
+} = require('three.css')(THREE);
 
 /*
  * Class representing 3D layer
  */
-export class Layer extends THREE.CSS3DObject {
+export class Layer extends CSS3DObject {
   constructor(element: HTMLElement, depth: number) {
     // Create CSS3DObject object
     super(element);
@@ -35,7 +40,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   protected scene: THREE.Scene;
   protected camera: THREE.Camera;
-  protected controls: SequenceDiagramOrbitControls;
+  protected controls: SequenceDiagramControls;
   protected renderer: THREE.CSS3DRenderer;
   protected diagramChanged = false;
   protected layerElements = [];
@@ -45,7 +50,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   public layers = [];
 
-  constructor(protected service: SequenceDiagramService) { }
+  constructor(private _ngZone: NgZone, protected service: SequenceDiagramService) { }
 
   ngAfterViewChecked() {
     if (this.diagramChanged) {
@@ -97,7 +102,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 
     // Create renderer
-    this.renderer = new THREE.CSS3DRenderer();
+    this.renderer = new CSS3DRenderer();
     this.renderer.setSize(width, height);
     this.sceneDiv.nativeElement.appendChild(this.renderer.domElement);
 
@@ -105,8 +110,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.camera.position.z = 800;
 
     // Controls
-    this.controls = new SequenceDiagramOrbitControls(this.camera, this.renderer.domElement);
-    this.controls.rotateSpeed = 0.5;
+    this.controls = new SequenceDiagramControls(this.camera, this.renderer.domElement);
 
     // TODO: target by mal byt 200px za aktualnym platnom
     // this.controls.target = new THREE.Vector3(
@@ -116,7 +120,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.controls.target = new THREE.Vector3(0, 0, -200);
 
     // Render scene
-    this.render();
+    this._ngZone.runOutsideAngular(() => this.render());
   }
 
   protected processExecutions(lifeline: M.Lifeline) {
@@ -125,7 +129,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     let verticalPadding = 10;
 
     let executions = [];
-
+/*
     for (let occurrenceSpecification of lifeline.occurrenceSpecifications) {
       for (let execution of occurrenceSpecification.startingExecutionSpecifications) {
         let duration = execution.finish.time - execution.start.time;
@@ -135,7 +139,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
         });
       }
     }
-
+*/
     return executions;
   }
 
@@ -497,11 +501,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   // Render loop
   render() {
-    const self = this;
-
-    requestAnimationFrame(function () {
-      self.render();
-    });
+    requestAnimationFrame(() => this.render());
 
     this.renderer.render(this.scene, this.camera);
   }
