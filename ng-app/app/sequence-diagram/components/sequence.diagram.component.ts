@@ -3,7 +3,7 @@ import {
   Component, ViewChild, SimpleChanges, Input, ViewChildren,
   QueryList, AfterViewInit, OnChanges, AfterViewChecked, NgZone
  } from '@angular/core';
-import { SequenceDiagramService } from '../services';
+import { SequenceDiagramService, SelectableService } from '../services';
 import { LayerComponent } from './layer.component';
 import { SequenceDiagramControls } from './sequence-diagram.controls';
 import * as M from '../models';
@@ -50,7 +50,59 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   public layers = [];
 
-  constructor(private _ngZone: NgZone, protected service: SequenceDiagramService) { }
+  constructor(private _ngZone: NgZone, protected service: SequenceDiagramService, protected selectableService: SelectableService) {
+    // TODO: Toto je ukážkový kód, ako počúvať na označenie elementu.
+    this.selectableService.onLeftClick((event) => {
+      console.log("--------------------------------");
+      console.info("Event typu: LeftClick");
+      console.log("Klikol si na " + event.model.type + " s ID " + event.model.id);
+      console.log("Súradnice tvojho kliknutia zľava: " + event.offsetX);
+      console.log("Súradnice tvojho kliknutia zhora: " + event.offsetY);
+      console.log("Detaily eventu: ");
+      console.log(event);
+      console.log("--------------------------------");
+    });
+    this.selectableService.onRightClick((event) => {
+      console.log("--------------------------------");
+      console.info("Event typu: RightClick");
+      console.log("Klikol si na " + event.model.type + " s ID " + event.model.id);
+      console.log("Súradnice tvojho kliknutia zľava: " + event.offsetX);
+      console.log("Súradnice tvojho kliknutia zhora: " + event.offsetY);
+      console.log("Detaily eventu: ");
+      console.log(event);
+      console.log("--------------------------------");
+    });
+    this.selectableService.onDoubleClick((event) => {
+      console.log("--------------------------------");
+      console.info("Event typu: DoubleClick");
+      console.log("Klikol si na " + event.model.type + " s ID " + event.model.id);
+      console.log("Súradnice tvojho kliknutia zľava: " + event.offsetX);
+      console.log("Súradnice tvojho kliknutia zhora: " + event.offsetY);
+      console.log("Detaily eventu: ");
+      console.log(event);
+      console.log("--------------------------------");
+    });
+    /*this.selectableService.onMouseOver((event) => {
+      console.log("--------------------------------");
+      console.info("Event typu: MouseOver");
+      console.log("Klikol si na " + event.model.type + " s ID " + event.model.id);
+      console.log("Súradnice tvojho kliknutia zľava: " + event.offsetX);
+      console.log("Súradnice tvojho kliknutia zhora: " + event.offsetY);
+      console.log("Detaily eventu: ");
+      console.log(event);
+      console.log("--------------------------------");
+    });*/
+    /*this.selectableService.onMouseMove((event) => {
+      console.log("--------------------------------");
+      console.info("Event typu: MouseMove");
+      console.log("Klikol si na " + event.model.type + " s ID " + event.model.id);
+      console.log("Súradnice tvojho kliknutia zľava: " + event.offsetX);
+      console.log("Súradnice tvojho kliknutia zhora: " + event.offsetY);
+      console.log("Detaily eventu: ");
+      console.log(event);
+      console.log("--------------------------------");
+    });*/
+  }
 
   ngAfterViewChecked() {
     if (this.diagramChanged) {
@@ -129,17 +181,18 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     let verticalPadding = 10;
 
     let executions = [];
-/*
-    for (let occurrenceSpecification of lifeline.occurrenceSpecifications) {
+
+    /*for (let occurrenceSpecification of lifeline.occurrenceSpecifications) {
       for (let execution of occurrenceSpecification.startingExecutionSpecifications) {
         let duration = execution.finish.time - execution.start.time;
         executions.push({
+          id: execution.id,
           top: execution.start.time - verticalPadding,
           height: duration + (2 * verticalPadding)
         });
       }
-    }
-*/
+    }*/
+
     return executions;
   }
 
@@ -162,13 +215,12 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     for (let lifeline of lifelineModels) {
       lifeline.leftDistance = orderNumber++ * gap;
 
-      let lifelineJSON = {
+      lifelines.push({
+        id: lifeline.id,
         left: lifeline.leftDistance,
         title: lifeline.name,
         executions: this.processExecutions(lifeline)
-      };
-
-      lifelines.push(lifelineJSON);
+      });
     }
 
     return lifelines;
@@ -222,16 +274,15 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     for (let messageModel of interaction.recursiveMessages) {
       let messagePosition = this.resolveMessagePosition(messageModel);
 
-      let message = {
+      messages.push({
+        id: messageModel.id,
         direction: this.resolveMessageDirection(messageModel),
         type: this.resolveMessageType(messageModel),
         title: messageModel.name,
         length: this.resolveMessageLength(messageModel),
         top: messagePosition.top,
         left: messagePosition.left
-      };
-
-      messages.push(message);
+      });
     }
 
     return messages;
@@ -363,6 +414,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
         let envelope = this.envelopeFragment(childFragment);
 
         operands.push({
+          id: interactionOperand.id,
           height: envelope.maximalTime - envelope.minimalTime + topPadding + bottomPadding,
           constraint: interactionOperand.constraint
         });
@@ -402,6 +454,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
       // 60 = lifeline.title.width / 2
       // 30 = 60 / 2
       fragments.push({
+        id: combinedFragment.id,
         title: combinedFragment.operator,
         width: envelope.mostRight - envelope.mostLeft - 60,
         top: envelope.minimalTime - verticalPadding,
@@ -452,6 +505,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     // Render root interaction
     // for (let i = 0; i < 3; i++)
     this.layers.push({
+      id: null, // TODO: sem treba poslať ID layeru
       lifelines: this.processLifelines(this.rootInteraction),
       messages: this.processMessages(this.rootInteraction),
       fragments: this.processFragments(this.rootInteraction)
@@ -459,7 +513,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
     // TODO: pomocné
     // Render all interactions
-    for (let interactionFragment of
+    /*for (let interactionFragment of
       this.rootInteraction.fragment.getRecursiveFragments('Interaction')) {
       let interaction = interactionFragment.fragmentable;
       if (interaction !== this.rootInteraction) {
@@ -467,12 +521,13 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
           break;
         }
         this.layers.push({
+          id: null, // TODO: sem treba poslať ID layeru
           lifelines: this.processLifelines(interaction),
           messages: this.processMessages(interaction),
           fragments: this.processFragments(interaction)
         });
       }
-    }
+    }*/
 
     /*let secondInteraction = this.service.getRecord(M.Interaction, '2');
     let thirdInteraction = this.service.getRecord(M.Interaction, '6');

@@ -17,6 +17,12 @@ import { FragmentComponent } from './sequence-diagram/components/fragment.compon
 import { OperandComponent } from './sequence-diagram/components/operand.component';
 import { LayerComponent } from './sequence-diagram/components/layer.component';
 
+// Directives
+import { SelectableDirective } from './sequence-diagram/directives/selectable.directive';
+
+// Services
+import { SelectableService } from './sequence-diagram/services';
+
 // Component for menu
 import { MenuComponent } from './menu/components/menu.component';
 import { SequenceDiagramComponent } from './sequence-diagram/components/sequence.diagram.component';
@@ -44,6 +50,7 @@ type StoreType = {
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
+    // Components
     AppComponent,
     MenuComponent,
     SequenceDiagramComponent,
@@ -52,7 +59,10 @@ type StoreType = {
     MessageComponent,
     FragmentComponent,
     OperandComponent,
-    LayerComponent
+    LayerComponent,
+
+    // Directives
+    SelectableDirective
   ],
   imports: [ // import Angular's modules
     BrowserModule,
@@ -62,7 +72,8 @@ type StoreType = {
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
-    APP_PROVIDERS
+    APP_PROVIDERS,
+    SelectableService
   ]
 })
 export class AppModule {
