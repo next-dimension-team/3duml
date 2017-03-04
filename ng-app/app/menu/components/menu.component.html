@@ -18,6 +18,10 @@
 		*ngIf="openedSequenceDiagram != null">
 		<a (click)="createLayerHandler()">Create Layer</a>
 	</li>
+	<li
+		*ngIf="openedSequenceDiagram != null">
+		<a (click)="createLifelineHandler()">Create Lifeline</a>
+	</li>
 
 	<li class="header">Instructions</li>
 	<li class="info">Edit lifeline title by double-clicking on it, then submit by pressing Enter key.</li>

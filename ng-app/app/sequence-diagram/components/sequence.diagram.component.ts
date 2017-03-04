@@ -512,6 +512,10 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.diagramChanged = true;
   }
 
+   public createLifeline(name: String) {
+    console.log("Vytvoril si lifeline s nazvom " + name);
+  }
+
   // Render loop
   render() {
     requestAnimationFrame(() => this.render());

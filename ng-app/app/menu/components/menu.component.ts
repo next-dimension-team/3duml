@@ -14,7 +14,7 @@ export class MenuComponent implements OnInit {
   public openSequenceDiagram = new EventEmitter;
 
   @Output()
-  public createLayer = new EventEmitter;
+  public showInputTextDialog = new EventEmitter;
 
   private sequenceDiagrams: Interaction[];
   private openedSequenceDiagram: Interaction;
@@ -44,8 +44,17 @@ export class MenuComponent implements OnInit {
 
   private createLayerHandler(): void {
     if (this.openedSequenceDiagram != null) {
-      var layerName = prompt("Zdajte názov plátna");
-      this.createLayer.emit(layerName);
+      //var layerName = prompt("Zdajte názov plátna");
+      //this.createLayer.emit(layerName);
+      this.showInputTextDialog.emit("layer");
+    }
+  }
+
+  private createLifelineHandler(): void {
+    if (this.openedSequenceDiagram != null) {
+      //var layerName = prompt("Zdajte názov plátna");
+      //this.createLayer.emit(layerName);
+      this.showInputTextDialog.emit("lifeline");
     }
   }
 

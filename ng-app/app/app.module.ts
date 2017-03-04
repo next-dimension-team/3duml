@@ -16,6 +16,7 @@ import { MessageComponent } from './sequence-diagram/components/message.componen
 import { FragmentComponent } from './sequence-diagram/components/fragment.component';
 import { OperandComponent } from './sequence-diagram/components/operand.component';
 import { LayerComponent } from './sequence-diagram/components/layer.component';
+import { InputTextComponent } from './sequence-diagram/components/input.text.component';
 
 // Component for menu
 import { MenuComponent } from './menu/components/menu.component';
@@ -52,7 +53,8 @@ type StoreType = {
     MessageComponent,
     FragmentComponent,
     OperandComponent,
-    LayerComponent
+    LayerComponent,
+    InputTextComponent
   ],
   imports: [ // import Angular's modules
     BrowserModule,

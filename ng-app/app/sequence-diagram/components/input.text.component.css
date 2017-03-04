@@ -1,0 +1,10 @@
+.input-text-wrapper {
+  position: absolute;
+  top: 30%; 
+  left: 30%;
+  right: 15%;
+}
+
+input {
+  width: 100%;
+}

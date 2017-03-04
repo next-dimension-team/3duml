@@ -14,6 +14,10 @@ export class AppComponent {
   protected loaded: boolean = false;
 
   public openedSequenceDiagram: Interaction;
+  public currentSequenceDiagramComponent: SequenceDiagramComponent;
+  public showInputTextDialog_: Boolean = false;
+  public inputTextType: String;
+
 
   constructor(private service: SequenceDiagramService) {
     this.loaded = true;
@@ -25,8 +29,19 @@ export class AppComponent {
     );
   }
 
-  createLayer(name: String, sequenceDiagramComponent: SequenceDiagramComponent) {
-    sequenceDiagramComponent.createLayer(name);
+  confirmCreateLayer(inputText: String) {
+    this.currentSequenceDiagramComponent.createLayer(inputText);
+    this.showInputTextDialog_ = false;
   }
 
+  confirmCreateLifeline(inputText: String) {
+    this.currentSequenceDiagramComponent.createLifeline(inputText);
+    this.showInputTextDialog_ = false;
+  }
+
+  showInputTextDialog(inputType: String, sequenceDiagramComponent: SequenceDiagramComponent) {
+    this.inputTextType = inputType;
+    this.showInputTextDialog_ = true;
+    this.currentSequenceDiagramComponent = sequenceDiagramComponent;    
+  }
 }
