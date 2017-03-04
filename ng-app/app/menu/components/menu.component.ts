@@ -13,6 +13,9 @@ export class MenuComponent implements OnInit {
   @Output()
   public openSequenceDiagram = new EventEmitter;
 
+  @Output()
+  public createLayer = new EventEmitter;
+
   private sequenceDiagrams: Interaction[];
   private openedSequenceDiagram: Interaction;
 
@@ -37,6 +40,13 @@ export class MenuComponent implements OnInit {
   private openSequenceDiagramHandler(sequenceDiagram: Interaction) {
     this.openedSequenceDiagram = sequenceDiagram;
     this.openSequenceDiagram.emit(this.openedSequenceDiagram);
+  }
+
+  private createLayerHandler(): void {
+    if (this.openedSequenceDiagram != null) {
+      var layerName = prompt("Zdajte názov plátna");
+      this.createLayer.emit(layerName);
+    }
   }
 
   createDiagram(): void {

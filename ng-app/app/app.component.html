@@ -3,7 +3,7 @@
     <div id="sidebar-wrapper">
         <app-sidebar-menu
             (openSequenceDiagram)="openSequenceDiagram($event)"
-            (createLayer)="createLayer(SequenceDiagramComponent)"
+            (createLayer)="createLayer($event, SequenceDiagramComponent)"
         ></app-sidebar-menu>
     </div>
 

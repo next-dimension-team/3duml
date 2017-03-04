@@ -25,9 +25,8 @@ export class AppComponent {
     );
   }
 
-  createLayer(sequenceDiagramComponent: SequenceDiagramComponent) {
-
-    
+  createLayer(name: String, sequenceDiagramComponent: SequenceDiagramComponent) {
+    sequenceDiagramComponent.createLayer(name);
   }
 
 }

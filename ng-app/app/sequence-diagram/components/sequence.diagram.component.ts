@@ -499,6 +499,18 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.diagramChanged = true;
   }
 
+  // TODO: Ukladanie do databazy
+  public createLayer(name: String) {
+    this.layers.push({
+          lifelines: [],
+          messages: [],
+          fragments: []
+        });
+    console.log("Vytvoril si layer s nazvom " + name);
+// Upravili sme pole "this.layers", diagram treba znova vyrenderovať
+    this.diagramChanged = true;
+  }
+
   // Render loop
   render() {
     requestAnimationFrame(() => this.render());
