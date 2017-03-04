@@ -26,7 +26,7 @@ const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
   port: PORT,
   ENV: ENV,
   HMR: HMR,
-  API_URL: `http://${HOST}:${PORT}`,
+  API_URL: `http://${HOST}:${PORT}/`,
 });
 
 const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
