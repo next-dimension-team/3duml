@@ -45,6 +45,9 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   protected diagramChanged = false;
   protected layerElements = [];
 
+  public sourceLifelineEvent;
+  public destinationLifelineEvent;
+
   @Input()
   public rootInteraction: M.Interaction;
 
@@ -53,6 +56,10 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   constructor(private _ngZone: NgZone, protected service: SequenceDiagramService, protected selectableService: SelectableService) {
     // TODO: Toto je ukážkový kód, ako počúvať na označenie elementu.
     this.selectableService.onLeftClick((event) => {
+
+      if (event.model.type === 'Lifeline') {
+        this.handleLifelineClick(event);
+      }
       console.log("--------------------------------");
       console.info("Event typu: LeftClick");
       console.log("Klikol si na " + event.model.type + " s ID " + event.model.id);
@@ -102,6 +109,42 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
       console.log(event);
       console.log("--------------------------------");
     });*/
+  }
+
+  protected handleLifelineClick(event: MouseEvent) {
+    let source;
+        if (this.sourceLifelineEvent) {
+          this.destinationLifelineEvent = event;
+          console.log("Toto je lifelineKAM mam ist");
+          console.log(this.destinationLifelineEvent.model.id);
+          console.log("Toto je lifelineOdkial mam ist");
+          console.log(this.sourceLifelineEvent);
+          this.addMessage();
+          this.sourceLifelineEvent = null;
+          this.destinationLifelineEvent = null;
+        }
+        else {
+          this.sourceLifelineEvent = event;
+          console.log("Toto je lifelineOdkial mam ist");
+          console.log(this.sourceLifelineEvent.model.id);
+        }
+      }
+
+  protected addMessage () {
+
+    let message = new M.Message();
+    console.log("Kliknutie na sourcelifeline suradnica:" + this.sourceLifelineEvent.offsetX);
+    console.log("Kliknutie na destinationLifeline suradnica:" + this.destinationLifelineEvent.offsetX);
+   /* message.sendEvent.covered.leftDistance = this.sourceLifelineEvent.offsetX;
+    message.receiveEvent.covered.leftDistance = this.destinationLifelineEvent.offsetX;
+    message.sendEvent.time = this.sourceLifelineEvent.offsetY; */
+   // nejde to zatial, neviem pristupu ku sendEvenet ani covered...
+
+    //zatial nefunguje, neviem ako poslat message
+    this.resolveMessageDirection(message); // tuto sa vypocita odkial, kam
+    this.resolveMessageLength(message); //dlzka
+    this.resolveMessagePosition(message); //pozicia
+
   }
 
   ngAfterViewChecked() {
@@ -226,6 +269,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     return lifelines;
   }
 
+
+
   protected resolveMessageDirection(message: M.Message) {
 
     // Message smeruje z lifelineA do lifelineB
@@ -270,6 +315,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   protected processMessages(interaction: M.Interaction) {
     let messages = [];
+    let messageIdMax = 0;
 
     for (let messageModel of interaction.recursiveMessages) {
       let messagePosition = this.resolveMessagePosition(messageModel);
@@ -283,7 +329,19 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
         top: messagePosition.top,
         left: messagePosition.left
       });
+      messageIdMax = messageModel.id;
     }
+
+    //tuto som chcel pushnut tu pridanu message userom...
+   /* messages.push({
+      id: messageIdMax + 1,
+      direction: this.resolveMessageDirection(messageModel),
+      type: this.resolveMessageType(messageModel),
+      title: "kedychcem()",
+      length: this.resolveMessageLength(messageModel),
+      top: messagePosition.top,
+      left: messagePosition.left
+    });*/
 
     return messages;
   }
