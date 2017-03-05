@@ -182,7 +182,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
     let executions = [];
 
-    /*for (let occurrenceSpecification of lifeline.occurrenceSpecifications) {
+    for (let occurrenceSpecification of lifeline.occurrenceSpecifications) {
+      if(occurrenceSpecification.hasOwnProperty('startingExecutionSpecifications')){
       for (let execution of occurrenceSpecification.startingExecutionSpecifications) {
         let duration = execution.finish.time - execution.start.time;
         executions.push({
@@ -191,7 +192,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
           height: duration + (2 * verticalPadding)
         });
       }
-    }*/
+      }
+    }
 
     return executions;
   }

@@ -73,6 +73,7 @@ class ATMSystemSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esA1->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esA1F->makeChildOf($rootF);
 
         // Lifeline B Occurrence Specifications
         $ocB1 = factory(OccurrenceSpecification::class)->create([
@@ -109,6 +110,7 @@ class ATMSystemSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esB1->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esB1F->makeChildOf($rootF);
 
         // Lifeline C Occurrence Specifications
         $ocC1 = factory(OccurrenceSpecification::class)->create([
@@ -137,6 +139,7 @@ class ATMSystemSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esC1->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esC1F->makeChildOf($rootF);
 
         $esC2 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC3->id,
@@ -146,6 +149,7 @@ class ATMSystemSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esC2->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esC2F->makeChildOf($rootF);
 
         // Messages
         $message1 = factory(Message::class)->create([
