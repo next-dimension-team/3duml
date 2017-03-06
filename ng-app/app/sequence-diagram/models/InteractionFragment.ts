@@ -95,7 +95,9 @@ export class InteractionFragment extends JsonApiModel {
     // Prejdeme potomkov - fragmenty
     for (let interactionFragment of this.getRecursiveFragments('Interaction', fragment, true)) {
       // Do výsledného poľa správ uložíme správy, ktoré patria do súčasnej interakcie
-      messages = messages.concat(interactionFragment.fragmentable.messages);
+      if (interactionFragment.fragmentable.messages) {
+        messages = messages.concat(interactionFragment.fragmentable.messages);
+      }
     }
 
     return messages;
