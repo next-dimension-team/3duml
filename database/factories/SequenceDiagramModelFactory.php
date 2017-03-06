@@ -59,7 +59,7 @@ $factory->define(App\Models\Message::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Models\OccurrenceSpecification::class, function (Faker\Generator $faker) {
     return [
-        'time' => $faker->numberBetween(0, 100),
+        'order' => $faker->numberBetween(0, 100),
     ];
 });
 
