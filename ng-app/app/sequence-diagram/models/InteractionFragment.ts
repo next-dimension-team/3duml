@@ -42,7 +42,7 @@ export class InteractionFragment extends JsonApiModel {
     super.syncRelationships(
       data,
       included,
-      _.some(included, { type: 'layers' }) ? -2 : level
+      _.some(included, { type: 'layers' }) ? -3 : level
     );
   }
 

@@ -1,24 +1,25 @@
 <!-- Render layer -->
+<!-- TODO CONSTANT -->
 <div
   class="layer"
-  [selectable]="{type: 'Layer', id: id}">
+  [selectable]="{type: 'Layer', id: model.id}"
+  [style.width]="(model.lifelines.length * 320) + 'px'">
 
   <!-- Render sequence diagram -->
   <div class="sequence-diagram">
 
+    <!-- TODO CONSTANT -->
     <!-- Render lifelines -->
     <app-lifeline
-      *ngFor="let lifeline of lifelines"
-      [id]="lifeline.id"
-      [left]="lifeline.left"
-      [title]="lifeline.title"
-      [executions]="lifeline.executions"
+      *ngFor="let lifeline of model.lifelines; let i = index;"
+      [model]="lifeline"
+      [left]="i * 500"
     ></app-lifeline>
 
     <!-- Render messages -->
     <app-message
       *ngFor="let message of messages"
-      [id]="message.id"
+      [model]="message.model"
       [direction]="message.direction"
       [type]="message.type"
       [title]="message.title"
@@ -28,7 +29,7 @@
     ></app-message>
 
     <!-- Render fragments -->
-    <app-fragment
+    <!--<app-fragment
       *ngFor="let fragment of fragments"
       [id]="fragment.id"
       [title]="fragment.title"
@@ -36,7 +37,7 @@
       [top]="fragment.top"
       [left]="fragment.left"
       [operands]="fragment.operands"
-    ></app-fragment>
+    ></app-fragment>-->
 
   </div>
 

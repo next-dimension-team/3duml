@@ -1,0 +1,10 @@
+<div class="sequence-diagram">
+
+  <app-lifeline
+    *ngFor="let lifeline of interactionModel.lifelines; let i = index;"
+    [model]="lifeline"
+    [left]="i * 200"></app-lifeline>
+
+  <ng-content></ng-content>
+
+</div>

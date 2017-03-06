@@ -1,13 +1,14 @@
-import { Component, AfterViewInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import * as M from '../models';
 
 @Component({
   selector: 'app-message',
   templateUrl: './message.component.html'
 })
-export class MessageComponent implements AfterViewInit {
+export class MessageComponent {
 
   @Input()
-  public id: string;
+  public model: M.Message;
 
   @Input()
   public direction: string =  'left-to-right';
@@ -26,9 +27,5 @@ export class MessageComponent implements AfterViewInit {
 
   @Input()
   public left: number;
-
-  ngAfterViewInit() {
-    //
-  }
 
 }

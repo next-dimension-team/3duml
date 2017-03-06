@@ -52,14 +52,12 @@ export class NewSequenceDiagramComponent implements AfterViewInit, OnChanges, Af
   protected layerElements = [];
 
   constructor(private _ngZone: NgZone, protected service: SequenceDiagramService, protected selectableService: SelectableService) {
-
+    //
   }
 
-  protected refreshDiagram() {
+  public refreshDiagram() {
 
     this.layers = _.uniq(_.map(this.rootInteraction.recursiveLifelines, 'layer'));
-
-    console.log(this.layers);
 
     let layerNum = 0;
 
@@ -82,13 +80,16 @@ export class NewSequenceDiagramComponent implements AfterViewInit, OnChanges, Af
    */
   ngOnChanges(changes: SimpleChanges) {
     if (this.rootInteraction) {
+      console.log(this.rootInteraction);
       this.refreshDiagram();
     }
   }
 
   // TODO: toto upravit cez subscribe
   ngAfterViewChecked() {
-    if (this.rootInteraction) {
+    // TODO: ruby fixne to XXX :D
+    if (this.rootInteraction && ! window.XXX) {
+      window.XXX = true;
       this.refreshDiagram();
     }
   }

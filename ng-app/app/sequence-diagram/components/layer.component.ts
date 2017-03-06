@@ -1,4 +1,5 @@
 import { Component, Input, ElementRef } from '@angular/core';
+import * as M from '../models';
 
 @Component({
   selector: 'app-layer',
@@ -7,20 +8,42 @@ import { Component, Input, ElementRef } from '@angular/core';
 export class LayerComponent {
 
   @Input()
-  public id: string;
+  public model: M.Layer;
 
-  @Input()
-  public depth;
+  protected messages: any[];
 
-  @Input()
-  public lifelines;
+  constructor(public element: ElementRef) {
+    this.processMessages();
+  }
 
-  @Input()
-  public messages;
+  protected processMessages() {
+    /*
+    model
+    direction
+    type
+    title
+    length
+    top
+    left
+    */
 
-  @Input()
-  public fragments;
+    
 
-  constructor(public element: ElementRef) { }
+    /*for (let messageModel of interaction.recursiveMessages) {
+      let messagePosition = this.resolveMessagePosition(messageModel);
+
+      messages.push({
+        id: messageModel.id,
+        direction: this.resolveMessageDirection(messageModel),
+        type: this.resolveMessageType(messageModel),
+        title: messageModel.name,
+        length: this.resolveMessageLength(messageModel),
+        top: messagePosition.top,
+        left: messagePosition.left
+      });
+    }
+
+    return messages;*/
+  }
 
 }

@@ -6,9 +6,6 @@
     <app-layer
         #layerComponents
         *ngFor="let layer of layers"
-        [id]="layer.id"
-        [lifelines]="layer.lifelines"
-        [messages]="layer.messages"
-        [fragments]="layer.fragments"
+        [model]="layer"
     ></app-layer>
 </div>

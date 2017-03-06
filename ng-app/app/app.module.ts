@@ -13,9 +13,11 @@ import { AppComponent } from './app.component';
 import { LifelineComponent } from './sequence-diagram/components/lifeline.component';
 import { ExecutionComponent } from './sequence-diagram/components/execution.component';
 import { MessageComponent } from './sequence-diagram/components/message.component';
-import { FragmentComponent } from './sequence-diagram/components/fragment.component';
+import { CombinedFragmentComponent } from './sequence-diagram/components/combined-fragment.component';
 import { OperandComponent } from './sequence-diagram/components/operand.component';
 import { LayerComponent } from './sequence-diagram/components/layer.component';
+import { InteractionFragmentComponent } from './sequence-diagram/components/interaction-fragment.component';
+import { InteractionComponent } from './sequence-diagram/components/interaction.component';
 
 // Directives
 import { SelectableDirective } from './sequence-diagram/directives/selectable.directive';
@@ -57,9 +59,11 @@ type StoreType = {
     LifelineComponent,
     ExecutionComponent,
     MessageComponent,
-    FragmentComponent,
+    CombinedFragmentComponent,
     OperandComponent,
     LayerComponent,
+    InteractionFragmentComponent,
+    InteractionComponent,
 
     // Directives
     SelectableDirective
