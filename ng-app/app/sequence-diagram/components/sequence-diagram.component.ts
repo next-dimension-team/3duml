@@ -55,10 +55,6 @@ export class NewSequenceDiagramComponent implements AfterViewInit, OnChanges, Af
 
   }
 
-  ngAfterViewChecked() {
-
-  }
-
   protected refreshDiagram() {
 
     this.layers = _.uniq(_.map(this.rootInteraction.recursiveLifelines, 'layer'));
@@ -85,6 +81,13 @@ export class NewSequenceDiagramComponent implements AfterViewInit, OnChanges, Af
    * Sleduje zmeny vstupov komponentu.
    */
   ngOnChanges(changes: SimpleChanges) {
+    if (this.rootInteraction) {
+      this.refreshDiagram();
+    }
+  }
+
+  // TODO: toto upravit cez subscribe
+  ngAfterViewChecked() {
     if (this.rootInteraction) {
       this.refreshDiagram();
     }
