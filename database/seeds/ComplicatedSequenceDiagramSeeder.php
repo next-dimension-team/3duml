@@ -12,8 +12,8 @@ use App\Models\ExecutionSpecification;
 use App\Models\Layer;
 
 /*
- * Original sequence diagram
- * 
+ * Original sequence diagram on link: https://postimg.org/image/urtp7bhup/
+ * note: extension spec. are not exactly same in seed as there. 
  */
 class ComplicatedSequenceDiagramSeeder extends Seeder
 {
