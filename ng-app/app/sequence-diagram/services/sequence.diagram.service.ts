@@ -188,4 +188,18 @@ export class SequenceDiagramService {
     return this.datastore.peekAll(modelType);
   }
 
+  public createDiagram(name: string, callback: any) {
+    let interaction = this.datastore.createRecord(M.Interaction, {
+      name: name
+    });
+
+    interaction.save().subscribe((interaction: M.Interaction) => {
+      let interactionFragment = this.datastore.createRecord(M.InteractionFragment, {
+        fragmentable: interaction
+      });
+
+      interactionFragment.save().subscribe(callback);
+    });
+  }
+
 }

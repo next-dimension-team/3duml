@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Interaction } from '../../sequence-diagram/models';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
+import * as M from '../../sequence-diagram/models';
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -41,7 +42,15 @@ export class MenuComponent implements OnInit {
 
   createDiagram(): void {
     // TODO
-    console.log('Menu component said: Clicked on "Create Diagram" link');
+    //console.log('Menu component said: Clicked on "Create Diagram" link');
+    var diagramName = window.prompt("Choose name of new digram", "NewSeqDiagram");
+
+    //console.log(diagramName);
+    //vytvorenie noveho diagramu
+    this.sequenceDiagramService.createDiagram(diagramName, (interaction: M.InteractionFragment) => {
+        console.log("JE TO VYTVORENE");
+      });
+    
   }
 
 }

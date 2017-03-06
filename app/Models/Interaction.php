@@ -13,6 +13,10 @@ class Interaction extends Model
      */
     protected $table = 'interactions';
 
+    protected $fillable = [
+        'name'
+    ];
+
     public function messages()
     {
         return $this->hasMany(Message::class);
