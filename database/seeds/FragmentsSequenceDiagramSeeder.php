@@ -77,6 +77,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esA1->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esA1F->makeChildOf($rootF);
 
         $esA2 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocA2->id,
@@ -86,6 +87,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esA2->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esA2F->makeChildOf($rootF);
 
         $esA3 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocA3->id,
@@ -95,6 +97,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esA3->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esA3F->makeChildOf($rootF);
 
         // Lifeline B Occurrence Specifications
         $ocB1 = factory(OccurrenceSpecification::class)->create([
@@ -143,6 +146,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esB1->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esB1F->makeChildOf($rootF);
 
         $esB2 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocB3->id,
@@ -152,6 +156,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esB2->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esB2F->makeChildOf($rootF);
 
         $esB3 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocB5->id,
@@ -161,6 +166,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esB3->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esB3F->makeChildOf($rootF);
 
         $esB4 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocB6->id,
@@ -170,6 +176,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esB4->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esB4F->makeChildOf($rootF);
 
         $esB5 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocB7->id,
@@ -179,6 +186,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esB2->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esB5F->makeChildOf($rootF);
 
         $esB6 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocB9->id,
@@ -188,6 +196,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esB6->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esB6F->makeChildOf($rootF);
 
         // Lifeline C Occurrence Specifications
         $ocC1 = factory(OccurrenceSpecification::class)->create([
@@ -236,6 +245,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esC1->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esC1F->makeChildOf($rootF);
 
         $esC2 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC2->id,
@@ -245,6 +255,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esC2->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esC2F->makeChildOf($rootF);
 
         $esC3 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC3->id,
@@ -254,6 +265,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esC3->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esC3F->makeChildOf($rootF);
 
         $esC4 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC4->id,
@@ -263,6 +275,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esC4->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esC4F->makeChildOf($rootF);
 
         $esC5 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC5->id,
@@ -272,6 +285,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esC5->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esC5F->makeChildOf($rootF);
 
         $esC6 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC6->id,
@@ -281,6 +295,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esC6->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esC6F->makeChildOf($rootF);
 
         $esC7 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC7->id,
@@ -290,6 +305,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esC7->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esC7F->makeChildOf($rootF);
 
         $esC8 = factory(ExecutionSpecification::class)->create([
             'start_occurrence_specification_id' => $ocC9->id,
@@ -299,6 +315,7 @@ class FragmentsSequenceDiagramSeeder extends Seeder
             'fragmentable_id' => $esC8->id,
             'fragmentable_type' => 'execution_specification',
         ]);
+        $esC8F->makeChildOf($rootF);
 
         // Messages
         factory(Message::class)->create([

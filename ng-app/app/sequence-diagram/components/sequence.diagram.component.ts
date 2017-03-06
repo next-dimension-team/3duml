@@ -182,17 +182,19 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
     let executions = [];
 
-    /*for (let occurrenceSpecification of lifeline.occurrenceSpecifications) {
-      for (let execution of occurrenceSpecification.startingExecutionSpecifications) {
-        let duration = execution.finish.time - execution.start.time;
-        executions.push({
-          id: execution.id,
-          top: execution.start.time - verticalPadding,
-          height: duration + (2 * verticalPadding)
-        });
+    for (let occurrenceSpecification of lifeline.occurrenceSpecifications) {
+      // kontrolujeme ci sa v JSON nachadza atribut 'startingEx..', ak ano, prida sa ex. specification (sulec)
+      if (occurrenceSpecification.hasOwnProperty('startingExecutionSpecifications')) {
+        for (let execution of occurrenceSpecification.startingExecutionSpecifications) {
+          let duration = execution.finish.time - execution.start.time;
+          executions.push({
+            id: execution.id,
+            top: execution.start.time - verticalPadding,
+            height: duration + (2 * verticalPadding)
+          });
+        }
       }
-    }*/
-
+    }
     return executions;
   }
 
