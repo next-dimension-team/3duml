@@ -11,7 +11,7 @@ class CreateOccurrenceSpecificationsTable extends Migration
         Schema::create('occurrence_specifications', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
-            $table->integer('time')->unsigned();
+            $table->integer('order')->unsigned();
             $table->integer('lifeline_id')->unsigned();
         });
     }
