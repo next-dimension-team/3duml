@@ -60,7 +60,8 @@ class MinimalLayerSeeder extends Seeder
         // Create lifelines
         $lifelineA = tap(
             factory(Lifeline::class)->make([
-                'name' => 'john: Person'
+                'name' => 'john: Person',
+                'order' => 1
             ]),
             function ($lifeline) {
             $lifeline->save();
@@ -68,7 +69,8 @@ class MinimalLayerSeeder extends Seeder
 
         $lifelineB = tap(
             factory(Lifeline::class)->make([
-                'name' => 'anna: Person'
+                'name' => 'anna: Person',
+                'order' => 2
             ]),
             function ($lifeline) {
             $lifeline->save();
@@ -76,7 +78,8 @@ class MinimalLayerSeeder extends Seeder
 
         $lifelineC = tap(
             factory(Lifeline::class)->make([
-                'name' => 'peter: Person'
+                'name' => 'peter: Person',
+                'order' => 1
             ]),
             function ($lifeline) {
             $lifeline->save();
@@ -84,7 +87,8 @@ class MinimalLayerSeeder extends Seeder
 
         $lifelineD = tap(
             factory(Lifeline::class)->make([
-                'name' => 'bill: Person'
+                'name' => 'bill: Person',
+                'order' => 2
             ]),
             function ($lifeline) {
             $lifeline->save();

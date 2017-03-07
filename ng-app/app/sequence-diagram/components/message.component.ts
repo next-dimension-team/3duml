@@ -28,8 +28,8 @@ export class MessageComponent {
 
   // TODO: implementovat logiku
   protected get left() {
-    let sourceLifelineOrder = parseInt(this.messageModel.sendEvent.covered.id);
-    let targetLifelineOrder = parseInt(this.messageModel.receiveEvent.covered.id);
+    let sourceLifelineOrder = this.messageModel.sendEvent.covered.order;
+    let targetLifelineOrder = this.messageModel.receiveEvent.covered.order;
     let firstLifelineOrder = (sourceLifelineOrder < targetLifelineOrder) ? sourceLifelineOrder : targetLifelineOrder;
 
     let leftOffset = (firstLifelineOrder - 1) * this.VZDIALENOST_LAJFLAJN;    
@@ -40,19 +40,18 @@ export class MessageComponent {
 
   // TODO: implementovat logiku
   protected get length() {
-    let sourceLifelineOrder = parseInt(this.messageModel.sendEvent.covered.id);
-    let targetLifelineOrder = parseInt(this.messageModel.receiveEvent.covered.id);
+    let sourceLifelineOrder = this.messageModel.sendEvent.covered.order;
+    let targetLifelineOrder = this.messageModel.receiveEvent.covered.order;
     
     return Math.abs(sourceLifelineOrder - targetLifelineOrder) * this.VZDIALENOST_LAJFLAJN;
   }
 
   // TODO: implementovat logiku
-  // NAMIESTO ID TREBA DAT ORDER
   protected get direction() {
     let sourceLifeline = this.messageModel.sendEvent.covered;
     let targetLifeline = this.messageModel.receiveEvent.covered;
 
-    return (sourceLifeline.id < targetLifeline.id) ? 'left-to-right' : 'right-to-left';
+    return (sourceLifeline.order < targetLifeline.order) ? 'left-to-right' : 'right-to-left';
   }
 
   protected get type() {
