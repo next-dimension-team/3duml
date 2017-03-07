@@ -235,7 +235,7 @@ class MinimalLayerSeeder extends Seeder
 
 
 
-
+        if (true):
 
         // Combined Fragment
         $opt2 = factory(CombinedFragment::class)->create([
@@ -312,5 +312,7 @@ class MinimalLayerSeeder extends Seeder
             ->sendEvent()->associate($occurrenceSpecificationX2)
             ->receiveEvent()->associate($occurrenceSpecificationY2)
             ->save();
+
+        endif;
     }
 }

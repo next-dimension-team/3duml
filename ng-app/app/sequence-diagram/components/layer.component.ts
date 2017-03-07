@@ -45,25 +45,30 @@ export class LayerComponent implements OnChanges {
       top: null,
     };
 
-    // Interaction
-    /*if (self.type == 'Interaction') {
-      for (let child of children) {
-        child.
-      }
-    }*/
-
     // Combined Fragment
     if (self.type == 'CombinedFragment') {
       let envelope = this.envelopeFragment(interactionFragmentModel);
-      self.width = envelope.width;
-      self.left = envelope.mostLeft;
-      self.top = (((envelope.minimalTime - 1) * this.VYSKA_ZUBKU) + this.VYSKA_HLAVICKY_LAJFLAJNY);
+      self.width = 0;
+      self.left = 0;
+      self.top = (envelope.min * this.VYSKA_ZUBKU) + this.VYSKA_HLAVICKY_LAJFLAJNY;
+
+      for (let childOperand of children) {
+        for (let childOperandInteraction of childOperand.children) {
+          for (let childOperandInteractionFragments of childOperandInteraction.children) {
+            childOperandInteractionFragments.top -= self.top;
+          }
+        }
+      }
+
+      console.info("CombinedFragment envelope", envelope);
     }
 
     // Interaction Operand
     else if (self.type == 'InteractionOperand') {
       let envelope = this.envelopeFragment(interactionFragmentModel);
-      self.height = (envelope.height + 2) * this.VYSKA_ZUBKU;
+      self.height = (envelope.max - envelope.min) * this.VYSKA_ZUBKU;
+
+      console.info("InteractionOperand envelope", envelope);
     }
 
     self.children = children;
@@ -72,76 +77,79 @@ export class LayerComponent implements OnChanges {
   }
 
   protected envelopeFragment(interactionFragment: M.InteractionFragment) {
-
-    // Inicializácia
-    let minimalTime = null;
-    let maximalTime = null;
-    let mostLeft = null;
-    let mostRight = null;
-
-    // Prejdeme všetky správy v zadanom kombinovanom fragmente
-    for (let message of interactionFragment.recursiveMessages) {
-
-      // Určíme minimálny a maximálny čas
-      if (message.sendEvent.time < minimalTime || minimalTime == null) {
-        minimalTime = message.sendEvent.time;
-      }
-
-      if (message.receiveEvent.time < minimalTime || minimalTime == null) {
-        minimalTime = message.receiveEvent.time;
-      }
-
-      if (message.sendEvent.time > maximalTime || maximalTime == null) {
-        maximalTime = message.sendEvent.time;
-      }
-
-      if (message.receiveEvent.time > maximalTime || maximalTime == null) {
-        maximalTime = message.receiveEvent.time;
-      }
-
-      // Určíme ľavú a pravú hraincu
-      let lifelineALeft = message.sendEvent.covered.leftDistance;
-      let lifelineBLeft = message.receiveEvent.covered.leftDistance;
-
-      if (lifelineALeft < mostLeft || mostLeft == null) {
-        mostLeft = lifelineALeft;
-      }
-
-      if (lifelineBLeft < mostLeft || mostLeft == null) {
-        mostLeft = lifelineBLeft;
-      }
-
-      if (lifelineALeft > mostRight || mostRight == null) {
-        mostRight = lifelineALeft;
-      }
-
-      if (lifelineBLeft > mostRight || mostRight == null) {
-        mostRight = lifelineBLeft;
-      }
-    }
-
-    // Kontroly
-    if (minimalTime == null) {
-      console.error('Could not determine minimal time for combined fragment', interactionFragment);
-    }
-    if (maximalTime == null) {
-      console.error('Could not determine maximal time for combined fragment', interactionFragment);
-    }
-    if (mostLeft == null || mostRight == null) {
-      console.error('Could not determine width for combined fragment', interactionFragment);
-    }
-
-    // Vytvoríme výsledný objekt
-    let envelope = {
-      minimalTime: minimalTime,
-      maximalTime: maximalTime,
-      mostLeft: mostLeft,
-      mostRight: mostRight,
-      width: mostRight - mostLeft,
-      height: maximalTime - minimalTime
+    let e = {
+      min: null,
+      max: null
     };
 
-    return envelope;
+    let type = interactionFragment.fragmentable.constructor.name;
+
+    if (type == 'Interaction') {
+      // Prejdeme všetky správy v zadanom kombinovanom fragmente
+      for (let message of interactionFragment.fragmentable.messages) {
+
+        // Určíme minimálny a maximálny čas
+        if (message.sendEvent.time < e.min || e.min == null) {
+          e.min = message.sendEvent.time;
+        }
+
+        if (message.receiveEvent.time < e.min || e.min == null) {
+          e.min = message.receiveEvent.time;
+        }
+
+        if (message.sendEvent.time > e.max || e.max == null) {
+          e.max = message.sendEvent.time;
+        }
+
+        if (message.receiveEvent.time > e.max || e.max == null) {
+          e.max = message.receiveEvent.time;
+        }
+      }
+
+      for (let childFragment of interactionFragment.children) {
+        let childEnvelope = this.envelopeFragment(childFragment);
+        e = this.squeezeEnvelopes(e, childEnvelope);
+      }
+    }
+
+    else if (type == 'CombinedFragment') {
+      e = null;
+      for (let childFragment of interactionFragment.children) {
+        let childEnvelope = this.envelopeFragment(childFragment);
+        if (! e) {
+          e = childEnvelope;
+        } else {
+          e = this.squeezeEnvelopes(e, childEnvelope);
+        }
+      }
+    }
+
+    else if (type == 'InteractionOperand') {
+      e = null;
+      for (let childFragment of interactionFragment.children) {
+        let childEnvelope = this.envelopeFragment(childFragment);
+        if (! e) {
+          e = childEnvelope;
+        } else {
+          e = this.squeezeEnvelopes(e, childEnvelope);
+        }
+      }
+      e.min--;
+      e.max++;
+    }
+
+    else {
+      alert("toto by sa nemalo stat");
+    }
+
+    return e;
+  }
+
+  protected squeezeEnvelopes(a, b) {
+    return {
+      min: Math.min(a.min, b.min),
+      max: Math.max(a.max, b.max)
+    };
   }
 
 }

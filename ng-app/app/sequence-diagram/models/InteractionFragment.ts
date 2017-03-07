@@ -103,6 +103,23 @@ export class InteractionFragment extends JsonApiModel {
     return messages;
   }
 
+  get recursiveMessagesOneLevel(): M.Message[] {
+    let messages = [];
+
+    switch (this.fragmentable.constructor.name) {
+
+      case 'Interaction':
+        return this.fragmentable.messages;
+
+      default:
+        for (let interactionFragment of this.children) {
+          messages = messages.concat(interactionFragment.recursiveMessagesOneLevel);
+        }
+        return messages;
+
+   }
+  }
+
   get recursiveMessages(): M.Message[] {
     return this.getRecursiveMessages(this);
   }
