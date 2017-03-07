@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Models\Layer;
 use App\Models\Message;
 use App\Models\Lifeline;
 use App\Models\Interaction;
@@ -28,15 +27,6 @@ class MinimalLayerSeeder extends Seeder
             ->fragmentable()
             ->associate($rootInteraction)
             ->save();
-
-        // Create layers
-        $layerA = factory(Layer::class)->create([
-            'depth' => 0,
-        ]);
-
-        $layerB = factory(Layer::class)->create([
-            'depth' => 1,
-        ]);
 
         // Create interactions
         $interactionA = factory(Interaction::class)->create([
@@ -71,9 +61,7 @@ class MinimalLayerSeeder extends Seeder
         $lifelineA = tap(
             factory(Lifeline::class)->make([
                 'name' => 'john: Person'
-            ])
-            ->layer()
-            ->associate($layerA),
+            ]),
             function ($lifeline) {
             $lifeline->save();
         });
@@ -81,9 +69,7 @@ class MinimalLayerSeeder extends Seeder
         $lifelineB = tap(
             factory(Lifeline::class)->make([
                 'name' => 'anna: Person'
-            ])
-            ->layer()
-            ->associate($layerA),
+            ]),
             function ($lifeline) {
             $lifeline->save();
         });
@@ -91,9 +77,7 @@ class MinimalLayerSeeder extends Seeder
         $lifelineC = tap(
             factory(Lifeline::class)->make([
                 'name' => 'peter: Person'
-            ])
-            ->layer()
-            ->associate($layerB),
+            ]),
             function ($lifeline) {
             $lifeline->save();
         });
@@ -101,9 +85,7 @@ class MinimalLayerSeeder extends Seeder
         $lifelineD = tap(
             factory(Lifeline::class)->make([
                 'name' => 'bill: Person'
-            ])
-            ->layer()
-            ->associate($layerB),
+            ]),
             function ($lifeline) {
             $lifeline->save();
         });
