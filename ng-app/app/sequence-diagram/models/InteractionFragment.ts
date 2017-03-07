@@ -38,11 +38,11 @@ export class InteractionFragment extends JsonApiModel {
   }
 
   public syncRelationships(data: any, included: any, level: number): void {
-    // Ak chceme relacie synchronizovat az po vrstvy musime zmenit level
+    // Ak chceme relacie synchronizovat az po lifeliny musime zmenit level
     super.syncRelationships(
       data,
       included,
-      _.some(included, { type: 'layers' }) ? -3 : level
+      _.some(included, { type: 'lifelines' }) ? -2 : level
     );
   }
 

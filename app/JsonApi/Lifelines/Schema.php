@@ -18,6 +18,7 @@ class Schema extends EloquentSchema
      */
     protected $attributes = [
         'name',
+        'order',
     ];
 
     /**
@@ -56,13 +57,6 @@ class Schema extends EloquentSchema
                 self::SHOW_SELF => true,
                 self::SHOW_RELATED => true,
                 self::DATA => $resource->occurrenceSpecifications,
-            ],
-            'layer' => [
-                self::SHOW_SELF => true,
-                self::SHOW_RELATED => true,
-                self::DATA => isset($includeRelationships['layer'])
-                    ? $resource->layer
-                    : $this->createBelongsToIdentity($resource, 'layer'),
             ],
         ];
     }

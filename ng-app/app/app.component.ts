@@ -10,15 +10,13 @@ import { SequenceDiagramService } from './sequence-diagram/services';
 })
 export class AppComponent {
 
-  protected loaded: boolean = false;
-
   public openedSequenceDiagram: M.InteractionFragment;
 
   constructor(private service: SequenceDiagramService) {
-    this.loaded = true;
+    //
   }
 
-  openSequenceDiagram(diagram: M.Interaction) {
+  public openSequenceDiagram(diagram: M.Interaction) {
     this.service.loadSequenceDiagramTree(diagram).subscribe(
       (interactionFragment: M.InteractionFragment) => this.openedSequenceDiagram = interactionFragment
     );
