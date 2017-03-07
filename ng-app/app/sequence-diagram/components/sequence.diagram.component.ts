@@ -45,21 +45,24 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   protected diagramChanged = false;
   protected layerElements = [];
 
-  public sourceLifelineEvent;
-  public destinationLifelineEvent;
+  public sourceLifelineEvent = null;
+  public sourceLifelineEventModel = null;
+  public destinationLifelineEvent = null;
+  public destinationLifelineEventModel = null;
+  public sequenceDiagramService: SequenceDiagramService;
 
   @Input()
   public rootInteraction: M.Interaction;
 
   public layers = [];
+  public messages = [];
 
   constructor(private _ngZone: NgZone, protected service: SequenceDiagramService, protected selectableService: SelectableService) {
     // TODO: Toto je ukážkový kód, ako počúvať na označenie elementu.
+
     this.selectableService.onLeftClick((event) => {
 
-      if (event.model.type === 'Lifeline') {
-        this.handleLifelineClick(event);
-      }
+
       console.log("--------------------------------");
       console.info("Event typu: LeftClick");
       console.log("Klikol si na " + event.model.type + " s ID " + event.model.id);
@@ -70,6 +73,10 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
       console.log("--------------------------------");
     });
     this.selectableService.onRightClick((event) => {
+
+      if (event.model.type == 'Lifeline') {
+        this.handleLifelineClick(event);
+      }
       console.log("--------------------------------");
       console.info("Event typu: RightClick");
       console.log("Klikol si na " + event.model.type + " s ID " + event.model.id);
@@ -114,17 +121,21 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   protected handleLifelineClick(event: MouseEvent) {
     let source;
         if (this.sourceLifelineEvent) {
+          this.destinationLifelineEventModel = event.model;
           this.destinationLifelineEvent = event;
           console.log("Toto je lifelineKAM mam ist");
           console.log(this.destinationLifelineEvent.model.id);
           console.log("Toto je lifelineOdkial mam ist");
-          console.log(this.sourceLifelineEvent);
-          this.addMessage();
+          console.log(this.sourceLifelineEvent.model.id);
+          console.log("-------------------------------------------------------")
+          console.log()
+          this.createMessage(this.sourceLifelineEvent, this.sourceLifelineEventModel, this.destinationLifelineEvent, this.destinationLifelineEventModel);
           this.sourceLifelineEvent = null;
           this.destinationLifelineEvent = null;
         }
         else {
           this.sourceLifelineEvent = event;
+          this.sourceLifelineEventModel = event.model;
           console.log("Toto je lifelineOdkial mam ist");
           console.log(this.sourceLifelineEvent.model.id);
         }
@@ -132,7 +143,10 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
   protected addMessage () {
 
-    let message = new M.Message();
+    let direction;
+    let length;
+    let left = 0;
+
     console.log("Kliknutie na sourcelifeline suradnica:" + this.sourceLifelineEvent.offsetX);
     console.log("Kliknutie na destinationLifeline suradnica:" + this.destinationLifelineEvent.offsetX);
    /* message.sendEvent.covered.leftDistance = this.sourceLifelineEvent.offsetX;
@@ -141,9 +155,43 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
    // nejde to zatial, neviem pristupu ku sendEvenet ani covered...
 
     //zatial nefunguje, neviem ako poslat message
-    this.resolveMessageDirection(message); // tuto sa vypocita odkial, kam
-    this.resolveMessageLength(message); //dlzka
-    this.resolveMessagePosition(message); //pozicia
+    /*this.resolveMessageDirection(message);*/ // tuto sa vypocita odkial, kam
+   /* this.resolveMessageLength(message); *///dlzka
+    /*this.resolveMessagePosition(message); *///pozicia
+
+      let lifelineALeft = this.sourceLifelineEvent.screenX;
+      let lifelineBLeft = this.destinationLifelineEvent.screenX;
+
+      if (lifelineBLeft - lifelineALeft >= 0)
+        direction = 'left-to-right'
+    else
+      direction = 'right-to-left';
+
+      // 12 = 2*6; 6 = execution.width/2
+      length = Math.abs(lifelineALeft - lifelineBLeft) - 12 + 120*2;
+
+      //let left = Math.min(lifelineALeft, lifelineBLeft);
+    //dat podm ak je left to right takttoo inak opacne
+    if (direction == 'left-to-right')
+      left = Math.min(this.sourceLifelineEvent.offsetX);
+    else
+      left = Math.min(this.destinationLifelineEvent.offsetX);
+
+
+    this.messages.push({
+      id: 7,
+      direction: direction,
+      type: 'sync',
+      title: 'kedychcem()',
+      length: length,
+      top: this.sourceLifelineEvent.offsetY,
+      left: left
+    });
+
+    /*this.layers.push({
+      id: null,
+      messages: this.messages,
+    });*/
 
   }
 
@@ -329,18 +377,18 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
         top: messagePosition.top,
         left: messagePosition.left
       });
-      messageIdMax = messageModel.id;
+      //messageIdMax = messageModel.id;
     }
 
     //tuto som chcel pushnut tu pridanu message userom...
-   /* messages.push({
-      id: messageIdMax + 1,
-      direction: this.resolveMessageDirection(messageModel),
-      type: this.resolveMessageType(messageModel),
+  /* messages.push({
+      id: 10,
+      direction: 'left-to-right',
+      type: 'unknown',
       title: "kedychcem()",
-      length: this.resolveMessageLength(messageModel),
-      top: messagePosition.top,
-      left: messagePosition.left
+      length: 40,
+      top: 15,
+      left: 25
     });*/
 
     return messages;
@@ -566,6 +614,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
       id: null, // TODO: sem treba poslať ID layeru
       lifelines: this.processLifelines(this.rootInteraction),
       messages: this.processMessages(this.rootInteraction),
+      //messages: this.messages,
       fragments: this.processFragments(this.rootInteraction)
     });
 
@@ -619,4 +668,11 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     this.renderer.render(this.scene, this.camera);
   }
 
+  createMessage(fromEvent: MouseEvent, fromLifelineModel: M.Lifeline, toEvent: MouseEvent, toLifelineModel: M.Lifeline): void{
+
+
+    this.sequenceDiagramService.createMessage(fromEvent, fromLifelineModel, toEvent, toLifelineModel, (message: M.Message) => {
+      console.log("Vytvorena message v DB");
+    });
+  }
 }

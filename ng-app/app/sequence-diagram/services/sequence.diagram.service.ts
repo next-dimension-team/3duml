@@ -188,4 +188,31 @@ export class SequenceDiagramService {
     return this.datastore.peekAll(modelType);
   }
 
+  public createMessage(fromEvent: MouseEvent, fromLifelineModel: M.Lifeline, toEvent: MouseEvent, toLifelineModel: M.Lifeline, callback: any) {
+
+    let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+      time: Math.round(fromEvent.offsetY),
+      covered: fromLifelineModel
+
+    });
+
+    sourceOccurence.save().subscribe();
+
+    let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+      time: Math.round(toEvent.offsetY),
+      covered: toLifelineModel
+
+    });
+
+    destinationOccurence.save().subscribe();
+
+    let message = this.datastore.createRecord(M.Message, {
+      name: "send()",
+      sendEvent: sourceOccurence,
+      receiveEvent: destinationOccurence
+    });
+
+    message.save().subscribe(callback);
+  }
+
 }
