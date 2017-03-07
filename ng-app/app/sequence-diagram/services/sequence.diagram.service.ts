@@ -26,10 +26,10 @@ export class SequenceDiagramService {
 
     return this.datastore.query(M.InteractionFragment, {
       include: _.join([
-        'fragmentable.messages.sendEvent.covered.layer',
-        'fragmentable.messages.receiveEvent.covered.layer',
-        'fragmentable.start.covered.layer',
-        'fragmentable.finish.covered.layer'
+        'fragmentable.messages.sendEvent.covered',
+        'fragmentable.messages.receiveEvent.covered',
+        'fragmentable.start.covered',
+        'fragmentable.finish.covered'
       ]),
       filter: {
         descendants: id

@@ -11,6 +11,9 @@ export class Lifeline extends JsonApiModel {
   name: string;
 
   @Attribute()
+  order: number;  
+
+  @Attribute()
   created_at: Date;
 
   @Attribute()
@@ -18,9 +21,6 @@ export class Lifeline extends JsonApiModel {
 
   @HasMany()
   occurrenceSpecifications: M.OccurrenceSpecification[];
-
-  @BelongsTo()
-  layer: M.Layer;
 
   // TODO: neodskúšaná metóda
   get interactions(): M.Interaction[] {

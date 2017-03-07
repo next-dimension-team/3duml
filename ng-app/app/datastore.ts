@@ -14,8 +14,7 @@ import * as sd from './sequence-diagram/models';
     'interaction-operands': sd.InteractionOperand,
     'lifelines': sd.Lifeline,
     'messages': sd.Message,
-    'occurrence-specifications': sd.OccurrenceSpecification,
-    'layers': sd.Layer,
+    'occurrence-specifications': sd.OccurrenceSpecification
   }
 })
 export class Datastore extends JsonApiDatastore {
