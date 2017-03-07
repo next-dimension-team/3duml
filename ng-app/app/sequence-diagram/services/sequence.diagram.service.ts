@@ -21,7 +21,7 @@ export class SequenceDiagramService {
     );
   }
 
-  public loadSequenceDiagramTree(interaction: M.Interaction): Observable<M.Interaction> {
+  public loadSequenceDiagramTree(interaction: M.Interaction): Observable<M.InteractionFragment> {
     let id = interaction.fragment.id;
 
     return this.datastore.query(M.InteractionFragment, {
@@ -35,7 +35,7 @@ export class SequenceDiagramService {
         descendants: id
       }
     }).map(
-      (fragments: M.InteractionFragment[]) => _.find(fragments, ['id', id]).fragmentable
+      (fragments: M.InteractionFragment[]) => _.find(fragments, ['id', id])
     );
   }
 

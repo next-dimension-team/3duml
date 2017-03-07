@@ -3,7 +3,12 @@
   <app-lifeline
     *ngFor="let lifeline of interactionModel.lifelines; let i = index;"
     [model]="lifeline"
-    [left]="i * 200"></app-lifeline>
+    [left]="i * 500"></app-lifeline>
+  
+  <app-message
+    *ngFor="let message of interactionModel.messages"
+    [messageModel]="message"
+    top="100"></app-message>
 
   <ng-content></ng-content>
 

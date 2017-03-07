@@ -5,7 +5,7 @@
 <div class="layers-wrapper">
     <app-layer
         #layerComponents
-        *ngFor="let layer of layers"
-        [model]="layer"
+        *ngFor="let interactionFragmentModel of rootInteractionFragment.children"
+        [interactionFragmentModel]="interactionFragmentModel"
     ></app-layer>
 </div>

@@ -1,38 +1,35 @@
-<ul>
-  <li>
-    <p>
-      Ja som:
-      {{interactionFragmentModel.fragmentable.constructor.name}}
-      {{interactionFragmentModel.fragmentable.id}}
-    </p>
+<!-- TODO -->
+<!--
+<p>
+  Ja som:
+  {{interactionFragmentModel.fragmentable.constructor.name}}
+  {{interactionFragmentModel.fragmentable.id}}
+</p>-->
 
-    <!-- TODO: prerobit na switch -->
+<!-- TODO: prerobit na switch -->
 
-    <!-- Interaction -->
-    <app-interaction
-      *ngIf="interactionFragmentModel.fragmentable.constructor.name == 'Interaction'"
-      [interactionModel]="interactionFragmentModel.fragmentable">
+<!-- Interaction -->
+<app-interaction
+  *ngIf="interactionFragmentModel.fragmentable.constructor.name == 'Interaction'"
+  [interactionModel]="interactionFragmentModel.fragmentable">
 
-      <!-- Interaction Fragment -->
-      <app-interaction-fragment
-        *ngFor="let child of interactionFragmentModel.children"
-        [interactionFragmentModel]="child">
-      </app-interaction-fragment>
+  <!-- Interaction Fragment -->
+  <app-interaction-fragment
+    *ngFor="let child of interactionFragmentModel.children"
+    [interactionFragmentModel]="child">
+  </app-interaction-fragment>
 
-    </app-interaction>
+</app-interaction>
 
-    <!-- Combined Fragment -->
-    <app-combined-fragment
-      *ngIf="interactionFragmentModel.fragmentable.constructor.name == 'CombinedFragment'"
-      [combinedFragmentModel]="interactionFragmentModel.fragmentable">
+<!-- Combined Fragment -->
+<app-combined-fragment
+  *ngIf="interactionFragmentModel.fragmentable.constructor.name == 'CombinedFragment'"
+  [combinedFragmentModel]="interactionFragmentModel.fragmentable">
 
-      <!-- Interaction Fragment -->
-      <app-interaction-fragment
-        *ngFor="let child of interactionFragmentModel.children"
-        [interactionFragmentModel]="child">
-      </app-interaction-fragment>
+  <!-- Interaction Fragment -->
+  <app-interaction-fragment
+    *ngFor="let child of interactionFragmentModel.children"
+    [interactionFragmentModel]="child">
+  </app-interaction-fragment>
 
-    </app-combined-fragment>
-    
-  </li>
-</ul>
+</app-combined-fragment>

@@ -2,42 +2,15 @@
 <!-- TODO CONSTANT -->
 <div
   class="layer"
-  [selectable]="{type: 'Layer', id: model.id}"
-  [style.width]="(model.lifelines.length * 320) + 'px'">
+  [style.width]="(interactionFragmentModel.fragmentable.lifelines.length * 320) + 'px'">
 
   <!-- Render sequence diagram -->
   <div class="sequence-diagram">
 
-    <!-- TODO CONSTANT -->
-    <!-- Render lifelines -->
-    <app-lifeline
-      *ngFor="let lifeline of model.lifelines; let i = index;"
-      [model]="lifeline"
-      [left]="i * 500"
-    ></app-lifeline>
-
-    <!-- Render messages -->
-    <app-message
-      *ngFor="let message of messages"
-      [model]="message.model"
-      [direction]="message.direction"
-      [type]="message.type"
-      [title]="message.title"
-      [length]="message.length"
-      [top]="message.top"
-      [left]="message.left"
-    ></app-message>
-
-    <!-- Render fragments -->
-    <!--<app-fragment
-      *ngFor="let fragment of fragments"
-      [id]="fragment.id"
-      [title]="fragment.title"
-      [width]="fragment.width"
-      [top]="fragment.top"
-      [left]="fragment.left"
-      [operands]="fragment.operands"
-    ></app-fragment>-->
+    <!-- Interaction Fragment -->
+    <app-interaction-fragment
+      [interactionFragmentModel]="interactionFragmentModel">
+    </app-interaction-fragment>
 
   </div>
 

@@ -45,9 +45,7 @@ export class NewSequenceDiagramComponent implements AfterViewInit, OnChanges, Af
   protected renderer: THREE.CSS3DRenderer;
 
   @Input()
-  public rootInteraction: M.Interaction;
-
-  protected layers = [];
+  public rootInteractionFragment: M.InteractionFragment;
 
   protected layerElements = [];
 
@@ -56,8 +54,12 @@ export class NewSequenceDiagramComponent implements AfterViewInit, OnChanges, Af
   }
 
   public refreshDiagram() {
+    
+    if (! this.layerComponents) {
+      return;
+    }
 
-    this.layers = _.uniq(_.map(this.rootInteraction.recursiveLifelines, 'layer'));
+    //this.layers = _.uniq(_.map(this.rootInteraction.recursiveLifelines, 'layer'));
 
     let layerNum = 0;
 
@@ -79,8 +81,8 @@ export class NewSequenceDiagramComponent implements AfterViewInit, OnChanges, Af
    * Sleduje zmeny vstupov komponentu.
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (this.rootInteraction) {
-      console.log(this.rootInteraction);
+    if (this.rootInteractionFragment) {
+      console.log(this.rootInteractionFragment);
       this.refreshDiagram();
     }
   }
@@ -88,7 +90,7 @@ export class NewSequenceDiagramComponent implements AfterViewInit, OnChanges, Af
   // TODO: toto upravit cez subscribe
   ngAfterViewChecked() {
     // TODO: ruby fixne to XXX :D
-    if (this.rootInteraction && ! window.XXX) {
+    if (this.rootInteractionFragment && ! window.XXX) {
       window.XXX = true;
       this.refreshDiagram();
     }

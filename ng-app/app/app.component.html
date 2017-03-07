@@ -7,10 +7,10 @@
     </div>
 
     <div id="page-content-wrapper">
-        <app-interaction-fragment
+        <new-app-sequence-diagram
             *ngIf="openedSequenceDiagram"
-            [interactionFragmentModel]="openedSequenceDiagram.fragment"
-        ></app-interaction-fragment>
+            [rootInteractionFragment]="openedSequenceDiagram"
+        ></new-app-sequence-diagram>
     </div>
 
 </div>
