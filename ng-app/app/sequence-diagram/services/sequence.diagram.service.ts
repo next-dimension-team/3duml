@@ -191,28 +191,31 @@ export class SequenceDiagramService {
   public createMessage(fromEvent: MouseEvent, fromLifelineModel: M.Lifeline, toEvent: MouseEvent, toLifelineModel: M.Lifeline, callback: any) {
 
     let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-      time: Math.round(fromEvent.offsetY),
-      covered: fromLifelineModel
-
+      time: 5,
+      covered: this.getOne(M.Lifeline, fromLifelineModel.id)
     });
+    sourceOccurence.save().subscribe(callback);
 
-    sourceOccurence.save().subscribe();
+    sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification)=> {
+      let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+        time: Math.round(toEvent.offsetY),
+        covered: this.getOne(M.Lifeline, toLifelineModel.id)
 
-    let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-      time: Math.round(toEvent.offsetY),
-      covered: toLifelineModel
+      });
 
+      destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) =>{
+        let message = this.datastore.createRecord(M.Message, {
+          //TODO nazvat message ako chcem
+          name: "send",
+          sort: "synchCall",
+          //TODO zmenit dynamicky na interaction, v ktorom realne som
+          interaction: this.getOne(M.Interaction, "1"),
+          sendEvent: sourceOccurence,
+          receiveEvent: destinationOccurence
+        });
+        message.save().subscribe(callback);
+      });
     });
-
-    destinationOccurence.save().subscribe();
-
-    let message = this.datastore.createRecord(M.Message, {
-      name: "send()",
-      sendEvent: sourceOccurence,
-      receiveEvent: destinationOccurence
-    });
-
-    message.save().subscribe(callback);
   }
 
 }

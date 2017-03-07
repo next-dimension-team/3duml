@@ -49,7 +49,6 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   public sourceLifelineEventModel = null;
   public destinationLifelineEvent = null;
   public destinationLifelineEventModel = null;
-  public sequenceDiagramService: SequenceDiagramService;
 
   @Input()
   public rootInteraction: M.Interaction;
@@ -74,7 +73,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     });
     this.selectableService.onRightClick((event) => {
 
-      if (event.model.type == 'Lifeline') {
+      if (event.model.type === 'Lifeline') {
         this.handleLifelineClick(event);
       }
       console.log("--------------------------------");
@@ -671,7 +670,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   createMessage(fromEvent: MouseEvent, fromLifelineModel: M.Lifeline, toEvent: MouseEvent, toLifelineModel: M.Lifeline): void{
 
 
-    this.sequenceDiagramService.createMessage(fromEvent, fromLifelineModel, toEvent, toLifelineModel, (message: M.Message) => {
+    this.service.createMessage(fromEvent, fromLifelineModel, toEvent, toLifelineModel, (message: M.Message) => {
       console.log("Vytvorena message v DB");
     });
   }
