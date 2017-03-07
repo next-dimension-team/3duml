@@ -21,6 +21,19 @@ export class Interaction extends JsonApiModel {
   @HasMany()
   messages: M.Message[];
 
+  get isRootInteraction() {
+    return (! this.fragment.parent);
+  }
+
+  get isLayerInteraction() {
+    let parent = this.fragment.parent;
+    return (parent && parent.isRootInteraction);
+  }
+
+  get isBasicInteraction() {
+    return (! this.isRootInteraction && ! this.isLayerInteraction);
+  }
+
   get recursiveMessages(): M.Message[] {
     return this.fragment.recursiveMessages;
   }

@@ -1,2 +1,12 @@
-CF
-<ng-content></ng-content>
+<!-- Render Combined Fragment -->
+<div
+  class="fragment"
+  [style.width]="'500px'"
+  [style.left]="fragment.left + 'px'"
+  [style.top]="fragment.top + 'px'"
+>
+  <div class="title">{{fragment.model.operator}}</div>
+
+  <ng-content></ng-content>
+
+</div>

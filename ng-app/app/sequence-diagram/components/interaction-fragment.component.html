@@ -1,35 +1,38 @@
-<!-- TODO -->
-<!--
-<p>
-  Ja som:
-  {{interactionFragmentModel.fragmentable.constructor.name}}
-  {{interactionFragmentModel.fragmentable.id}}
-</p>-->
-
-<!-- TODO: prerobit na switch -->
+<!-- TODO: prerobit na ngSwitch -->
 
 <!-- Interaction -->
-<app-interaction
-  *ngIf="interactionFragmentModel.fragmentable.constructor.name == 'Interaction'"
-  [interactionModel]="interactionFragmentModel.fragmentable">
-
+<ng-container *ngIf="fragment.type == 'Interaction'">
+  
   <!-- Interaction Fragment -->
   <app-interaction-fragment
-    *ngFor="let child of interactionFragmentModel.children"
-    [interactionFragmentModel]="child">
+    *ngFor="let fragment of fragment.children"
+    [fragment]="fragment">
   </app-interaction-fragment>
-
-</app-interaction>
+  
+</ng-container>
 
 <!-- Combined Fragment -->
 <app-combined-fragment
-  *ngIf="interactionFragmentModel.fragmentable.constructor.name == 'CombinedFragment'"
-  [combinedFragmentModel]="interactionFragmentModel.fragmentable">
-
+  *ngIf="fragment.type == 'CombinedFragment'"
+  [fragment]="fragment">
+  
   <!-- Interaction Fragment -->
   <app-interaction-fragment
-    *ngFor="let child of interactionFragmentModel.children"
-    [interactionFragmentModel]="child">
+    *ngFor="let fragment of fragment.children"
+    [fragment]="fragment">
   </app-interaction-fragment>
-
+  
 </app-combined-fragment>
+
+<!-- Interaction Operand -->
+<app-interaction-operand
+  *ngIf="fragment.type == 'InteractionOperand'"
+  [fragment]="fragment">
+  
+  <!-- Interaction Fragment -->
+  <app-interaction-fragment
+    *ngFor="let fragment of fragment.children"
+    [fragment]="fragment">
+  </app-interaction-fragment>
+  
+</app-interaction-operand>

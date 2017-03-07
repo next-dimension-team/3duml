@@ -7,15 +7,24 @@ import * as M from '../models';
 })
 export class MessageComponent {
 
+  // Konstantu vytiahnut niekam do konfigu
+  protected VZDIALENOST_LAJFLAJN = 400;
+  protected SIRKA_LAJFLAJNY = 120; // TOTO musi byt parne cislo delitelne 4 bezo zvysku 120/4 = 30 ez
+  protected VYSKA_HLAVICKY_LAJFLAJNY = 50;
+  protected VZDIALENOST_OD_VRCHU_MESSAGE_PO_VRCH_CIARY_MESSAGE = 15;
+  protected VYSKA_ZUBKU = 40;
+
   @Input()
   public messageModel: M.Message;
 
-  @Input()
-  public top: number;
-
-  // Konstantu vytiahnut niekam do konfigu
-  protected VZDIALENOST_LAJFLAJN = 500;
-  protected SIRKA_LAJFLAJNY = 120; // TOTO musi byt parne cislo
+  protected get top() {
+    let globalOffset = this.VYSKA_HLAVICKY_LAJFLAJNY - this.VZDIALENOST_OD_VRCHU_MESSAGE_PO_VRCH_CIARY_MESSAGE;
+    let sendTime = this.messageModel.sendEvent.time;
+    let receiveTime = this.messageModel.receiveEvent.time;
+    let time = (sendTime < receiveTime) ? sendTime : receiveTime;
+    let messageOffset = time * this.VYSKA_ZUBKU;
+    return globalOffset + messageOffset;
+  }
 
   // TODO: implementovat logiku
   protected get left() {

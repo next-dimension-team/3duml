@@ -8,6 +8,6 @@ import * as M from '../models';
 export class InteractionFragmentComponent {
 
   @Input()
-  public interactionFragmentModel: M.InteractionFragment;
+  public fragment: any;
 
 }

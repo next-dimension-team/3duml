@@ -2,10 +2,10 @@ import { Component, Input } from '@angular/core';
 import * as M from '../models';
 
 @Component({
-  selector: 'app-combined-fragment',
-  templateUrl: './combined-fragment.component.html'
+  selector: 'app-interaction-operand',
+  templateUrl: './interaction-operand.component.html'
 })
-export class CombinedFragmentComponent {
+export class InteractionOperandComponent {
 
   @Input()
   public fragment: any;

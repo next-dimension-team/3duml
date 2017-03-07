@@ -7,9 +7,22 @@
   <!-- Render sequence diagram -->
   <div class="sequence-diagram">
 
-    <!-- Interaction Fragment -->
+    <!-- Lifelines -->
+    <app-lifeline
+      *ngFor="let lifeline of interactionFragmentModel.fragmentable.recursiveLifelines; let i = index;"
+      [model]="lifeline"
+      [left]="i * 400"></app-lifeline>
+
+    <!-- Messages -->
+    <app-message
+      *ngFor="let message of interactionFragmentModel.fragmentable.recursiveMessages"
+      [messageModel]="message">
+    </app-message>
+
+    <!-- Interaction Fragments -->
     <app-interaction-fragment
-      [interactionFragmentModel]="interactionFragmentModel">
+      *ngFor="let fragment of fragments"
+      [fragment]="fragment">
     </app-interaction-fragment>
 
   </div>

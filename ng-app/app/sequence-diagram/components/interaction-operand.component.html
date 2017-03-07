@@ -1,0 +1,10 @@
+<!-- Render operand -->
+<div
+  class="operand"
+  [style.height]="fragment.height + 'px'"
+>
+  <div class="constraint">{{fragment.model.constraint}}</div>
+
+  <ng-content></ng-content>
+
+</div>
