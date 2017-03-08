@@ -196,18 +196,22 @@ input {
   z-index: 30;
 }
 
-.sequence-diagram .fragment .title {
-  z-index: 31;
-}
-
-.sequence-diagram .fragment .operand .constraint {
+.sequence-diagram .lifeline {
   z-index: 40;
 }
 
-.sequence-diagram .message {
+.sequence-diagram .fragment .title {
   z-index: 50;
 }
 
+.sequence-diagram .fragment .operand .constraint {
+  z-index: 60;
+}
+
+.sequence-diagram .message {
+  z-index: 70;
+}
+
 .sequence-diagram .message .title {
-  z-index: 51;
+  z-index: 71;
 }
