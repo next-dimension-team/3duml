@@ -60,8 +60,6 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
     // TODO: Toto je ukážkový kód, ako počúvať na označenie elementu.
 
     this.selectableService.onLeftClick((event) => {
-
-
       console.log("--------------------------------");
       console.info("Event typu: LeftClick");
       console.log("Klikol si na " + event.model.type + " s ID " + event.model.id);
@@ -126,8 +124,8 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
           console.log(this.destinationLifelineEvent.model.id);
           console.log("Toto je lifelineOdkial mam ist");
           console.log(this.sourceLifelineEvent.model.id);
-          console.log("-------------------------------------------------------")
-          console.log()
+          console.log("-------------------------------------------------------");
+          console.log();
           this.createMessage(this.sourceLifelineEvent, this.sourceLifelineEventModel, this.destinationLifelineEvent, this.destinationLifelineEventModel);
           this.sourceLifelineEvent = null;
           this.destinationLifelineEvent = null;
@@ -140,63 +138,11 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
         }
       }
 
-  protected addMessage () {
-
-    let direction;
-    let length;
-    let left = 0;
-
-    console.log("Kliknutie na sourcelifeline suradnica:" + this.sourceLifelineEvent.offsetX);
-    console.log("Kliknutie na destinationLifeline suradnica:" + this.destinationLifelineEvent.offsetX);
-   /* message.sendEvent.covered.leftDistance = this.sourceLifelineEvent.offsetX;
-    message.receiveEvent.covered.leftDistance = this.destinationLifelineEvent.offsetX;
-    message.sendEvent.time = this.sourceLifelineEvent.offsetY; */
-   // nejde to zatial, neviem pristupu ku sendEvenet ani covered...
-
-    //zatial nefunguje, neviem ako poslat message
-    /*this.resolveMessageDirection(message);*/ // tuto sa vypocita odkial, kam
-   /* this.resolveMessageLength(message); *///dlzka
-    /*this.resolveMessagePosition(message); *///pozicia
-
-      let lifelineALeft = this.sourceLifelineEvent.screenX;
-      let lifelineBLeft = this.destinationLifelineEvent.screenX;
-
-      if (lifelineBLeft - lifelineALeft >= 0)
-        direction = 'left-to-right'
-    else
-      direction = 'right-to-left';
-
-      // 12 = 2*6; 6 = execution.width/2
-      length = Math.abs(lifelineALeft - lifelineBLeft) - 12 + 120*2;
-
-      //let left = Math.min(lifelineALeft, lifelineBLeft);
-    //dat podm ak je left to right takttoo inak opacne
-    if (direction == 'left-to-right')
-      left = Math.min(this.sourceLifelineEvent.offsetX);
-    else
-      left = Math.min(this.destinationLifelineEvent.offsetX);
-
-
-    this.messages.push({
-      id: 7,
-      direction: direction,
-      type: 'sync',
-      title: 'kedychcem()',
-      length: length,
-      top: this.sourceLifelineEvent.offsetY,
-      left: left
-    });
-
-    /*this.layers.push({
-      id: null,
-      messages: this.messages,
-    });*/
-
-  }
-
   ngAfterViewChecked() {
     if (this.diagramChanged) {
       this.refreshDiagram();
+      this.sourceLifelineEvent = null;
+      this.destinationLifelineEvent = null;
     }
   }
 
@@ -204,6 +150,9 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
 
     this.diagramChanged = false;
     let layerNum = 0;
+
+    this.sourceLifelineEvent = null;
+    this.destinationLifelineEvent = null;
 
     // Odstránime staré vrstvy
     for (let layerElement of this.layerElements) {
@@ -225,6 +174,7 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   ngOnChanges(changes: SimpleChanges) {
     if (this.rootInteraction) {
       this.refreshRootInteraction();
+      this.sourceLifelineEvent = null;
     }
   }
 
@@ -668,10 +618,9 @@ export class SequenceDiagramComponent implements AfterViewInit, OnChanges, After
   }
 
   createMessage(fromEvent: MouseEvent, fromLifelineModel: M.Lifeline, toEvent: MouseEvent, toLifelineModel: M.Lifeline): void{
-
-
     this.service.createMessage(fromEvent, fromLifelineModel, toEvent, toLifelineModel, (message: M.Message) => {
       console.log("Vytvorena message v DB");
+      console.log(this.sourceLifelineEvent);
     });
   }
 }

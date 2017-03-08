@@ -191,14 +191,15 @@ export class SequenceDiagramService {
   public createMessage(fromEvent: MouseEvent, fromLifelineModel: M.Lifeline, toEvent: MouseEvent, toLifelineModel: M.Lifeline, callback: any) {
 
     let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-      time: 5,
+      time: (Math.round(fromEvent.offsetY/40))*40,
       covered: this.getOne(M.Lifeline, fromLifelineModel.id)
     });
     sourceOccurence.save().subscribe(callback);
 
     sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification)=> {
       let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-        time: Math.round(toEvent.offsetY),
+        //TODO: bude len /40
+        time: (Math.round(toEvent.offsetY/40))*40,
         covered: this.getOne(M.Lifeline, toLifelineModel.id)
 
       });
