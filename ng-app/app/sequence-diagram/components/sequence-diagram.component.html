@@ -1,11 +1,5 @@
-<!-- Wrapping element for Three.js scene -->
-<div #scene></div>
-
-<!-- Render layers -->
-<div class="layers-wrapper">
-    <app-layer
-        #layerComponents
-        *ngFor="let interactionFragmentModel of rootInteractionFragment.children"
-        [interactionFragmentModel]="interactionFragmentModel"
-    ></app-layer>
-</div>
+<app-layer
+    #layerComponents
+    *ngFor="let interactionFragmentModel of rootInteractionFragment.children"
+    [interactionFragmentModel]="interactionFragmentModel">
+</app-layer>

@@ -1,11 +1,15 @@
-import { Component, Input, ElementRef, OnChanges } from '@angular/core';
+import { Component, Input, ElementRef, OnChanges, OnInit, OnDestroy } from '@angular/core';
 import * as M from '../models';
+import * as THREE from 'three';
+let { Object: CSS3DObject } : { Object: typeof THREE.CSS3DObject } = require('three.css')(THREE);
 
 @Component({
   selector: 'app-layer',
   templateUrl: './layer.component.html'
 })
-export class LayerComponent implements OnChanges {
+export class LayerComponent implements OnChanges, OnInit, OnDestroy {
+
+  public object: THREE.CSS3DObject;
 
   protected VYSKA_HLAVICKY_LAJFLAJNY = 50;
   protected VYSKA_ZUBKU = 40;
@@ -15,11 +19,21 @@ export class LayerComponent implements OnChanges {
 
   protected fragments = [];
 
-  constructor(public element: ElementRef) {
+  constructor(protected element: ElementRef) {
     //
   }
 
-  ngOnChanges() {
+  public ngOnInit() {
+    this.object = new CSS3DObject(this.element.nativeElement);
+  }
+
+  public ngOnDestroy() {
+    if (this.object.parent) {
+      this.object.parent.remove(this.object);
+    }
+  }
+
+  public ngOnChanges() {
     this.fragments = this.r(this.interactionFragmentModel).children;
     console.log("RESULT", this.fragments);
   }

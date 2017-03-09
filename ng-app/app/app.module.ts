@@ -26,7 +26,7 @@ import { SelectableService } from './sequence-diagram/services';
 
 // Component for menu
 import { MenuComponent } from './menu/components/menu.component';
-import { NewSequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
+import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
 import { AppState, InternalStateType } from './app.service';
 import { Datastore } from './datastore';
 
@@ -54,7 +54,7 @@ type StoreType = {
     // Components
     AppComponent,
     MenuComponent,
-    NewSequenceDiagramComponent,
+    SequenceDiagramComponent,
     LifelineComponent,
     ExecutionComponent,
     MessageComponent,

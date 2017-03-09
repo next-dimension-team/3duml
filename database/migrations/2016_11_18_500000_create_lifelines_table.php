@@ -12,7 +12,7 @@ class CreateLifelinesTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->string('name');
-            $table->integer('order');
+            $table->integer('order')->unsigned();
         });
     }
 

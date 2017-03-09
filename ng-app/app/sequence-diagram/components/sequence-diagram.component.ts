@@ -1,102 +1,37 @@
 import * as THREE from 'three';
 import {
-  Component, ViewChild, SimpleChanges, Input, ViewChildren,
-  QueryList, AfterViewInit, OnChanges, AfterViewChecked, NgZone
+  Component, SimpleChanges, Input, ViewChildren, HostListener,
+  QueryList, AfterViewInit, OnInit, OnChanges, NgZone, ElementRef
 } from '@angular/core';
-import { SequenceDiagramService, SelectableService } from '../services';
 import { LayerComponent } from './layer.component';
 import { SequenceDiagramControls } from './sequence-diagram.controls';
 import * as M from '../models';
-import * as _ from 'lodash';
-
-let { Object: CSS3DObject, Renderer: CSS3DRenderer } : {
-  Object: typeof THREE.CSS3DObject,
-  Renderer: typeof THREE.CSS3DRenderer
-} = require('three.css')(THREE);
-
-/*
- * Class representing 3D layer
- */
-export class Layer extends CSS3DObject {
-  constructor(element: HTMLElement, depth: number) {
-    // Create CSS3DObject object
-    super(element);
-
-    // Adjust layer position
-    this.position.z = -600 * depth;
-  }
-}
+let { Renderer: CSS3DRenderer } : { Renderer: typeof THREE.CSS3DRenderer } = require('three.css')(THREE);
 
 @Component({
-  selector: 'new-app-sequence-diagram',
-  templateUrl: './sequence-diagram.component.html',
-  providers: [SequenceDiagramService]
+  selector: 'app-sequence-diagram',
+  templateUrl: './sequence-diagram.component.html'
 })
-export class NewSequenceDiagramComponent implements AfterViewInit, OnChanges, AfterViewChecked {
+export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewInit {
 
-  @ViewChild('scene') sceneDiv;
-
-  // http://stackoverflow.com/questions/40819739/angular-2-template-reference-variable-with-ngfor
-  @ViewChildren('layerComponents') layerComponents: QueryList<LayerComponent>;
-
-  protected scene: THREE.Scene;
-  protected camera: THREE.Camera;
-  protected controls: SequenceDiagramControls;
-  protected renderer: THREE.CSS3DRenderer;
+  @ViewChildren('layerComponents')
+  protected layerComponents: QueryList<LayerComponent>;
 
   @Input()
   public rootInteractionFragment: M.InteractionFragment;
 
-  protected layerElements = [];
+  protected scene: THREE.Scene;
+  protected camera: THREE.PerspectiveCamera;
+  protected controls: SequenceDiagramControls;
+  protected renderer: THREE.CSS3DRenderer;
 
-  constructor(private _ngZone: NgZone, protected service: SequenceDiagramService, protected selectableService: SelectableService) {
+  protected renderQueued = false;
+
+  constructor(protected ngZone: NgZone, protected element: ElementRef) {
     //
   }
 
-  public refreshDiagram() {
-    
-    if (! this.layerComponents) {
-      return;
-    }
-
-    //this.layers = _.uniq(_.map(this.rootInteraction.recursiveLifelines, 'layer'));
-
-    let layerNum = 0;
-
-    // Odstránime staré vrstvy
-    for (let layerElement of this.layerElements) {
-      this.scene.remove(layerElement);
-    }
-
-    // Pridáme nové vrstvy
-    for (let layerComponent of this.layerComponents.toArray()) {
-      let element: HTMLElement = layerComponent.element.nativeElement;
-      let layer: Layer = new Layer(element, layerNum++);
-      this.layerElements.push(layer);
-      this.scene.add(layer);
-    }
-  }
-
-  /*
-   * Sleduje zmeny vstupov komponentu.
-   */
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.rootInteractionFragment) {
-      console.log(this.rootInteractionFragment);
-      this.refreshDiagram();
-    }
-  }
-
-  // TODO: toto upravit cez subscribe
-  ngAfterViewChecked() {
-    // TODO: ruby fixne to XXX :D
-    if (this.rootInteractionFragment && ! window.XXX) {
-      window.XXX = true;
-      this.refreshDiagram();
-    }
-  }
-
-  ngAfterViewInit() {
+  public ngOnInit() {
     // Calculate canvas size
     let width = window.innerWidth * 0.85;
     let height = window.innerHeight;
@@ -111,27 +46,71 @@ export class NewSequenceDiagramComponent implements AfterViewInit, OnChanges, Af
     // Create renderer
     this.renderer = new CSS3DRenderer();
     this.renderer.setSize(width, height);
-    this.sceneDiv.nativeElement.appendChild(this.renderer.domElement);
+    this.element.nativeElement.appendChild(this.renderer.domElement);
 
     // Adjust camera position
     this.camera.position.z = 800;
 
     // Controls
     this.controls = new SequenceDiagramControls(this.camera, this.renderer.domElement);
+    this.controls.addEventListener('change', () => this.queueRender());
+  }
 
-    // TODO: target by mal byt 200px za aktualnym platnom
-    // this.controls.target = new THREE.Vector3(
-    //     layer.position.x, layer.position.y, layer.position.z -200
-    // );
-    // docasna implementacia pre pracu s exampleom
-    this.controls.target = new THREE.Vector3(0, 0, -200);
+  public ngOnChanges(changes: SimpleChanges) {
+    if (! changes.rootInteractionFragment.isFirstChange()) {
+      this.controls.reset();
+    }
+  }
 
-    // Render scene
-    this._ngZone.runOutsideAngular(() => this.render());
+  public ngAfterViewInit() {
+    this.layerComponents.changes.subscribe(
+      () => {
+        this.refreshLayers();
+        this.queueRender();
+      }
+    );
+
+    // emit first update
+    this.layerComponents.notifyOnChanges();
+  }
+
+  @HostListener('window:resize')
+  public onWindowResize() {
+    let width = window.innerWidth * 0.85;
+    let height = window.innerHeight;
+
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(width, height);
+
+    this.queueRender();
+  }
+
+  public queueRender() {
+    if (! this.renderQueued) {
+      this.renderQueued = true;
+
+      this.ngZone.runOutsideAngular(
+        () => requestAnimationFrame(() => this.render())
+      );
+    }
+  }
+
+  protected refreshLayers() {
+    this.layerComponents.forEach(
+      (layer, index) => {
+        this.scene.add(layer.object.translateZ(-600 * index));
+      }
+    );
+
+    this.controls.target = this.layerComponents.last.object.position.clone();
   }
 
   protected render() {
-    requestAnimationFrame(() => this.render());
+    this.renderQueued = false;
+
+    this.controls.update();
 
     this.renderer.render(this.scene, this.camera);
   }

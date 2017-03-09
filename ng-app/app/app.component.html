@@ -2,15 +2,15 @@
 
     <div id="sidebar-wrapper">
         <app-sidebar-menu
-            (openSequenceDiagram)="openSequenceDiagram($event)"
-        ></app-sidebar-menu>
+            (openSequenceDiagram)="openSequenceDiagram($event)">
+        </app-sidebar-menu>
     </div>
 
     <div id="page-content-wrapper">
-        <new-app-sequence-diagram
+        <app-sequence-diagram
             *ngIf="openedSequenceDiagram"
-            [rootInteractionFragment]="openedSequenceDiagram"
-        ></new-app-sequence-diagram>
+            [rootInteractionFragment]="openedSequenceDiagram">
+        </app-sequence-diagram>
     </div>
 
 </div>
