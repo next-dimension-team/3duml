@@ -8,6 +8,9 @@ import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularcla
 // Platform and Environment providers/directives/pipes
 import { ENV_PROVIDERS } from './environment';
 
+// App settings
+import { AppSettings } from './app.settings';
+
 // App components
 import { AppComponent } from './app.component';
 import { LifelineComponent } from './sequence-diagram/components/lifeline.component';
@@ -75,7 +78,8 @@ type StoreType = {
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
     APP_PROVIDERS,
-    SelectableService
+    SelectableService,
+    AppSettings
   ]
 })
 export class AppModule {
