@@ -12,6 +12,10 @@ class OccurrenceSpecification extends Model
      * @var string
      */
     protected $table = 'occurrence_specifications';
+	
+	protected $fillable = [
+        'time'
+    ];
 
     public function covered()
     {
