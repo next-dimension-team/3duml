@@ -5,8 +5,8 @@
 }
 
 .sidebar-nav li {
-  height: 90px;
-  line-height: 5px;
+  line-height: 15px;
+  margin-bottom: 3px;
 }
 
 .sidebar-nav li.active {
@@ -19,6 +19,7 @@
 
 .mat-card {
   border-radius: 0px;
+  padding-top: 10px;
 }
 
 .spacer {
