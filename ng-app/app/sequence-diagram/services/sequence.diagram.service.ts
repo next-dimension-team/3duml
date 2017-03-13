@@ -92,6 +92,7 @@ export class SequenceDiagramService {
         this.datastore.deleteRecord(M.Message, event.model.id).subscribe(() => {
           console.log("Maze sa sprava s id:", event.model.id);
           this.performingDelete = false;
+          location.reload();
         });
       }
     });
