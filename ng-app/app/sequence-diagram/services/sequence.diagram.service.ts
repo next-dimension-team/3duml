@@ -95,11 +95,21 @@ export class SequenceDiagramService {
 
   protected initializeDeleteOperation() {
     this.inputService.onLeftClick((event) => {
+      console.log("model", event.model);
       if (event.model.type == "Message" && this.performingDelete) {
-        this.datastore.deleteRecord(M.Message, event.model.id).subscribe(() => {
-          console.log("Maze sa sprava s id:", event.model.id);
+        let message = this.datastore.peekRecord(M.Message, event.model.id);
+        console.log("Nasla sa messaga:",message);
+        this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
+          console.log("Maze sa sprava s id:", message.id);
+          this.datastore.deleteRecord(M.OccurrenceSpecification, message.receiveEvent.id).subscribe(() => {
+            console.log("Maze sa OccSpecif s id:", message.receiveEvent.id);
+            this.datastore.deleteRecord(M.OccurrenceSpecification, message.sendEvent.id).subscribe(() => {
+              console.log("Maze sa OccSpecif s id:", message.sendEvent.id);
+              // this.calculateTime(message);
+              location.reload();
+            });
+          });
           this.performingDelete = false;
-          location.reload();
         });
       }
     });
@@ -165,6 +175,12 @@ export class SequenceDiagramService {
         });
   }
 
+  protected calculateTime(message: M.Message){
+
+    receiveLifeline = message.receiveEvent;
+    sendLifeline = message.sendEvent;
+
+  }
   // TODO
 
   /**
