@@ -25,6 +25,7 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
 
   public ngOnInit() {
     this.object = new CSS3DObject(this.element.nativeElement);
+    console.log(this.interactionFragmentModel.fragmentable);
   }
 
   public ngOnDestroy() {

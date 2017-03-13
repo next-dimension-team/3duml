@@ -3,14 +3,14 @@
 <div
   class="layer"
   [selectable]="{type: 'Layer', id: interactionFragmentModel.fragmentable.id}"
-  [style.width]="(interactionFragmentModel.fragmentable.recursiveLifelines.length * 320) + 'px'">
+  [style.width]="(interactionFragmentModel.fragmentable.lifelines.length * 320) + 'px'">
 
   <!-- Render sequence diagram -->
   <div class="sequence-diagram">
 
     <!-- Lifelines -->
     <app-lifeline
-      *ngFor="let lifeline of interactionFragmentModel.fragmentable.recursiveLifelines; let i = index;"
+      *ngFor="let lifeline of interactionFragmentModel.fragmentable.lifelines; let i = index;"
       [lifelineModel]="lifeline"
       [left]="i * 400"></app-lifeline>
 

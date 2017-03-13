@@ -17,4 +17,9 @@ class Lifeline extends Model
     {
         return $this->hasMany(OccurrenceSpecification::class);
     }
+
+    public function interaction()
+    {
+        return $this->belongsTo(Interaction::class);
+    }
 }
