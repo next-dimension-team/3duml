@@ -4,18 +4,25 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { JsonApiModule } from 'angular2-jsonapi';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
+import { MaterialModule } from '@angular/material';
+import 'hammerjs';
 
 // Platform and Environment providers/directives/pipes
 import { ENV_PROVIDERS } from './environment';
+
+// App settings
+import { AppSettings } from './app.settings';
 
 // App components
 import { AppComponent } from './app.component';
 import { LifelineComponent } from './sequence-diagram/components/lifeline.component';
 import { ExecutionComponent } from './sequence-diagram/components/execution.component';
 import { MessageComponent } from './sequence-diagram/components/message.component';
-import { FragmentComponent } from './sequence-diagram/components/fragment.component';
-import { OperandComponent } from './sequence-diagram/components/operand.component';
+import { CombinedFragmentComponent } from './sequence-diagram/components/combined-fragment.component';
+import { InteractionOperandComponent } from './sequence-diagram/components/interaction-operand.component';
 import { LayerComponent } from './sequence-diagram/components/layer.component';
+import { InteractionFragmentComponent } from './sequence-diagram/components/interaction-fragment.component';
+import 'hammerjs';
 
 // Directives
 import { SelectableDirective } from './sequence-diagram/directives/selectable.directive';
@@ -25,7 +32,7 @@ import { SelectableService } from './sequence-diagram/services';
 
 // Component for menu
 import { MenuComponent } from './menu/components/menu.component';
-import { SequenceDiagramComponent } from './sequence-diagram/components/sequence.diagram.component';
+import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
 import { AppState, InternalStateType } from './app.service';
 import { Datastore } from './datastore';
 
@@ -57,9 +64,10 @@ type StoreType = {
     LifelineComponent,
     ExecutionComponent,
     MessageComponent,
-    FragmentComponent,
-    OperandComponent,
+    CombinedFragmentComponent,
+    InteractionOperandComponent,
     LayerComponent,
+    InteractionFragmentComponent,
 
     // Directives
     SelectableDirective
@@ -68,12 +76,14 @@ type StoreType = {
     BrowserModule,
     FormsModule,
     HttpModule,
-    JsonApiModule
+    JsonApiModule,
+    MaterialModule.forRoot()
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
     APP_PROVIDERS,
-    SelectableService
+    SelectableService,
+    AppSettings
   ]
 })
 export class AppModule {

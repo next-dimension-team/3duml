@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import * as M from '../models';
 
 @Component({
   selector: 'app-lifeline',
@@ -6,24 +7,10 @@ import { Component, Input } from '@angular/core';
 })
 export class LifelineComponent {
 
-  protected editingTitle = false;
+  @Input()
+  public model: M.Lifeline;
 
   @Input()
-  public id: string;
-
-  @Input()
-  public left;
-
-  @Input()
-  public title;
-
-  @Input()
-  public executions: Array<Object>;
-
-  onKeyDown(e) {
-    if (e.key === 'Enter') {
-      this.editingTitle = false;
-    }
-  }
+  public left: number;
 
 }

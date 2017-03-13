@@ -1,0 +1,38 @@
+<!-- TODO: prerobit na ngSwitch -->
+
+<!-- Interaction -->
+<ng-container *ngIf="fragment.type == 'Interaction'">
+  
+  <!-- Interaction Fragment -->
+  <app-interaction-fragment
+    *ngFor="let fragment of fragment.children"
+    [fragment]="fragment">
+  </app-interaction-fragment>
+  
+</ng-container>
+
+<!-- Combined Fragment -->
+<app-combined-fragment
+  *ngIf="fragment.type == 'CombinedFragment'"
+  [fragment]="fragment">
+  
+  <!-- Interaction Fragment -->
+  <app-interaction-fragment
+    *ngFor="let fragment of fragment.children"
+    [fragment]="fragment">
+  </app-interaction-fragment>
+  
+</app-combined-fragment>
+
+<!-- Interaction Operand -->
+<app-interaction-operand
+  *ngIf="fragment.type == 'InteractionOperand'"
+  [fragment]="fragment">
+  
+  <!-- Interaction Fragment -->
+  <app-interaction-fragment
+    *ngFor="let fragment of fragment.children"
+    [fragment]="fragment">
+  </app-interaction-fragment>
+  
+</app-interaction-operand>

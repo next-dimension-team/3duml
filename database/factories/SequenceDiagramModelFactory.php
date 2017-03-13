@@ -47,6 +47,7 @@ $factory->define(App\Models\InteractionOperand::class, function (Faker\Generator
 $factory->define(App\Models\Lifeline::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
+        'order' => $faker->unique()->randomNumber(),
     ];
 });
 
@@ -60,11 +61,5 @@ $factory->define(App\Models\Message::class, function (Faker\Generator $faker) {
 $factory->define(App\Models\OccurrenceSpecification::class, function (Faker\Generator $faker) {
     return [
         'time' => $faker->numberBetween(0, 100),
-    ];
-});
-
-$factory->define(App\Models\Layer::class, function (Faker\Generator $faker) {
-    return [
-        'depth' => $faker->numberBetween(0, 100),
     ];
 });

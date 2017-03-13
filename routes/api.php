@@ -32,5 +32,4 @@ Route::prefix('v1')
          JsonApi::resource('interaction-operands');
          JsonApi::resource('combined-fragments');
          JsonApi::resource('execution-specifications');
-         JsonApi::resource('layers');
      });

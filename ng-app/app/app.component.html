@@ -1,18 +1,16 @@
-<div id="wrapper" *ngIf="loaded">
+<div id="wrapper">
 
     <div id="sidebar-wrapper">
         <app-sidebar-menu
-            (openSequenceDiagram)="openSequenceDiagram($event)"
-        ></app-sidebar-menu>
+            (openSequenceDiagram)="openSequenceDiagram($event)">
+        </app-sidebar-menu>
     </div>
 
     <div id="page-content-wrapper">
         <app-sequence-diagram
-            [rootInteraction]="openedSequenceDiagram"
-        ></app-sequence-diagram>
+            *ngIf="openedSequenceDiagram"
+            [rootInteractionFragment]="openedSequenceDiagram">
+        </app-sequence-diagram>
     </div>
 
-</div>
-<div *ngIf="!loaded" class="loading">
-    <img src="/loading.gif" alt="Loading">
 </div>

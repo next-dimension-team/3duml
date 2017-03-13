@@ -1,42 +1,29 @@
 <!-- Render layer -->
+<!-- TODO CONSTANT -->
 <div
   class="layer"
-  [selectable]="{type: 'Layer', id: id}">
+  [style.width]="(interactionFragmentModel.fragmentable.lifelines.length * 320) + 'px'">
 
   <!-- Render sequence diagram -->
   <div class="sequence-diagram">
 
-    <!-- Render lifelines -->
+    <!-- Lifelines -->
     <app-lifeline
-      *ngFor="let lifeline of lifelines"
-      [id]="lifeline.id"
-      [left]="lifeline.left"
-      [title]="lifeline.title"
-      [executions]="lifeline.executions"
-    ></app-lifeline>
+      *ngFor="let lifeline of interactionFragmentModel.fragmentable.recursiveLifelines; let i = index;"
+      [model]="lifeline"
+      [left]="i * 400"></app-lifeline>
 
-    <!-- Render messages -->
+    <!-- Messages -->
     <app-message
-      *ngFor="let message of messages"
-      [id]="message.id"
-      [direction]="message.direction"
-      [type]="message.type"
-      [title]="message.title"
-      [length]="message.length"
-      [top]="message.top"
-      [left]="message.left"
-    ></app-message>
+      *ngFor="let message of interactionFragmentModel.fragmentable.recursiveMessages"
+      [messageModel]="message">
+    </app-message>
 
-    <!-- Render fragments -->
-    <app-fragment
+    <!-- Interaction Fragments -->
+    <app-interaction-fragment
       *ngFor="let fragment of fragments"
-      [id]="fragment.id"
-      [title]="fragment.title"
-      [width]="fragment.width"
-      [top]="fragment.top"
-      [left]="fragment.left"
-      [operands]="fragment.operands"
-    ></app-fragment>
+      [fragment]="fragment">
+    </app-interaction-fragment>
 
   </div>
 

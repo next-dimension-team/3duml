@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Interaction } from './sequence-diagram/models';
+import * as M from './sequence-diagram/models';
 import { SequenceDiagramService } from './sequence-diagram/services';
 
 @Component({
@@ -10,17 +10,15 @@ import { SequenceDiagramService } from './sequence-diagram/services';
 })
 export class AppComponent {
 
-  protected loaded: boolean = false;
-
-  public openedSequenceDiagram: Interaction;
+  public openedSequenceDiagram: M.InteractionFragment;
 
   constructor(private service: SequenceDiagramService) {
-    this.loaded = true;
+    //
   }
 
-  openSequenceDiagram(diagram: Interaction) {
+  public openSequenceDiagram(diagram: M.Interaction) {
     this.service.loadSequenceDiagramTree(diagram).subscribe(
-      (interaction: Interaction) => this.openedSequenceDiagram = interaction
+      (interactionFragment: M.InteractionFragment) => this.openedSequenceDiagram = interactionFragment
     );
   }
 

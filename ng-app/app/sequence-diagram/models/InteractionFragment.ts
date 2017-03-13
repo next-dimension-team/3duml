@@ -38,11 +38,11 @@ export class InteractionFragment extends JsonApiModel {
   }
 
   public syncRelationships(data: any, included: any, level: number): void {
-    // Ak chceme relacie synchronizovat az po vrstvy musime zmenit level
+    // Ak chceme relacie synchronizovat az po lifeliny musime zmenit level
     super.syncRelationships(
       data,
       included,
-      _.some(included, { type: 'layers' }) ? -2 : level
+      _.some(included, { type: 'lifelines' }) ? -2 : level
     );
   }
 
@@ -95,10 +95,29 @@ export class InteractionFragment extends JsonApiModel {
     // Prejdeme potomkov - fragmenty
     for (let interactionFragment of this.getRecursiveFragments('Interaction', fragment, true)) {
       // Do výsledného poľa správ uložíme správy, ktoré patria do súčasnej interakcie
-      messages = messages.concat(interactionFragment.fragmentable.messages);
+      if (interactionFragment.fragmentable.messages) {
+        messages = messages.concat(interactionFragment.fragmentable.messages);
+      }
     }
 
     return messages;
+  }
+
+  get recursiveMessagesOneLevel(): M.Message[] {
+    let messages = [];
+
+    switch (this.fragmentable.constructor.name) {
+
+      case 'Interaction':
+        return this.fragmentable.messages;
+
+      default:
+        for (let interactionFragment of this.children) {
+          messages = messages.concat(interactionFragment.recursiveMessagesOneLevel);
+        }
+        return messages;
+
+   }
   }
 
   get recursiveMessages(): M.Message[] {

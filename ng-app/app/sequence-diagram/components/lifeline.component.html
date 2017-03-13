@@ -1,32 +1,24 @@
 <!-- Render lifeline -->
 <div
   class="lifeline"
-  [selectable]="{type: 'Lifeline', id: id}"
+  [selectable]="{type: 'Lifeline', id: model.id}"
   [style.left]="left + 'px'">
 
   <div
-    class="title"
-    [class.editingTitle]="editingTitle"
-    (click)="editingTitle=true;titleInput.focus();">
-    <span>{{title}}</span>
-    <input
-      #titleInput
-      type="text"
-      (click)="titleInput.focus();"
-      (keydown)="onKeyDown($event)"
-      [(ngModel)]="title">
+    class="title">
+    <span>{{model.name}}</span>
   </div>
 
   <div class="line"></div>
   <div class="executions">
 
     <!-- Render executions -->
-    <app-execution
+    <!--<app-execution
       *ngFor="let execution of executions"
       [id]="execution.id"
       [height]="execution.height"
       [top]="execution.top"
-    ></app-execution>
+    ></app-execution>-->
 
   </div>
 </div>
