@@ -29,7 +29,7 @@ import 'hammerjs';
 import { SelectableDirective } from './sequence-diagram/directives/selectable.directive';
 
 // Services
-import { SelectableService } from './sequence-diagram/services';
+import { SequenceDiagramService, InputService } from './sequence-diagram/services';
 
 // Component for menu
 import { MenuComponent } from './menu/components/menu.component';
@@ -44,7 +44,8 @@ import '../styles/styles.scss';
 const APP_PROVIDERS = [
   AppState,
   Datastore,
-  SelectableService,
+  InputService,
+  SequenceDiagramService,
   { provide: APP_CONFIG, useValue: AppConfig },
   ConfigService
 ];
