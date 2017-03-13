@@ -20,7 +20,7 @@ export class Lifeline extends JsonApiModel {
   updated_at: Date;
 
   @HasMany()
-  occurrenceSpecifications: M.OccurrenceSpecification[];
+  occurrenceSpecifications: M.OccurrenceSpecification[] = [];
 
   // TODO: neodskúšaná metóda
   get interactions(): M.Interaction[] {

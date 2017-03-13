@@ -1,2 +1,2 @@
 export * from './sequence.diagram.service';
-export * from './selectable.service';
+export * from './input.service';
