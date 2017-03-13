@@ -83,6 +83,8 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     if (! changes.rootInteractionFragment.isFirstChange()) {
       this.controls.reset();
     }
+
+    console.log(changes.rootInteractionFragment);
   }
 
   public ngAfterViewInit() {
@@ -129,7 +131,9 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
       }
     );
 
-    this.controls.target = this.layerComponents.last.object.position.clone();
+    this.controls.target = this.layerComponents.length > 0
+      ? this.layerComponents.last.object.position.clone()
+      : new THREE.Vector3();
   }
 
   protected render() {
