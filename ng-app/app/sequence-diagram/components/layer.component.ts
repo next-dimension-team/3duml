@@ -37,14 +37,19 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
     this.fragments = this.r(this.interactionFragmentModel).children;
   }
 
+  // TODO: nevykreslovat fragmenty ktore su mimo layeru (top = MAX_INT)
+
   r(interactionFragmentModel: M.InteractionFragment) {
     // Child
     let children = [];
     for (let child of interactionFragmentModel.children) {
-      children.push(this.r(child));
+      let childFragment = this.r(child);
+      if (childFragment) {
+        children.push(childFragment);
+      }
     }
 
-    // Me
+    // Self
     let self = {
       type: interactionFragmentModel.fragmentable.constructor.name,
       interactionFragmentModel: interactionFragmentModel,
@@ -87,8 +92,8 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
 
   protected envelopeFragment(interactionFragment: M.InteractionFragment) {
     let e = {
-      min: null,
-      max: null
+      min: Number.MAX_SAFE_INTEGER,
+      max: Number.MIN_SAFE_INTEGER
     };
 
     let type = interactionFragment.fragmentable.constructor.name;
@@ -145,10 +150,6 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       }
       e.min--;
       e.max++;
-    }
-
-    else {
-      alert("toto by sa nemalo stat");
     }
 
     return e;
