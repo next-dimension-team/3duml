@@ -48,6 +48,7 @@ export class SequenceDiagramService {
 
     return this.datastore.query(M.InteractionFragment, {
       include: _.join([
+        'fragmentable.lifelines',
         'fragmentable.messages.sendEvent.covered',
         'fragmentable.messages.receiveEvent.covered',
         'fragmentable.start.covered',

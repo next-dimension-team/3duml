@@ -56,6 +56,11 @@ class Schema extends EloquentSchema
                 self::SHOW_RELATED => true,
                 self::DATA => $resource->messages,
             ],
+            'lifelines' => [
+                self::SHOW_SELF => true,
+                self::SHOW_RELATED => true,
+                self::DATA => $resource->lifelines,
+            ],
             'fragment' => [
                 self::SHOW_SELF => true,
                 self::SHOW_RELATED => true,

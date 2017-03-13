@@ -22,6 +22,11 @@ class Interaction extends Model
         return $this->hasMany(Message::class);
     }
 
+    public function lifelines()
+    {
+        return $this->hasMany(Lifeline::class);
+    }
+
     public function fragment()
     {
         return $this->morphOne(InteractionFragment::class, 'fragmentable');
