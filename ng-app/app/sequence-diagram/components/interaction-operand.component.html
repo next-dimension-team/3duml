@@ -1,6 +1,7 @@
 <!-- Render operand -->
 <div
   class="operand"
+  [selectable]="{type: 'InteractionOperand', id: fragment.model.id}"
   [style.height]="fragment.height + 'px'"
 >
   <div class="constraint">{{fragment.model.constraint}}</div>

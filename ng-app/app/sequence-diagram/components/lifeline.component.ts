@@ -8,7 +8,7 @@ import * as M from '../models';
 export class LifelineComponent {
 
   @Input()
-  public model: M.Lifeline;
+  public lifelineModel: M.Lifeline;
 
   @Input()
   public left: number;
