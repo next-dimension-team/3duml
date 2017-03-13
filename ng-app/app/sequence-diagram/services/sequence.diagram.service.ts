@@ -2,14 +2,37 @@ import { Injectable } from '@angular/core';
 import { Datastore } from '../../datastore';
 import { JsonApiModel, ModelType } from 'angular2-jsonapi';
 import { Observable } from 'rxjs';
+import { InputService } from './input.service';
 import * as _ from 'lodash';
 import * as M from '../models';
 
 @Injectable()
 export class SequenceDiagramService {
 
-  constructor(private datastore: Datastore) { }
+  protected static initialized = false;
 
+  constructor(protected datastore: Datastore, protected inputService: InputService) {
+    // Initialize the service
+    if (! SequenceDiagramService.initialized) {
+      this.initialize();
+      SequenceDiagramService.initialized = true;
+    }
+  }
+
+  /**
+   * Select Operation
+   */
+  protected selectedElement = null;
+
+  public initialize() {
+    this.inputService.onLeftClick((event) => {
+      console.log(event);
+    });
+  }
+
+  /**
+   * Retrieve Operation
+   */
   public getSequenceDiagrams(): Observable<M.Interaction[]> {
     return this.datastore.query(M.InteractionFragment, {
       include: 'fragmentable',
@@ -39,6 +62,9 @@ export class SequenceDiagramService {
     );
   }
 
+  /**
+   * Create Operation
+   */
   public createDiagram(name: string, callback: any) {
     let interaction = this.datastore.createRecord(M.Interaction, {
       name: name
@@ -52,5 +78,17 @@ export class SequenceDiagramService {
       interactionFragment.save().subscribe(callback);
     });
   }
+
+  /**
+   * Delete Operation
+   */
+
+  // TODO
+
+  /**
+   * Update Operation
+   */
+
+  // TODO
 
 }

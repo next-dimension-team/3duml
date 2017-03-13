@@ -1,5 +1,5 @@
 import { Directive, Input, HostListener } from '@angular/core';
-import { SelectableService } from '../services';
+import { InputService } from '../services';
 
 @Directive({
   selector: '[selectable]'
@@ -8,7 +8,7 @@ export class SelectableDirective {
 
   @Input('selectable') model: any;
 
-  constructor(protected selectableService: SelectableService) { }
+  constructor(protected inputService: InputService) { }
 
   protected cloneEvent(event) {
     return new event.constructor(event.type, event);
@@ -19,7 +19,7 @@ export class SelectableDirective {
   protected onLeftClick($event) {
     $event = this.cloneEvent($event);
     $event.model = this.model;
-    this.selectableService.broadcastLeftClick($event);
+    this.inputService.broadcastLeftClick($event);
   }
 
   /* Right Click */
@@ -27,7 +27,7 @@ export class SelectableDirective {
   protected onRightClick($event) {
     $event = this.cloneEvent($event);
     $event.model = this.model;
-    this.selectableService.broadcastRightClick($event);
+    this.inputService.broadcastRightClick($event);
   }
 
   /* Double Click */
@@ -35,7 +35,7 @@ export class SelectableDirective {
   protected onDblClick($event) {
     $event = this.cloneEvent($event);
     $event.model = this.model;
-    this.selectableService.broadcastDoubleClick($event);
+    this.inputService.broadcastDoubleClick($event);
   }
 
   /* Mouse Over */
@@ -43,7 +43,7 @@ export class SelectableDirective {
   protected onMouseOver($event) {
     $event = this.cloneEvent($event);
     $event.model = this.model;
-    this.selectableService.broadcastMouseOver($event);
+    this.inputService.broadcastMouseOver($event);
   }
 
   /* Mouse Move */
@@ -51,6 +51,6 @@ export class SelectableDirective {
   protected onMouseMove($event) {
     $event = this.cloneEvent($event);
     $event.model = this.model;
-    this.selectableService.broadcastMouseMove($event);
+    this.inputService.broadcastMouseMove($event);
   }
 }
