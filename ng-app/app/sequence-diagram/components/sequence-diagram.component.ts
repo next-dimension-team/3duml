@@ -7,6 +7,7 @@ import { LayerComponent } from './layer.component';
 import { SequenceDiagramControls } from './sequence-diagram.controls';
 import { SelectableService } from '../services';
 import * as M from '../models';
+import { ConfigService } from '../../config'
 let { Renderer: CSS3DRenderer } : { Renderer: typeof THREE.CSS3DRenderer } = require('three.css')(THREE);
 
 @Component({
@@ -28,7 +29,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
 
   protected renderQueued = false;
 
-  constructor(protected ngZone: NgZone, protected element: ElementRef, protected selectableService: SelectableService) {
+  constructor(protected ngZone: NgZone, protected element: ElementRef, protected selectableService: SelectableService, protected config: ConfigService) {
     // TODO: Toto je ukážkový kód, ako počúvať na označenie elementu.
 
     this.selectableService.onLeftClick((event) => {
@@ -53,7 +54,12 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     this.scene.background = new THREE.Color('#fff');
 
     // Create camera
-    this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(
+      this.config.get('camera.fov'),
+      width / height,
+      this.config.get('camera.near'),
+      this.config.get('camera.far')
+    );
 
     // Create renderer
     this.renderer = new CSS3DRenderer();
@@ -61,7 +67,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     this.element.nativeElement.appendChild(this.renderer.domElement);
 
     // Adjust camera position
-    this.camera.position.z = 800;
+    this.camera.position.z = this.config.get('camera.z');
 
     // Controls
     this.controls = new SequenceDiagramControls(this.camera, this.renderer.domElement);
@@ -112,7 +118,9 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   protected refreshLayers() {
     this.layerComponents.forEach(
       (layer, index) => {
-        this.scene.add(layer.object.translateZ(-600 * index));
+        this.scene.add(
+          layer.object.translateZ(this.config.get('layer.gap') * -index)
+        );
       }
     );
 
