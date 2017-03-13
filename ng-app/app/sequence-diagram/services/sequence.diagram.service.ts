@@ -11,6 +11,11 @@ export class SequenceDiagramService {
 
   protected static initialized = false;
   protected performingDelete = false;
+  protected sourceLifelineEvent = null;
+  protected sourceLifelineEventModel = null;
+  protected destinationLifelineEvent = null;
+  protected destinationLifelineEventModel = null;
+  protected addingMessageInteraction = null;
 
   constructor(protected datastore: Datastore, protected inputService: InputService) {
     // Initialize the service
@@ -27,6 +32,7 @@ export class SequenceDiagramService {
 
   public initialize() {
     this.initializeDeleteOperation();
+    this.initializeAddMessageOperation();
   }
 
   /**
@@ -82,11 +88,11 @@ export class SequenceDiagramService {
   /**
    * Delete Operation
    */
-  
+
   public performDelete() {
     this.performingDelete = true;
   }
-  
+
   protected initializeDeleteOperation() {
     this.inputService.onLeftClick((event) => {
       console.log("model", event.model);
@@ -107,6 +113,66 @@ export class SequenceDiagramService {
         });
       }
     });
+  }
+
+  protected initializeAddMessageOperation() {
+    this.inputService.onRightClick((event) => {
+
+      if (event.model.type == "Lifeline") {
+        this.handleLifelineClick(event);
+      }
+    });
+  }
+
+  protected handleLifelineClick(event: MouseEvent) {
+    if (this.sourceLifelineEvent) {
+      this.destinationLifelineEvent = event;
+      console.log("Toto je lifelineKAM mam ist");
+      console.log(this.destinationLifelineEvent.model.id);
+      this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
+
+        console.log("Vytvorena message v DB");
+
+      });
+      this.sourceLifelineEvent = null;
+      this.destinationLifelineEvent = null;
+    }
+    else {
+      this.sourceLifelineEvent = event;
+      console.log("Toto je lifelineOdkial mam ist");
+      console.log(this.sourceLifelineEvent.model.id);
+    }
+  }
+
+  protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
+
+      let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.id);
+      let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.id);
+
+      let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+        time: Math.round(sourceLifeline.offsetY / 40),
+        covered: sourceLifelineModel
+      });
+
+        sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
+          let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+            time: Math.round(destinationLifeline.offsetY / 40),
+            covered: destinationLifelineModel
+          });
+
+          destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
+            let message = this.datastore.createRecord(M.Message, {
+              //TODO nazvat message ako chcem
+              name: "send",
+              sort: "synchCall",
+              //TODO zmenit dynamicky na interaction, v ktorom realne som
+              interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.),
+              sendEvent: sourceOccurence,
+              receiveEvent: destinationOccurence
+            });
+            message.save().subscribe(callback);
+          });
+        });
   }
 
   protected calculateTime(message: M.Message){
