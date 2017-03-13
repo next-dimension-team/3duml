@@ -89,8 +89,10 @@ export class SequenceDiagramService {
   protected initializeDeleteOperation() {
     this.inputService.onLeftClick((event) => {
       if (event.model.type == "Message" && this.performingDelete) {
-        console.log("Chces mazat spravu!");
-        this.performingDelete = true;
+        this.datastore.deleteRecord(M.Message, event.model.id).subscribe(() => {
+          console.log("Maze sa sprava s id:", event.model.id);
+          this.performingDelete = false;
+        });
       }
     });
   }
