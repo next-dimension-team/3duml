@@ -25,7 +25,7 @@ export class InteractionFragment extends JsonApiModel {
   @HasMany({
     key: 'children'
   })
-  _children: InteractionFragment[];
+  _children: InteractionFragment[] = [];
 
   private _childrenKeys: string[];
 

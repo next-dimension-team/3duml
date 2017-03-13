@@ -16,16 +16,16 @@ export class OccurrenceSpecification extends JsonApiModel {
   updated_at: Date;
 
   @HasMany()
-  sendingEventMessages: M.Message[];
+  sendingEventMessages: M.Message[] = [];
 
   @HasMany()
-  receivingEventMessages: M.Message[];
+  receivingEventMessages: M.Message[] = [];
 
   @HasMany()
-  startingExecutionSpecifications: M.ExecutionSpecification[];
+  startingExecutionSpecifications: M.ExecutionSpecification[] = [];
 
   @HasMany()
-  finishingExecutionSpecifications: M.ExecutionSpecification[];
+  finishingExecutionSpecifications: M.ExecutionSpecification[] = [];
 
   @BelongsTo()
   covered: M.Lifeline;

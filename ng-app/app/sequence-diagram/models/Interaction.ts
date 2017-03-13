@@ -19,7 +19,7 @@ export class Interaction extends JsonApiModel {
   fragment: M.InteractionFragment;
 
   @HasMany()
-  messages: M.Message[];
+  messages: M.Message[] = [];
 
   get isRootInteraction() {
     return (! this.fragment.parent);
