@@ -1,3 +1,4 @@
+<!-- 
 <ul class="sidebar-nav">
 
 	<li class="header main">3D UML</li>
@@ -19,3 +20,57 @@
 	<li class="info">Edit lifeline title by double-clicking on it, then submit by pressing Enter key.</li>
 
 </ul>
+
+-->
+
+<md-toolbar color="primary">
+    <span>3D UML</span>
+    <span class="spacer"></span>
+    <button md-icon-button [mdMenuTriggerFor]="menu">
+      <md-icon>more_vert</md-icon>
+    </button>
+    <md-menu #menu="mdMenu">
+        <button md-menu-item>
+        <md-icon>autorenew</md-icon>
+        <span>Refresh</span>
+      </button>
+        <button md-menu-item>
+        <md-icon>save</md-icon>
+        <span>Save all diagrams</span>
+      </button>
+        <button md-menu-item disabled>
+        <md-icon>announcement</md-icon>
+        <span>Issues</span>
+      </button>
+        <button md-menu-item>
+        <md-icon>info</md-icon>
+        <span>Informations</span>
+      </button>
+    </md-menu>
+</md-toolbar>
+
+<md-tab-group>
+    <md-tab label="View">
+        <ul class="sidebar-nav">
+            <li *ngFor="let sequenceDiagram of sequenceDiagrams" [class.active]="sequenceDiagram==openedSequenceDiagram">
+                <md-card>
+                    <md-card-content>
+                        <h3>{{sequenceDiagram.name}}</h3>
+                    </md-card-content>
+                    <md-card-actions>
+                        <button md-button (click)=openSequenceDiagramHandler(sequenceDiagram)>
+                            <i class="material-icons md-18" >touch_app</i> Select
+                        </button>
+                        <button md-button>
+                            <i class="material-icons md-18">delete</i> Delete 
+                        </button>
+                    </md-card-actions>
+                </md-card>
+            </li>
+        </ul>
+    </md-tab>
+
+    <md-tab label="Edit">
+ 
+    </md-tab>
+</md-tab-group>

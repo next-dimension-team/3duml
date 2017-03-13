@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { JsonApiModule } from 'angular2-jsonapi';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
+import { MaterialModule } from '@angular/material';
+import 'hammerjs';
 
 // Platform and Environment providers/directives/pipes
 import { ENV_PROVIDERS } from './environment';
@@ -20,6 +22,7 @@ import { CombinedFragmentComponent } from './sequence-diagram/components/combine
 import { InteractionOperandComponent } from './sequence-diagram/components/interaction-operand.component';
 import { LayerComponent } from './sequence-diagram/components/layer.component';
 import { InteractionFragmentComponent } from './sequence-diagram/components/interaction-fragment.component';
+import 'hammerjs';
 
 // Directives
 import { SelectableDirective } from './sequence-diagram/directives/selectable.directive';
@@ -73,7 +76,8 @@ type StoreType = {
     BrowserModule,
     FormsModule,
     HttpModule,
-    JsonApiModule
+    JsonApiModule,
+    MaterialModule.forRoot()
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
