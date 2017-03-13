@@ -89,12 +89,29 @@ export class SequenceDiagramService {
   
   protected initializeDeleteOperation() {
     this.inputService.onLeftClick((event) => {
+
+      console.log("model", event.model);
       if (event.model.type == "Message" && this.performingDelete) {
-        this.datastore.deleteRecord(M.Message, event.model.id).subscribe(() => {
-          console.log("Maze sa sprava s id:", event.model.id);
-          this.performingDelete = false;
-          location.reload();
-        });
+        
+        this.datastore.findRecord(M.Message, event.model.id { include: 'sendEvent,receiveEvent' }).subscribe((message: M.Message) => {
+              // to do 
+              console.log("Nasla sa messaga:",message);
+              this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
+                console.log("Maze sa sprava s id:", message.id);
+                this.performingDelete = false;
+                // TODO : refreshnutie stranky zatial, treba refresh diagramu
+              });
+              this.datastore.deleteRecord(M.OccurrenceSpecification, message.receiveEvent.id).subscribe(() => {
+                console.log("Maze sa OccSpecif s id:", message.receiveEvent.id);
+                // TODO : refreshnutie stranky zatial, treba refresh diagramu
+              });
+              this.datastore.deleteRecord(M.OccurrenceSpecification, message.sendEvent.id).subscribe(() => {
+                console.log("Maze sa OccSpecif s id:", message.sendEvent.id);
+                // TODO : refreshnutie stranky zatial, treba refresh diagramu
+              });
+              location.reload();
+          }
+        );
       }
     });
   }
