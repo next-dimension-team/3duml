@@ -6,7 +6,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>3D UML</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css" />
-        <link rel="stylesheet" href="/styles.css" />
         @if (file_exists(public_path('build/dll')))
             <script type="text/javascript" src="{!! mix('dll/polyfills.dll.js', 'build') !!}"></script>
             <script type="text/javascript" src="{!! mix('dll/vendor.dll.js', 'build') !!}"></script>
