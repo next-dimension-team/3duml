@@ -19,6 +19,9 @@ export class Lifeline extends JsonApiModel {
   @Attribute()
   updated_at: Date;
 
+  @BelongsTo()
+  interaction: M.Interaction;
+
   @HasMany()
   occurrenceSpecifications: M.OccurrenceSpecification[] = [];
 
