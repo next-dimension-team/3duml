@@ -11,6 +11,12 @@ export class SequenceDiagramService {
 
   protected static initialized = false;
   protected performingDelete = false;
+  protected sourceLifelineEvent = null;
+  protected sourceLifelineEventModel = null;
+  protected destinationLifelineEvent = null;
+  protected destinationLifelineEventModel = null;
+  protected performingMessageAdding = false;
+  protected addingMessageInteraction = null;
 
   constructor(protected datastore: Datastore, protected inputService: InputService) {
     // Initialize the service
@@ -27,6 +33,7 @@ export class SequenceDiagramService {
 
   public initialize() {
     this.initializeDeleteOperation();
+    this.initializeAddMessageOperation();
   }
 
   /**
@@ -82,11 +89,11 @@ export class SequenceDiagramService {
   /**
    * Delete Operation
    */
-  
+
   public performDelete() {
     this.performingDelete = true;
   }
-  
+
   protected initializeDeleteOperation() {
     this.inputService.onLeftClick((event) => {
       if (event.model.type == "Message" && this.performingDelete) {
@@ -96,6 +103,86 @@ export class SequenceDiagramService {
           location.reload();
         });
       }
+    });
+  }
+
+  protected initializeAddMessageOperation() {
+    this.inputService.onRightClick((event) => {
+
+      if (event.model.type == "Lifeline") {
+        this.performingMessageAdding = true;
+      }
+      if (event.model.type == "Layer" && this.performingMessageAdding) {
+        this.addingMessageInteraction = event;
+        this.handleLifelineClick(event);
+      }
+      console.log("--------------------------------");
+      console.info("Event typu: RightClick");
+      console.log("Klikol si na " + event.model.type + " s ID " + event.model.id);
+      console.log("Súradnice tvojho kliknutia zľava: " + event.offsetX);
+      console.log("Súradnice tvojho kliknutia zhora: " + event.offsetY);
+    });
+  }
+
+  protected handleLifelineClick(event: MouseEvent) {
+    if (this.sourceLifelineEvent) {
+      this.destinationLifelineEvent = event.model;
+      this.destinationLifelineEvent = event;
+      console.log("Toto je lifelineKAM mam ist");
+      console.log(this.destinationLifelineEvent.model.id);
+      console.log("Toto je lifelineOdkial mam ist");
+      console.log(this.sourceLifelineEvent.model.id);
+      console.log("-------------------------------------------------------");
+      console.log();
+
+      this.createMessage(this.sourceLifelineEvent, this.sourceLifelineEventModel, this.destinationLifelineEvent, this.destinationLifelineEventModel, this.addingMessageInteraction);
+      this.sourceLifelineEvent = null;
+      this.destinationLifelineEvent = null;
+    }
+    else {
+      this.sourceLifelineEvent = event;
+      this.sourceLifelineEventModel = event.model;
+      console.log("Toto je lifelineOdkial mam ist");
+      console.log(this.sourceLifelineEvent.model.id);
+    }
+  }
+
+  createMessage(fromEvent: MouseEvent, fromLifelineModel: M.Lifeline, toEvent: MouseEvent, toLifelineModel: M.Lifeline, layer: M.Layer): void{
+    this.addMessage(fromEvent, fromLifelineModel, toEvent, toLifelineModel, layer, (message: M.Message) => {
+      console.log("Vytvorena message v DB");
+      console.log(this.sourceLifelineEvent);
+    });
+  }
+
+  public addMessage(fromEvent: MouseEvent, fromLifelineModel: M.Lifeline, toEvent: MouseEvent, toLifelineModel: M.Lifeline, layer: M.Layer, callback: any) {
+
+    this.datastore.findRecord(M.Lifeline, fromLifelineModel.id).subscribe((fromLifeline: M.Lifeline) => console.log("EZ",fromLifeline)
+    );
+
+    let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+      time: Math.round(fromEvent.offsetY/40),
+      covered: fromLifeline
+    });
+    sourceOccurence.save().subscribe(callback);
+
+    sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification)=> {
+      let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+        time: Math.round(toEvent.offsetY/40),
+        covered: toLifelineModel
+      });
+
+      destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) =>{
+        let message = this.datastore.createRecord(M.Message, {
+          //TODO nazvat message ako chcem
+          name: "send",
+          sort: "synchCall",
+          //TODO zmenit dynamicky na interaction, v ktorom realne som
+          interaction: layer,
+          sendEvent: sourceOccurence,
+          receiveEvent: destinationOccurence
+        });
+        message.save().subscribe(callback);
+      });
     });
   }
 
