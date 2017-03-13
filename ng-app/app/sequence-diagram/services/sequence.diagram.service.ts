@@ -92,6 +92,7 @@ export class SequenceDiagramService {
       console.log("model", event.model);
       if (event.model.type == "Message" && this.performingDelete) {
         let message = this.datastore.peekRecord(M.Message, event.model.id);
+        this.calculateTime(message);
         console.log("Nasla sa messaga:",message);
         this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
           console.log("Maze sa sprava s id:", message.id);
@@ -99,8 +100,7 @@ export class SequenceDiagramService {
             console.log("Maze sa OccSpecif s id:", message.receiveEvent.id);
             this.datastore.deleteRecord(M.OccurrenceSpecification, message.sendEvent.id).subscribe(() => {
               console.log("Maze sa OccSpecif s id:", message.sendEvent.id);
-              // this.calculateTime(message);
-              location.reload();
+              // location.reload();
             });
           });
           this.performingDelete = false;
@@ -111,8 +111,35 @@ export class SequenceDiagramService {
 
   protected calculateTime(message: M.Message){
 
-    receiveLifeline = message.receiveEvent;
-    sendLifeline = message.sendEvent;
+    let deletedMessageTime = message.sendEvent.time;
+    let receiveLifeline = message.receiveEvent.covered;
+    let sendLifeline = message.sendEvent.covered;
+
+    console.log("OS OF LAJFLAJNY", receiveLifeline.occurrenceSpecifications); 
+
+    for (let occurrence of receiveLifeline.occurrenceSpecifications) {
+      if (occurrence.time > deletedMessageTime){
+        console.log("OKURENCIA TAJM", occurrence.time);
+        teraz to znizit o 1 treba, zober id occurence spec a znizit
+        this.datastore.findRecord(M.OccurrenceSpecifiation, occcurence.id).subscribe(
+          (occurrenceSpecification: M.OccurrenceSpecifiation) => {
+            occurrenceSpecification.time = occurrenceSpecification.time - 1;
+          }
+        );
+      }
+    }
+
+    for (let occurrence of sendLifeline.occurrenceSpecifications) {
+      if (occurrence.time > deletedMessageTime){
+        console.log("OKURENCIA JE VECSIA", occurrence);
+        // teraz to znizit o 1 treba, zober id occurence spec a znizit
+        this.datastore.findRecord(M.OccurrenceSpecifiation, occcurence.id).subscribe(
+          (occurrenceSpecification: M.OccurrenceSpecifiation) => {
+            occurrenceSpecification.time = occurrenceSpecification.time - 1;
+          }
+        );
+      }
+    }
 
   }
   // TODO
