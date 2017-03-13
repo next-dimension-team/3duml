@@ -120,7 +120,7 @@ export class SequenceDiagramService {
     for (let occurrence of receiveLifeline.occurrenceSpecifications) {
       if (occurrence.time > deletedMessageTime){
         console.log("OKURENCIA TAJM", occurrence.time);
-        teraz to znizit o 1 treba, zober id occurence spec a znizit
+        // teraz to znizit o 1 treba, zober id occurence spec a znizit
         this.datastore.findRecord(M.OccurrenceSpecifiation, occcurence.id).subscribe(
           (occurrenceSpecification: M.OccurrenceSpecifiation) => {
             occurrenceSpecification.time = occurrenceSpecification.time - 1;
