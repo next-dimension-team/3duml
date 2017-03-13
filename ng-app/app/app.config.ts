@@ -11,6 +11,12 @@ export interface IAppConfig {
     near: number,
     far: number,
     z: number
+  },
+  controls: {
+    minPolarAngle: number;
+    maxPolarAngle: number;
+    minAzimuthAngle: number;
+    maxAzimuthAngle: number;
   }
 }
 
@@ -23,5 +29,11 @@ export const AppConfig: IAppConfig = {
     near: 0.1,
     far: 1000,
     z: 800
+  },
+  controls: {
+    minPolarAngle: 0.25 * Math.PI,
+    maxPolarAngle: 0.75 * Math.PI,
+    minAzimuthAngle: - 0.35 * Math.PI,
+    maxAzimuthAngle: 0.35 * Math.PI
   }
 };

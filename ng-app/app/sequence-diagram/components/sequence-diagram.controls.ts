@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import * as _ from 'lodash';
 let OrbitControls: typeof THREE.OrbitControls = require('three-orbit-controls')(THREE);
 
 /*
@@ -6,14 +7,10 @@ let OrbitControls: typeof THREE.OrbitControls = require('three-orbit-controls')(
  */
 export class SequenceDiagramControls extends OrbitControls {
 
-  constructor(object, domElement, minPolarAngle = 0.25 * Math.PI, maxPolarAngle = 0.75 * Math.PI,
-              minAzimuthAngle = - 0.35 * Math.PI, maxAzimuthAngle = 0.35 * Math.PI) {
+  constructor(object, domElement, config: any) {
     super(object, domElement);
 
-    this.minPolarAngle = minPolarAngle;
-    this.maxPolarAngle = maxPolarAngle;
-    this.minAzimuthAngle = minAzimuthAngle;
-    this.maxAzimuthAngle = maxAzimuthAngle;
+    _.assign(this, config);
   }
 
 }

@@ -70,7 +70,12 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     this.camera.position.z = this.config.get('camera.z');
 
     // Controls
-    this.controls = new SequenceDiagramControls(this.camera, this.renderer.domElement);
+    this.controls = new SequenceDiagramControls(
+      this.camera,
+      this.renderer.domElement,
+      this.config.get('controls')
+    );
+
     this.controls.addEventListener('change', () => this.queueRender());
   }
 
