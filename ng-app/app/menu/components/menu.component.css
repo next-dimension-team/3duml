@@ -4,16 +4,7 @@
   list-style: none;
 }
 
-.mat-card-actions {
-    padding: 0px 0;
-}
-
-.mat-card {
-    border-radius: 0px;
-}
-
 .sidebar-nav li {
-
   height: 90px;
   line-height: 5px;
 }
@@ -22,8 +13,24 @@
   border-left: 5px solid #3f51b5;
 }
 
+.mat-card-actions {
+  padding: 0px 0;
+}
+
+.mat-card {
+  border-radius: 0px;
+}
+
 .spacer {
   -webkit-box-flex: 1;
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
 }
+
+.list-item-button {
+  width: 100%;
+  height: 100%;
+  border-radius: 0px;
+  text-align: left;
+}
+

@@ -59,10 +59,10 @@
                     </md-card-content>
                     <md-card-actions>
                         <button md-button (click)=openSequenceDiagramHandler(sequenceDiagram)>
-                            <i class="material-icons md-18" >touch_app</i> Select
+                            <md-icon>touch_app</md-icon> Select
                         </button>
                         <button md-button>
-                            <i class="material-icons md-18">delete</i> Delete 
+                            <md-icon>delete</md-icon> Delete 
                         </button>
                     </md-card-actions>
                 </md-card>
@@ -71,6 +71,29 @@
     </md-tab>
 
     <md-tab label="Edit">
- 
+        <md-list>
+            <h3 md-subheader>CREATE</h3>
+            <md-list-item>
+                <button md-button class="list-item-button">
+                    <md-icon>add_to_queue</md-icon> Create Diagram 
+                </button>
+            </md-list-item>
+            <md-list-item>
+                <button md-button class="list-item-button">
+                    <md-icon>library_add</md-icon> Create Layer
+                </button>
+            </md-list-item>
+            <md-list-item>
+                <button md-button class="list-item-button">
+                    <md-icon>add</md-icon> Create Lifeline
+                </button>
+            </md-list-item>
+            <h3 md-subheader>DELETE</h3>
+             <md-list-item>
+                <button md-button class="list-item-button">
+                    <md-icon>delete</md-icon> Delete Component
+                </button>
+            </md-list-item>
+        </md-list>
     </md-tab>
 </md-tab-group>
