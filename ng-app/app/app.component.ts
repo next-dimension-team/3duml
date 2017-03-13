@@ -5,8 +5,7 @@ import { SequenceDiagramService } from './sequence-diagram/services';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
-  providers: [SequenceDiagramService]
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
 

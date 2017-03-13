@@ -13,7 +13,6 @@ export class MenuComponent implements OnInit {
 
   @Output()
   public openSequenceDiagram = new EventEmitter;
-
   private sequenceDiagrams: Interaction[];
   private openedSequenceDiagram: Interaction;
 
@@ -53,4 +52,7 @@ export class MenuComponent implements OnInit {
     
   }
 
+  protected delete() {
+    this.sequenceDiagramService.performDelete();
+  }
 }

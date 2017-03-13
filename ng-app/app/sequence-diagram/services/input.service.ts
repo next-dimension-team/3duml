@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 
 @Injectable()
-export class SelectableService {
+export class InputService {
 
   /* Available Events: https://www.w3schools.com/jsref/dom_obj_event.asp */
 
