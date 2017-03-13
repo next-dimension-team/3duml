@@ -1,13 +1,13 @@
 // For material theme
- @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
- @import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic);
- @import '~@angular/material/core/theming/prebuilt/indigo-pink.css';
- 
- .mat-tab-label {
-     width: 50%!important;
-     min-width: 50px!important;
- }
- 
- .mat-tab-header-pagination {
-     display: none!important;
- }
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
+@import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic);
+@import '~@angular/material/core/theming/prebuilt/indigo-pink.css';
+
+.mat-tab-label {
+  width: 50% !important;
+  min-width: 50px !important;
+}
+
+.mat-tab-header-pagination {
+  display: none !important;
+}
