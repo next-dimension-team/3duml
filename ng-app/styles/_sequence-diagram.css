@@ -1,11 +1,4 @@
 /* Global */
-.loading {
-  display: block;
-  padding-top: 200px;
-  font-size: 18px;
-  text-align: center;
-}
-
 * {
   backface-visibility: hidden!important;
   -webkit-backface-visibility: hidden!important;
@@ -18,9 +11,6 @@ input {
 }
 
 /* Layers */
-.layers-wrapper {
-  display: none;
-}
 
 .layer {
   display: block;
