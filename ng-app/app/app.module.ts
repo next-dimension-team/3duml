@@ -10,8 +10,9 @@ import 'hammerjs';
 // Platform and Environment providers/directives/pipes
 import { ENV_PROVIDERS } from './environment';
 
-// App settings
-import { AppSettings } from './app.settings';
+// App config
+import { APP_CONFIG, AppConfig } from './app.config';
+import { ConfigService } from './config';
 
 // App components
 import { AppComponent } from './app.component';
@@ -42,7 +43,10 @@ import '../styles/styles.scss';
 // Application wide providers
 const APP_PROVIDERS = [
   AppState,
-  Datastore
+  Datastore,
+  SelectableService,
+  { provide: APP_CONFIG, useValue: AppConfig },
+  ConfigService
 ];
 
 type StoreType = {
@@ -82,8 +86,6 @@ type StoreType = {
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
     APP_PROVIDERS,
-    SelectableService,
-    AppSettings
   ]
 })
 export class AppModule {
