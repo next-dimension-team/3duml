@@ -1,14 +1,14 @@
 #sidebar-wrapper {
     display: block;
     float: left;
-    width: 20%;
+    width: calc(20% - 5px);
     height: 100vh;
     border-right: 5px solid #3f51b5;
 }
 
 #page-content-wrapper {
     display: block;
-    float: left;
-    width: 78%;
+    float: right;
+    width: 80%;
     height: 100vh;
 }

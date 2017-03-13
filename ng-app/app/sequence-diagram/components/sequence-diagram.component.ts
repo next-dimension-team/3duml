@@ -33,7 +33,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
 
   public ngOnInit() {
     // Calculate canvas size
-    let width = window.innerWidth * 0.85;
+    let width = window.innerWidth * 0.80;
     let height = window.innerHeight;
 
     // Create scene
@@ -76,7 +76,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
 
   @HostListener('window:resize')
   public onWindowResize() {
-    let width = window.innerWidth * 0.85;
+    let width = window.innerWidth * 0.80;
     let height = window.innerHeight;
 
     this.camera.aspect = width / height;
