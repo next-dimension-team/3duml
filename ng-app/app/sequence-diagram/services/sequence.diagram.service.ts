@@ -10,6 +10,7 @@ import * as M from '../models';
 export class SequenceDiagramService {
 
   protected static initialized = false;
+  protected performingDelete = false;
 
   constructor(protected datastore: Datastore, protected inputService: InputService) {
     // Initialize the service
@@ -25,9 +26,7 @@ export class SequenceDiagramService {
   protected selectedElement = null;
 
   public initialize() {
-    this.inputService.onLeftClick((event) => {
-      console.log(event);
-    });
+    this.initializeDeleteOperation();
   }
 
   /**
@@ -82,6 +81,19 @@ export class SequenceDiagramService {
   /**
    * Delete Operation
    */
+  
+  public performDelete() {
+    this.performingDelete = true;
+  }
+  
+  protected initializeDeleteOperation() {
+    this.inputService.onLeftClick((event) => {
+      if (event.model.type == "Message" && this.performingDelete) {
+        console.log("Chces mazat spravu!");
+        this.performingDelete = true;
+      }
+    });
+  }
 
   // TODO
 
