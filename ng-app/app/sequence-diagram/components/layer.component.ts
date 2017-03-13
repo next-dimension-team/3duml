@@ -35,7 +35,6 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
 
   public ngOnChanges() {
     this.fragments = this.r(this.interactionFragmentModel).children;
-    console.log("RESULT", this.fragments);
   }
 
   r(interactionFragmentModel: M.InteractionFragment) {
@@ -73,16 +72,12 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
           }
         }
       }
-
-      console.info("CombinedFragment envelope", envelope);
     }
 
     // Interaction Operand
     else if (self.type == 'InteractionOperand') {
       let envelope = this.envelopeFragment(interactionFragmentModel);
       self.height = (envelope.max - envelope.min) * this.VYSKA_ZUBKU;
-
-      console.info("InteractionOperand envelope", envelope);
     }
 
     self.children = children;

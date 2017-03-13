@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { LayerComponent } from './layer.component';
 import { SequenceDiagramControls } from './sequence-diagram.controls';
+import { SelectableService } from '../services';
 import * as M from '../models';
 let { Renderer: CSS3DRenderer } : { Renderer: typeof THREE.CSS3DRenderer } = require('three.css')(THREE);
 
@@ -27,8 +28,19 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
 
   protected renderQueued = false;
 
-  constructor(protected ngZone: NgZone, protected element: ElementRef) {
-    //
+  constructor(protected ngZone: NgZone, protected element: ElementRef, protected selectableService: SelectableService) {
+    // TODO: Toto je ukážkový kód, ako počúvať na označenie elementu.
+
+    this.selectableService.onLeftClick((event) => {
+      console.log("--------------------------------");
+      console.info("Event typu: LeftClick");
+      console.log("Klikol si na " + event.model.type + " s ID " + event.model.id);
+      console.log("Súradnice tvojho kliknutia zľava: " + event.offsetX);
+      console.log("Súradnice tvojho kliknutia zhora: " + event.offsetY);
+      console.log("Detaily eventu: ");
+      console.log(event);
+      console.log("--------------------------------");
+    });
   }
 
   public ngOnInit() {

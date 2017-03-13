@@ -2,6 +2,7 @@
 <!-- TODO CONSTANT -->
 <div
   class="layer"
+  [selectable]="{type: 'Layer', id: interactionFragmentModel.fragmentable.id}"
   [style.width]="(interactionFragmentModel.fragmentable.lifelines.length * 320) + 'px'">
 
   <!-- Render sequence diagram -->
@@ -10,7 +11,7 @@
     <!-- Lifelines -->
     <app-lifeline
       *ngFor="let lifeline of interactionFragmentModel.fragmentable.recursiveLifelines; let i = index;"
-      [model]="lifeline"
+      [lifelineModel]="lifeline"
       [left]="i * 400"></app-lifeline>
 
     <!-- Messages -->
