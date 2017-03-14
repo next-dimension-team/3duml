@@ -93,6 +93,7 @@ export class SequenceDiagramService {
     this.inputService.onLeftClick((event) => {
       if (this.performingDelete) {
         switch (event.model.type) {
+          
           case 'Message':
             let message = this.datastore.peekRecord(M.Message, event.model.id);
             this.calculateTimeOnMessageDelete(message);
@@ -101,6 +102,7 @@ export class SequenceDiagramService {
             });
             this.performingDelete = false;
           break;
+
           case 'Lifeline':
             let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
             this.calculateLifelinesOrder(lifeline);
@@ -110,6 +112,7 @@ export class SequenceDiagramService {
             });
             this.performingDelete = false;
           break;
+
         }
       }
     });
@@ -118,23 +121,19 @@ export class SequenceDiagramService {
   /**
    * Funkcia upravuje atribut 'order' na Lifeline
    */
-  protected calculateLifelinesOrder(lifeline: M.Lifelines) {
+  protected calculateLifelinesOrder(lifeline: M.Lifeline) {
 
     let deletedLifelineOrder = lifeline.order;
     let interaction = lifeline.interaction;
     let lifelinesInInteraction = interaction.lifelines;
 
-    // ak je order lifeliny vecsi ako order vymazanej lifeliny tak ho zmensim o 1 
+    // ak je order lifeliny vecsi ako order vymazanej lifeliny tak ho zmensim o 1
     for (let lifeline of lifelinesInInteraction) {
       if (lifeline.order > deletedLifelineOrder) {
-        this.datastore.findRecord(M.Lifeline, lifeline.id).subscribe(
-          (lifeline: M.Lifeline) => {
-            lifeline.order = lifeline.order - 1;
-            lifeline.save().subscribe();
-          }
-        );
+        lifeline.order--;
+        lifeline.save().subscribe();
       }
-    }  
+    }
   }
 
   protected calculateTimeOnMessageDelete(message: M.Message) {
@@ -147,24 +146,16 @@ export class SequenceDiagramService {
     for (let occurrence of receiveLifeline.occurrenceSpecifications) {
       if (occurrence.time > deletedMessageTime) {
         // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time - 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
+        occurrence.time--;
+        occurrence.save().subscribe();
       }
     }
     // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
     for (let occurrence of sendLifeline.occurrenceSpecifications) {
       if (occurrence.time > deletedMessageTime) {
         // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time - 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
+        occurrence.time--;
+        occurrence.save().subscribe();
       }
     }
   }
