@@ -185,6 +185,7 @@ module.exports = function (options) {
             '@angular/router',
             '@angularclass/hmr',
             'rxjs',
+            '@angular/material',
             'angular2-jsonapi',
             'three',
             'three.css',
