@@ -10,13 +10,16 @@ class Hydrator extends EloquentHydrator
      * @var array
      */
     protected $attributes = [
-        //
+        'name',
+		'sort',
     ];
 
     /**
      * @var array
      */
     protected $relationships = [
-        //
+        'interaction',
+ 		'sendEvent',
+ 		'receiveEvent',
     ];
 }

@@ -19,6 +19,11 @@ class Message extends Model
      * @var array
      */
     protected $appends = ['kind'];
+	
+	protected $fillable = [
+ 		'name',
+ 		'sort',
+ 	];
 
     public function interaction()
     {
