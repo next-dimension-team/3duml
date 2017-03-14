@@ -210,11 +210,15 @@ export class SequenceDiagramService {
       if (event.model.type == "Lifeline") {
         if (this.sourceLifelineEvent) {
           this.destinationLifelineEvent = event;
-          this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
-            console.log("Vytvorena message v DB");
-          });
-          this.sourceLifelineEvent = null;
-          this.destinationLifelineEvent = null;
+          if (this.sourceLifelineEvent.model.id == this.destinationLifelineEvent.model.id) {
+            this.sourceLifelineEvent = this.destinationLifelineEvent;
+          } else {
+            this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
+              console.log("Vytvorena message v DB");
+            });
+            this.sourceLifelineEvent = null;
+            this.destinationLifelineEvent = null;
+          }
         }
         else {
           this.sourceLifelineEvent = event;
