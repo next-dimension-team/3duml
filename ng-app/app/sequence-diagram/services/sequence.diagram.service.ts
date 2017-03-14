@@ -93,7 +93,7 @@ export class SequenceDiagramService {
     this.inputService.onLeftClick((event) => {
       if (event.model.type == "Message" && this.performingDelete) {
         let message = this.datastore.peekRecord(M.Message, event.model.id);
-        this.calculateTime(message);
+        this.calculateTimeOnMessageDelete(message);
         this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
           this.datastore.deleteRecord(M.OccurrenceSpecification, message.receiveEvent.id).subscribe(() => {
             this.datastore.deleteRecord(M.OccurrenceSpecification, message.sendEvent.id).subscribe(() => {
@@ -106,7 +106,7 @@ export class SequenceDiagramService {
     });
   }
 
-  protected calculateTime(message: M.Message){
+  protected calculateTimeOnMessageDelete(message: M.Message){
 
     let deletedMessageTime = message.sendEvent.time;
     let receiveLifeline = message.receiveEvent.covered;
@@ -131,6 +131,39 @@ export class SequenceDiagramService {
         this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
           (occurrenceSpecification: M.OccurrenceSpecification) => {
             occurrenceSpecification.time = occurrenceSpecification.time - 1;
+            occurrenceSpecification.save().subscribe();
+          }
+        );
+      }
+    }
+  }
+
+  // TODO: chceme posuvat len ak sme tafili uz nejaku existujucu messagu
+  protected calculateTimeOnMessageInsert(message: M.Message){
+
+    let insertedMessageTime = message.sendEvent.time;
+    let receiveLifeline = message.receiveEvent.covered;
+    let sendLifeline = message.sendEvent.covered;
+
+    // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
+    for (let occurrence of receiveLifeline.occurrenceSpecifications) {
+      if (occurrence.time >= insertedMessageTime){
+        // teraz to znizit o 1 treba, zober id occurence spec a znizit
+        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
+          (occurrenceSpecification: M.OccurrenceSpecification) => {
+            occurrenceSpecification.time = occurrenceSpecification.time + 1;
+            occurrenceSpecification.save().subscribe();
+          }
+        );
+      }
+    }
+    // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
+    for (let occurrence of sendLifeline.occurrenceSpecifications) {
+      if (occurrence.time >= insertedMessageTime){
+        // teraz to znizit o 1 treba, zober id occurence spec a znizit
+        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
+          (occurrenceSpecification: M.OccurrenceSpecification) => {
+            occurrenceSpecification.time = occurrenceSpecification.time + 1;
             occurrenceSpecification.save().subscribe();
           }
         );
@@ -169,14 +202,14 @@ export class SequenceDiagramService {
 
       let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
         // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
-        time: Math.round(sourceLifeline.offsetY / 40) - 120,
+        time: Math.round((sourceLifeline.offsetY - 120) / 40),
         covered: sourceLifelineModel
       });
 
       sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
         let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
           // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
-          time: Math.round(destinationLifeline.offsetY / 40) - 120,
+          time: Math.round((destinationLifeline.offsetY - 120) / 40),
           covered: destinationLifelineModel
         });
 
@@ -189,7 +222,10 @@ export class SequenceDiagramService {
             interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
             sendEvent: sourceOccurence,
             receiveEvent: destinationOccurence
-          }).save().subscribe(callback);
+          }).save().subscribe((message: M.Message) => {
+            this.calculateTimeOnMessageInsert(message);
+            callback(message);
+          });
         });
       });
   }
