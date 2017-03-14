@@ -110,15 +110,23 @@ export class SequenceDiagramService {
             });
             this.performingDelete = false;
           break;
+          case 'Layer':
+            let interaction = this.datastore.peekRecord(M.Interaction, event.model.id);
+            this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
+              console.log("Maze sa interakcia:", interaction);
+              location.reload();
+            });
+            this.performingDelete = false;
+          break;
         }
       }
     });
   }
-  
+
   /**
    * Funkcia upravuje atribut 'order' na Lifeline
    */
-  protected calculateLifelinesOrder(lifeline: M.Lifelines) {
+  protected calculateLifelinesOrder(lifeline: M.Lifeline) {
 
     let deletedLifelineOrder = lifeline.order;
     let interaction = lifeline.interaction;
