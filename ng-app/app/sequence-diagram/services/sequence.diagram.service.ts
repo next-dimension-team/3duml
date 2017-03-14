@@ -141,32 +141,54 @@ export class SequenceDiagramService {
   // TODO: chceme posuvat len ak sme tafili uz nejaku existujucu messagu
   protected calculateTimeOnMessageInsert(message: M.Message){
 
+    let move = false;
     let insertedMessageTime = message.sendEvent.time;
-    let receiveLifeline = message.receiveEvent.covered;
     let sendLifeline = message.sendEvent.covered;
+    let receiveLifeline = message.receiveEvent.covered;
 
-    // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
-    for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-      if (occurrence.time >= insertedMessageTime){
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time + 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
+    for (let occurrence of sendLifeline.occurrenceSpecifications) {
+      if (occurrence.time == insertedMessageTime) {
+        move = true;
+        console.log("Nasiel som rovnaky occ na prvej");
+        break;
       }
     }
-    // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
-    for (let occurrence of sendLifeline.occurrenceSpecifications) {
-      if (occurrence.time >= insertedMessageTime){
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time + 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
+
+    if (move) {
+      for (let occurrence of receiveLifeline.occurrenceSpecifications) {
+        if (occurrence.time == insertedMessageTime) {
+          move = true;
+          console.log("Nasiel som rovnaky occ na druhej");
+          break;
+        }
+      }
+    }
+
+
+    if (move) {
+      // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
+      for (let occurrence of receiveLifeline.occurrenceSpecifications) {
+        if (occurrence.time >= insertedMessageTime){
+          // teraz to znizit o 1 treba, zober id occurence spec a znizit
+          this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
+            (occurrenceSpecification: M.OccurrenceSpecification) => {
+              occurrenceSpecification.time = occurrenceSpecification.time + 1;
+              occurrenceSpecification.save().subscribe();
+            }
+          );
+        }
+      }
+      // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
+      for (let occurrence of sendLifeline.occurrenceSpecifications) {
+        if (occurrence.time >= insertedMessageTime){
+          // teraz to znizit o 1 treba, zober id occurence spec a znizit
+          this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
+            (occurrenceSpecification: M.OccurrenceSpecification) => {
+              occurrenceSpecification.time = occurrenceSpecification.time + 1;
+              occurrenceSpecification.save().subscribe();
+            }
+          );
+        }
       }
     }
   }
@@ -199,17 +221,18 @@ export class SequenceDiagramService {
   protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
       let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.id);
       let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.id);
+      let averageTime = Math.round((((sourceLifeline.offsetY + destinationLifeline.offsetY) / 2.0) - 120) / 40.0);
 
       let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
         // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
-        time: Math.round((sourceLifeline.offsetY - 120) / 40),
+        time: averageTime,
         covered: sourceLifelineModel
       });
-
+      console.log("CAS" + averageTime);
       sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
         let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
           // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
-          time: Math.round((destinationLifeline.offsetY - 120) / 40),
+          time: averageTime,
           covered: destinationLifelineModel
         });
 
