@@ -79,6 +79,10 @@ export class SequenceDiagramService {
     });
   }
 
+  public createLayer(name: string, callback: any) {
+    
+  }
+
   /**
    * Delete Operation
    */

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import * as M from './sequence-diagram/models';
 import { SequenceDiagramService } from './sequence-diagram/services';
+import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
 
 @Component({
   selector: 'app-root',
@@ -21,4 +22,8 @@ export class AppComponent {
     );
   }
 
+  public createLayer(layerName: String, sequenceDiagramComponent: SequenceDiagramComponent) {
+    
+    console.log(layerName);
+  }
 }

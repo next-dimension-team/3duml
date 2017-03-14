@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { Interaction } from '../../sequence-diagram/models';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
 import * as M from '../../sequence-diagram/models';
 
@@ -13,8 +12,12 @@ export class MenuComponent implements OnInit {
 
   @Output()
   public openSequenceDiagram = new EventEmitter;
-  private sequenceDiagrams: Interaction[];
-  private openedSequenceDiagram: Interaction;
+
+  @Output()
+  public createLayer = new EventEmitter;
+
+  private sequenceDiagrams: M.Interaction[];
+  private openedSequenceDiagram: M.Interaction;
 
   constructor(private sequenceDiagramService: SequenceDiagramService) { }
 
@@ -24,7 +27,7 @@ export class MenuComponent implements OnInit {
 
   private loadSequenceDiagrams() {
     this.sequenceDiagramService.getSequenceDiagrams().subscribe(
-      (diagrams: Interaction[]) => {
+      (diagrams: M.Interaction[]) => {
         this.sequenceDiagrams = diagrams;
 
         if (this.sequenceDiagrams.length > 0) {
@@ -34,7 +37,7 @@ export class MenuComponent implements OnInit {
     );
   }
 
-  private openSequenceDiagramHandler(sequenceDiagram: Interaction) {
+  private openSequenceDiagramHandler(sequenceDiagram: M.Interaction) {
     this.openedSequenceDiagram = sequenceDiagram;
     this.openSequenceDiagram.emit(this.openedSequenceDiagram);
   }
@@ -47,9 +50,13 @@ export class MenuComponent implements OnInit {
     //console.log(diagramName);
     //vytvorenie noveho diagramu
     this.sequenceDiagramService.createDiagram(diagramName, (interaction: M.InteractionFragment) => {
-        console.log("JE TO VYTVORENE");
-      });
-    
+      console.log("JE TO VYTVORENE");
+    });
+  }
+
+  private createLayerHandler(): void {
+    var layerName = window.prompt("Choose name of new layer", "NewLayer");
+    this.createLayer.emit(layerName);
   }
 
   protected delete() {
