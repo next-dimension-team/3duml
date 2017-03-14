@@ -228,7 +228,9 @@ export class SequenceDiagramService {
         time: averageTime,
         covered: sourceLifelineModel
       });
+
       console.log("CAS" + averageTime);
+      
       sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
         let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
           // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
