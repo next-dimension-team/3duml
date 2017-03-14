@@ -82,7 +82,7 @@ type StoreType = {
     FormsModule,
     HttpModule,
     JsonApiModule,
-    MaterialModule.forRoot()
+    MaterialModule
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
