@@ -10,7 +10,6 @@ import * as M from '../models';
 export class SequenceDiagramService {
 
   protected static initialized = false;
-  protected performingDelete = false;
 
   constructor(protected datastore: Datastore, protected inputService: InputService) {
     // Initialize the service
@@ -27,6 +26,7 @@ export class SequenceDiagramService {
 
   public initialize() {
     this.initializeDeleteOperation();
+    this.initializeAddMessageOperation();
   }
 
   /**
@@ -82,6 +82,8 @@ export class SequenceDiagramService {
   /**
    * Delete Operation
    */
+
+  protected performingDelete = false;
   
   public performDelete() {
     this.performingDelete = true;
@@ -135,7 +137,62 @@ export class SequenceDiagramService {
       }
     }
   }
-  // TODO
+
+  /**
+   * Insert Operation
+   */
+
+  protected sourceLifelineEvent = null;
+  protected destinationLifelineEvent = null;
+  
+  protected initializeAddMessageOperation() {
+    this.inputService.onRightClick((event) => {
+      if (event.model.type == "Lifeline") {
+        if (this.sourceLifelineEvent) {
+          this.destinationLifelineEvent = event;
+          this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
+            console.log("Vytvorena message v DB");
+          });
+          this.sourceLifelineEvent = null;
+          this.destinationLifelineEvent = null;
+        }
+        else {
+          this.sourceLifelineEvent = event;
+        }
+      }
+    });
+  }
+
+  protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
+      let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.id);
+      let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.id);
+
+      let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+        // TODO: konstantu 40 treba tahat z configu
+        time: Math.round(sourceLifeline.offsetY / 40),
+        covered: sourceLifelineModel
+      });
+
+      sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
+        let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+          // TODO: konstantu 40 treba tahat z configu
+          time: Math.round(destinationLifeline.offsetY / 40),
+          covered: destinationLifelineModel
+        });
+
+        destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
+          this.datastore.createRecord(M.Message, {
+            //TODO nazvat message ako chcem
+            name: "send",
+            sort: "synchCall",
+            //TODO zmenit dynamicky na interaction, v ktorom realne som
+            interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
+            sendEvent: sourceOccurence,
+            receiveEvent: destinationOccurence
+          }).save().subscribe(callback);
+        });
+      });
+  }
 
   /**
    * Update Operation
