@@ -53,6 +53,13 @@ class Schema extends EloquentSchema
         }
 
         return [
+            'interaction' => [
+                self::SHOW_SELF => true,
+                self::SHOW_RELATED => true,
+                self::DATA => isset($includeRelationships['interaction'])
+                    ? $resource->interaction
+                    : $this->createBelongsToIdentity($resource, 'interaction'),
+            ],
             'occurrenceSpecifications' => [
                 self::SHOW_SELF => true,
                 self::SHOW_RELATED => true,

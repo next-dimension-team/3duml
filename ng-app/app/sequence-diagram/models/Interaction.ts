@@ -21,6 +21,9 @@ export class Interaction extends JsonApiModel {
   @HasMany()
   messages: M.Message[] = [];
 
+  @HasMany()
+  lifelines: M.Lifeline[] = [];
+
   get isRootInteraction() {
     return (! this.fragment.parent);
   }
@@ -41,7 +44,7 @@ export class Interaction extends JsonApiModel {
   /*
    * Implementácia virtuálneho vzťahu medzi interakciou a lifelinami
    */
-  get lifelines(): M.Lifeline[] {
+  /*get lifelines(): M.Lifeline[] {
     if (! this.messages) {
       return [];
     }
@@ -77,12 +80,12 @@ export class Interaction extends JsonApiModel {
     }
 
     return lifelines;
-  }
+  }*/
 
   /*
    * Implementácia virtuálneho vzťahu medzi interakciou a lifelinami
    */
-  get recursiveLifelines(): M.Lifeline[] {
+  /*get recursiveLifelines(): M.Lifeline[] {
     if (! this.recursiveMessages) {
       return [];
     }
@@ -118,6 +121,6 @@ export class Interaction extends JsonApiModel {
     }
 
     return lifelines;
-  }
+  }*/
 
 }

@@ -10,13 +10,14 @@ class Hydrator extends EloquentHydrator
      * @var array
      */
     protected $attributes = [
-        //
+        'name',
+        'constraint',
     ];
 
     /**
      * @var array
      */
     protected $relationships = [
-        //
+        'fragmentable',
     ];
 }

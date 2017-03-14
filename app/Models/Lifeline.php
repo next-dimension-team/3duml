@@ -12,9 +12,19 @@ class Lifeline extends Model
      * @var string
      */
     protected $table = 'lifelines';
+	
+    protected $fillable = [
+        'name',
+        'order',
+    ];
 
     public function occurrenceSpecifications()
     {
         return $this->hasMany(OccurrenceSpecification::class);
+    }
+
+    public function interaction()
+    {
+        return $this->belongsTo(Interaction::class);
     }
 }

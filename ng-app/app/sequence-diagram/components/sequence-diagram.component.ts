@@ -6,7 +6,7 @@ import {
 import { LayerComponent } from './layer.component';
 import { SequenceDiagramControls } from './sequence-diagram.controls';
 import * as M from '../models';
-import { ConfigService } from '../../config'
+import { ConfigService } from '../../config';
 let { Renderer: CSS3DRenderer } : { Renderer: typeof THREE.CSS3DRenderer } = require('three.css')(THREE);
 
 @Component({

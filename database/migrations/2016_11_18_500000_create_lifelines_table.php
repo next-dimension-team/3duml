@@ -13,6 +13,7 @@ class CreateLifelinesTable extends Migration
             $table->timestamps();
             $table->string('name');
             $table->integer('order')->unsigned();
+            $table->integer('interaction_id')->unsigned();
         });
     }
 

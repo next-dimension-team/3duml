@@ -62,7 +62,9 @@ class MinimalLayerSeeder extends Seeder
             factory(Lifeline::class)->make([
                 'name' => 'john: Person',
                 'order' => 1
-            ]),
+            ])
+            ->interaction()
+            ->associate($interactionA),
             function ($lifeline) {
             $lifeline->save();
         });
@@ -71,7 +73,9 @@ class MinimalLayerSeeder extends Seeder
             factory(Lifeline::class)->make([
                 'name' => 'anna: Person',
                 'order' => 2
-            ]),
+            ])
+            ->interaction()
+            ->associate($interactionA),
             function ($lifeline) {
             $lifeline->save();
         });
@@ -80,7 +84,9 @@ class MinimalLayerSeeder extends Seeder
             factory(Lifeline::class)->make([
                 'name' => 'peter: Person',
                 'order' => 1
-            ]),
+            ])
+            ->interaction()
+            ->associate($interactionB),
             function ($lifeline) {
             $lifeline->save();
         });
@@ -89,7 +95,9 @@ class MinimalLayerSeeder extends Seeder
             factory(Lifeline::class)->make([
                 'name' => 'bill: Person',
                 'order' => 2
-            ]),
+            ])
+            ->interaction()
+            ->associate($interactionB),
             function ($lifeline) {
             $lifeline->save();
         });

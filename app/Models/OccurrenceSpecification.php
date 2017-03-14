@@ -13,6 +13,10 @@ class OccurrenceSpecification extends Model
      */
     protected $table = 'occurrence_specifications';
 
+    protected $fillable = [
+        'time',
+    ];
+    
     public function covered()
     {
         return $this->belongsTo(Lifeline::class, 'lifeline_id');
