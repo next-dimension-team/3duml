@@ -10,7 +10,6 @@ import * as M from '../models';
 export class SequenceDiagramService {
 
   protected static initialized = false;
-  protected performingDelete = false;
 
   constructor(protected datastore: Datastore, protected inputService: InputService) {
     // Initialize the service
@@ -27,6 +26,7 @@ export class SequenceDiagramService {
 
   public initialize() {
     this.initializeDeleteOperation();
+    this.initializeAddMessageOperation();
   }
 
   /**
@@ -82,6 +82,8 @@ export class SequenceDiagramService {
   /**
    * Delete Operation
    */
+
+  protected performingDelete = false;
   
   public performDelete() {
     this.performingDelete = true;
@@ -89,18 +91,13 @@ export class SequenceDiagramService {
   
   protected initializeDeleteOperation() {
     this.inputService.onLeftClick((event) => {
-      console.log("model", event.model);
       if (event.model.type == "Message" && this.performingDelete) {
         let message = this.datastore.peekRecord(M.Message, event.model.id);
-        console.log("Nasla sa messaga:",message);
+        this.calculateTime(message);
         this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
-          console.log("Maze sa sprava s id:", message.id);
           this.datastore.deleteRecord(M.OccurrenceSpecification, message.receiveEvent.id).subscribe(() => {
-            console.log("Maze sa OccSpecif s id:", message.receiveEvent.id);
             this.datastore.deleteRecord(M.OccurrenceSpecification, message.sendEvent.id).subscribe(() => {
-              console.log("Maze sa OccSpecif s id:", message.sendEvent.id);
-              // this.calculateTime(message);
-              location.reload();
+            location.reload();
             });
           });
           this.performingDelete = false;
@@ -111,11 +108,91 @@ export class SequenceDiagramService {
 
   protected calculateTime(message: M.Message){
 
-    receiveLifeline = message.receiveEvent;
-    sendLifeline = message.sendEvent;
+    let deletedMessageTime = message.sendEvent.time;
+    let receiveLifeline = message.receiveEvent.covered;
+    let sendLifeline = message.sendEvent.covered;
 
+    // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
+    for (let occurrence of receiveLifeline.occurrenceSpecifications) {
+      if (occurrence.time > deletedMessageTime){
+        // teraz to znizit o 1 treba, zober id occurence spec a znizit
+        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
+          (occurrenceSpecification: M.OccurrenceSpecification) => {
+            occurrenceSpecification.time = occurrenceSpecification.time - 1;
+            occurrenceSpecification.save().subscribe();
+          }
+        );
+      }
+    }
+    // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
+    for (let occurrence of sendLifeline.occurrenceSpecifications) {
+      if (occurrence.time > deletedMessageTime){
+        // teraz to znizit o 1 treba, zober id occurence spec a znizit
+        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
+          (occurrenceSpecification: M.OccurrenceSpecification) => {
+            occurrenceSpecification.time = occurrenceSpecification.time - 1;
+            occurrenceSpecification.save().subscribe();
+          }
+        );
+      }
+    }
   }
-  // TODO
+
+  /**
+   * Insert Operation
+   */
+
+  protected sourceLifelineEvent = null;
+  protected destinationLifelineEvent = null;
+  
+  protected initializeAddMessageOperation() {
+    this.inputService.onRightClick((event) => {
+      if (event.model.type == "Lifeline") {
+        if (this.sourceLifelineEvent) {
+          this.destinationLifelineEvent = event;
+          this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
+            console.log("Vytvorena message v DB");
+          });
+          this.sourceLifelineEvent = null;
+          this.destinationLifelineEvent = null;
+        }
+        else {
+          this.sourceLifelineEvent = event;
+        }
+      }
+    });
+  }
+
+  protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
+      let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.id);
+      let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.id);
+
+      let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+        // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
+        time: Math.round(sourceLifeline.offsetY / 40) - 120,
+        covered: sourceLifelineModel
+      });
+
+      sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
+        let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+          // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
+          time: Math.round(destinationLifeline.offsetY / 40) - 120,
+          covered: destinationLifelineModel
+        });
+
+        destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
+          this.datastore.createRecord(M.Message, {
+            //TODO nazvat message ako chcem
+            name: "send",
+            sort: "synchCall",
+            //TODO zmenit dynamicky na interaction, v ktorom realne som
+            interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
+            sendEvent: sourceOccurence,
+            receiveEvent: destinationOccurence
+          }).save().subscribe(callback);
+        });
+      });
+  }
 
   /**
    * Update Operation

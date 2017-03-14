@@ -12,6 +12,11 @@ class Lifeline extends Model
      * @var string
      */
     protected $table = 'lifelines';
+	
+    protected $fillable = [
+        'name',
+        'order',
+    ];
 
     public function occurrenceSpecifications()
     {
