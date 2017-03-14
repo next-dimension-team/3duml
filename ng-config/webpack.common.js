@@ -206,7 +206,7 @@ module.exports = function (options) {
 
           let manifest = {};
 
-          flattenedPaths.forEach(path => {
+          flattenedPaths.forEach((path) => {
             path = path.replace(new RegExp('^public/build'), '').replace(/\\/g, '/');
 
             if (! path.startsWith('/')) path = ('/'+path);
