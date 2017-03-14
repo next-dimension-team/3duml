@@ -91,19 +91,50 @@ export class SequenceDiagramService {
   
   protected initializeDeleteOperation() {
     this.inputService.onLeftClick((event) => {
-      if (event.model.type == "Message" && this.performingDelete) {
-        let message = this.datastore.peekRecord(M.Message, event.model.id);
-        this.calculateTimeOnMessageDelete(message);
-        this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
-          this.datastore.deleteRecord(M.OccurrenceSpecification, message.receiveEvent.id).subscribe(() => {
-            this.datastore.deleteRecord(M.OccurrenceSpecification, message.sendEvent.id).subscribe(() => {
-            location.reload();
+      if (this.performingDelete) {
+        switch (event.model.type) {
+          case 'Message':
+            let message = this.datastore.peekRecord(M.Message, event.model.id);
+            this.calculateTimeOnMessageDelete(message);
+            this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
+              location.reload();
             });
-          });
-          this.performingDelete = false;
-        });
+            this.performingDelete = false;
+          break;
+          case 'Lifeline':
+            let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
+            this.calculateLifelinesOrder(lifeline);
+            this.datastore.deleteRecord(M.Lifeline, lifeline.id).subscribe(() => {
+              console.log("Maze sa lifeline:", lifeline);
+              location.reload();
+            });
+            this.performingDelete = false;
+          break;
+        }
       }
     });
+  }
+  
+  /**
+   * Funkcia upravuje atribut 'order' na Lifeline
+   */
+  protected calculateLifelinesOrder(lifeline: M.Lifelines) {
+
+    let deletedLifelineOrder = lifeline.order;
+    let interaction = lifeline.interaction;
+    let lifelinesInInteraction = interaction.lifelines;
+
+    // ak je order lifeliny vecsi ako order vymazanej lifeliny tak ho zmensim o 1 
+    for (let lifeline of lifelinesInInteraction) {
+      if (lifeline.order > deletedLifelineOrder) {
+        this.datastore.findRecord(M.Lifeline, lifeline.id).subscribe(
+          (lifeline: M.Lifeline) => {
+            lifeline.order = lifeline.order - 1;
+            lifeline.save().subscribe();
+          }
+        );
+      }
+    }  
   }
 
   protected calculateTimeOnMessageDelete(message: M.Message) {
