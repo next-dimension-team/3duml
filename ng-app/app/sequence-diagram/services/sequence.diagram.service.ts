@@ -201,6 +201,11 @@ export class SequenceDiagramService {
   protected destinationLifelineEvent = null;
   
   protected initializeAddMessageOperation() {
+
+    this.inputService.onLeftClick((event) => {
+      console.log(event.offsetY);
+    });
+
     this.inputService.onRightClick((event) => {
       if (event.model.type == "Lifeline") {
         if (this.sourceLifelineEvent) {
@@ -221,10 +226,10 @@ export class SequenceDiagramService {
   protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
       let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.id);
       let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.id);
-      let averageTime = Math.round((((sourceLifeline.offsetY + destinationLifeline.offsetY) / 2.0) - 120) / 40.0);
+      let averageTime = Math.round((((sourceLifeline.offsetY + destinationLifeline.offsetY) / 2.0) - 180) / 40.0);
 
       let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-        // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
+        // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
         time: averageTime,
         covered: sourceLifelineModel
       });
@@ -233,7 +238,7 @@ export class SequenceDiagramService {
       
       sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
         let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-          // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
+          // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
           time: averageTime,
           covered: destinationLifelineModel
         });
