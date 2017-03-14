@@ -20,10 +20,10 @@ class Message extends Model
      */
     protected $appends = ['kind'];
 	
-	protected $fillable = [
- 		'name',
- 		'sort',
- 	];
+    protected $fillable = [
+        'name',
+        'sort',
+    ];
 
     public function interaction()
     {

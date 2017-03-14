@@ -12,10 +12,6 @@ class OccurrenceSpecification extends Model
      * @var string
      */
     protected $table = 'occurrence_specifications';
-	
-	protected $fillable = [
-        'time',
-    ];
 
     protected $fillable = [
         'time',

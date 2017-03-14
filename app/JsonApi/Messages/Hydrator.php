@@ -11,7 +11,7 @@ class Hydrator extends EloquentHydrator
      */
     protected $attributes = [
         'name',
-		'sort',
+        'sort',
     ];
 
     /**
@@ -19,7 +19,7 @@ class Hydrator extends EloquentHydrator
      */
     protected $relationships = [
         'interaction',
- 		'sendEvent',
- 		'receiveEvent',
+        'sendEvent',
+        'receiveEvent',
     ];
 }

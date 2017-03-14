@@ -11,7 +11,7 @@ class Hydrator extends EloquentHydrator
      */
     protected $attributes = [
         'name',
-		'order',
+        'order',
     ];
 
     /**
@@ -19,6 +19,6 @@ class Hydrator extends EloquentHydrator
      */
     protected $relationships = [
         'occurrenceSpecifications',
-		'interaction',
+        'interaction',
     ];
 }

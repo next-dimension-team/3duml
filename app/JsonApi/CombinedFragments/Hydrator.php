@@ -11,7 +11,7 @@ class Hydrator extends EloquentHydrator
      */
     protected $attributes = [
         'name',
-		'operator',
+        'operator',
     ];
 
     /**

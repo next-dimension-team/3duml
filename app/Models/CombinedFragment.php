@@ -13,10 +13,10 @@ class CombinedFragment extends Model
      */
     protected $table = 'combined_fragments';
 	
-	protected $fillable = [
- 		'name',
- 		'operator',
- 	];
+    protected $fillable = [
+        'name',
+        'operator',
+    ];
 
     public function fragment()
     {

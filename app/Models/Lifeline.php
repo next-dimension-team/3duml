@@ -13,10 +13,10 @@ class Lifeline extends Model
      */
     protected $table = 'lifelines';
 	
-	protected $fillable = [
- 		'name',
- 		'order',
- 	];
+    protected $fillable = [
+        'name',
+        'order',
+    ];
 
     public function occurrenceSpecifications()
     {
