@@ -14,7 +14,7 @@ input {
 
 .layer {
   display: block;
-  width: 1200px;
+  min-width: 800px;
   height: 880px;
   background-color: rgba(240, 240, 240, 0.75);
   padding: 30px;

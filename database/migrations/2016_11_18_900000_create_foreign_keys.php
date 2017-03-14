@@ -12,58 +12,58 @@ class CreateForeignKeys extends Migration
             $table->foreign('interaction_id')
                 ->references('id')
                 ->on('interactions')
-                ->onDelete('restrict')
-                ->onUpdate('restrict');
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
 
             $table->foreign('send_event_id')
                 ->references('id')
                 ->on('occurrence_specifications')
-                ->onDelete('restrict')
-                ->onUpdate('restrict');
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
 
             $table->foreign('receive_event_id')
                 ->references('id')
                 ->on('occurrence_specifications')
-                ->onDelete('restrict')
-                ->onUpdate('restrict');
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
 
         Schema::table('interaction_fragments', function (Blueprint $table) {
             $table->foreign('parent_id')
                 ->references('id')
                 ->on('interaction_fragments')
-                ->onDelete('restrict')
-                ->onUpdate('restrict');
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
 
         Schema::table('execution_specifications', function (Blueprint $table) {
             $table->foreign('start_occurrence_specification_id')
                 ->references('id')
                 ->on('occurrence_specifications')
-                ->onDelete('restrict')
-                ->onUpdate('restrict');
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
 
             $table->foreign('finish_occurrence_specification_id')
                 ->references('id')
                 ->on('occurrence_specifications')
-                ->onDelete('restrict')
-                ->onUpdate('restrict');
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
 
         Schema::table('occurrence_specifications', function (Blueprint $table) {
             $table->foreign('lifeline_id')
                 ->references('id')
                 ->on('lifelines')
-                ->onDelete('restrict')
-                ->onUpdate('restrict');
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
 
         Schema::table('lifelines', function (Blueprint $table) {
             $table->foreign('interaction_id')
                 ->references('id')
                 ->on('interactions')
-                ->onDelete('restrict')
-                ->onUpdate('restrict');
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 
