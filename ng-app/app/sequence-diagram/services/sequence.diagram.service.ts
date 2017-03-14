@@ -168,15 +168,15 @@ export class SequenceDiagramService {
       let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.id);
 
       let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-        // TODO: konstantu 40 treba tahat z configu
-        time: Math.round(sourceLifeline.offsetY / 40),
+        // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
+        time: Math.round(sourceLifeline.offsetY / 40) - 120,
         covered: sourceLifelineModel
       });
 
       sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
         let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-          // TODO: konstantu 40 treba tahat z configu
-          time: Math.round(destinationLifeline.offsetY / 40),
+          // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
+          time: Math.round(destinationLifeline.offsetY / 40) - 120,
           covered: destinationLifelineModel
         });
 
