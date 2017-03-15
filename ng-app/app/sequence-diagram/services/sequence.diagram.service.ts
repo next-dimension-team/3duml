@@ -185,6 +185,7 @@ export class SequenceDiagramService {
           } else {
             this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
               console.log("Vytvorena message v DB");
+              location.reload();
             });
             this.sourceLifelineEvent = null;
             this.destinationLifelineEvent = null;

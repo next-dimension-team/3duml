@@ -23,9 +23,10 @@
   </div>
   <div class="points">
     <div
-      *ngFor="let time of times"
+      *ngFor="let point of points"
       class="point"
-      [selectable]="{type: 'LifelinePoint', lifelineID: lifelineModel.id, time: time}">
+      [class.hidden]="point.hidden"
+      [selectable]="{type: 'LifelinePoint', lifelineID: lifelineModel.id, time: point.time}">
     </div>
   </div>
 </div>
