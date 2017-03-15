@@ -19,6 +19,8 @@ export class LifelineComponent implements OnInit {
     // Get the occupied occurence specifications
     let occupied = [];
 
+    // TODO: emove "big points" on fragment intersections
+
     for (let occurrence of this.lifelineModel.occurrenceSpecifications) {
       occupied.push(occurrence.time);
     }
@@ -32,6 +34,19 @@ export class LifelineComponent implements OnInit {
         time: time,
         hidden: (occupied.indexOf(time) > -1)
       });
+    }
+
+    // Hide useless points
+    for (let point of this.points) {
+      // Small point
+      if (point.time != Math.round(point.time)) {
+        if (
+          (occupied.indexOf(point.time - 0.5) == -1) &&
+          (occupied.indexOf(point.time + 0.5) == -1)
+        ) {
+          point.hidden = true;
+        }
+      }
     }
   }
 
