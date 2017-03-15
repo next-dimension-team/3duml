@@ -136,7 +136,7 @@ export class SequenceDiagramService {
     }
   }
 
-  protected calculateTimeOnMessageDelete(message: M.Message) {
+  protected calculateTimeOnMessageDelete(message: M.Message){
 
     let deletedMessageTime = message.sendEvent.time;
     let receiveLifeline = message.receiveEvent.covered;
@@ -144,18 +144,26 @@ export class SequenceDiagramService {
 
     // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
     for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-      if (occurrence.time > deletedMessageTime) {
+      if (occurrence.time > deletedMessageTime){
         // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        occurrence.time--;
-        occurrence.save().subscribe();
+        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
+          (occurrenceSpecification: M.OccurrenceSpecification) => {
+            occurrenceSpecification.time = occurrenceSpecification.time - 1;
+            occurrenceSpecification.save().subscribe();
+          }
+        );
       }
     }
     // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
     for (let occurrence of sendLifeline.occurrenceSpecifications) {
-      if (occurrence.time > deletedMessageTime) {
+      if (occurrence.time > deletedMessageTime){
         // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        occurrence.time--;
-        occurrence.save().subscribe();
+        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
+          (occurrenceSpecification: M.OccurrenceSpecification) => {
+            occurrenceSpecification.time = occurrenceSpecification.time - 1;
+            occurrenceSpecification.save().subscribe();
+          }
+        );
       }
     }
   }
@@ -168,15 +176,20 @@ export class SequenceDiagramService {
   protected destinationLifelineEvent = null;
   
   protected initializeAddMessageOperation() {
-    this.inputService.onRightClick((event) => {
-      if (event.model.type == "Lifeline") {
+    this.inputService.onLeftClick((event) => {
+      if (event.model.type == "LifelinePoint") {
         if (this.sourceLifelineEvent) {
           this.destinationLifelineEvent = event;
-          this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
-            console.log("Vytvorena message v DB");
-          });
-          this.sourceLifelineEvent = null;
-          this.destinationLifelineEvent = null;
+          if (this.sourceLifelineEvent.model.lifelineID == this.destinationLifelineEvent.model.lifelineID) {
+            this.sourceLifelineEvent = this.destinationLifelineEvent;
+          } else {
+            this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
+              console.log("Vytvorena message v DB");
+              location.reload();
+            });
+            this.sourceLifelineEvent = null;
+            this.destinationLifelineEvent = null;
+          }
         }
         else {
           this.sourceLifelineEvent = event;
@@ -186,73 +199,91 @@ export class SequenceDiagramService {
   }
 
   protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
-      let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.id);
-      let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.id);
+      let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
+      let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
+      let time = Math.round(sourceLifeline.model.time);
 
       let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-        // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
-        time: Math.round((sourceLifeline.offsetY - 120) / 40),
+        // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
+        time: time,
         covered: sourceLifelineModel
       });
-
+      
       sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
         let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-          // TODO: konstantu 40 treba tahat z configu, aj 120 brat z configu
-          time: Math.round((destinationLifeline.offsetY - 120) / 40),
+          // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
+          time: time,
           covered: destinationLifelineModel
         });
 
         destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
           this.datastore.createRecord(M.Message, {
-            //TODO nazvat message ako chcem
+            // TODO nazvat message ako chcem
             name: "send",
             sort: "synchCall",
-            //TODO zmenit dynamicky na interaction, v ktorom realne som
+            // TODO zmenit dynamicky na interaction / fragment v ktorom som
             interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
             sendEvent: sourceOccurence,
             receiveEvent: destinationOccurence
           }).save().subscribe((message: M.Message) => {
-            this.calculateTimeOnMessageInsert(message);
+            //this.calculateTimeOnMessageInsert(message);
             callback(message);
           });
         });
       });
   }
 
-  // TODO: chceme posuvat len ak sme tafili uz nejaku existujucu messagu
-  // TODO: nie je mozne pridavat messadu na jednej lifelines
   // TODO: pridavanie 3D sipky
-  protected calculateTimeOnMessageInsert(message: M.Message) {
+  /*protected calculateTimeOnMessageInsert(message: M.Message){
 
+    let move = false;
     let insertedMessageTime = message.sendEvent.time;
-    let receiveLifeline = message.receiveEvent.covered;
     let sendLifeline = message.sendEvent.covered;
+    let receiveLifeline = message.receiveEvent.covered;
 
-    // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
-    for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-      if (occurrence.time >= insertedMessageTime) {
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time + 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
-      }
-    }
-    // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
     for (let occurrence of sendLifeline.occurrenceSpecifications) {
-      if (occurrence.time >= insertedMessageTime) {
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time + 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
+      if (occurrence.time == insertedMessageTime) {
+        move = true;
+        break;
       }
     }
-  }
+
+    if (move) {
+      for (let occurrence of receiveLifeline.occurrenceSpecifications) {
+        if (occurrence.time == insertedMessageTime) {
+          move = true;
+          break;
+        }
+      }
+    }
+
+    if (move) {
+      // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
+      for (let occurrence of receiveLifeline.occurrenceSpecifications) {
+        if (occurrence.time >= insertedMessageTime){
+          // teraz to znizit o 1 treba, zober id occurence spec a znizit
+          this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
+            (occurrenceSpecification: M.OccurrenceSpecification) => {
+              occurrenceSpecification.time = occurrenceSpecification.time + 1;
+              occurrenceSpecification.save().subscribe();
+            }
+          );
+        }
+      }
+      // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
+      for (let occurrence of sendLifeline.occurrenceSpecifications) {
+        if (occurrence.time >= insertedMessageTime){
+          // teraz to znizit o 1 treba, zober id occurence spec a znizit
+          this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
+            (occurrenceSpecification: M.OccurrenceSpecification) => {
+              occurrenceSpecification.time = occurrenceSpecification.time + 1;
+              occurrenceSpecification.save().subscribe();
+            }
+          );
+        }
+      }
+    }
+  }*/
 
   /**
    * Update Operation

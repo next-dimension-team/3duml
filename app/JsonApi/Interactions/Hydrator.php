@@ -18,6 +18,7 @@ class Hydrator extends EloquentHydrator
      */
     protected $relationships = [
         'messages',
+        'lifelines',
         'fragment'
     ];
 }
