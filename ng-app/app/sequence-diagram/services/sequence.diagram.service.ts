@@ -211,11 +211,11 @@ export class SequenceDiagramService {
       console.log(event.offsetY);
     });
 
-    this.inputService.onRightClick((event) => {
-      if (event.model.type == "Lifeline") {
+    this.inputService.onLeftClick((event) => {
+      if (event.model.type == "LifelinePoint") {
         if (this.sourceLifelineEvent) {
           this.destinationLifelineEvent = event;
-          if (this.sourceLifelineEvent.model.id == this.destinationLifelineEvent.model.id) {
+          if (this.sourceLifelineEvent.model.lifelineID == this.destinationLifelineEvent.model.lifelineID) {
             this.sourceLifelineEvent = this.destinationLifelineEvent;
           } else {
             this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
@@ -233,22 +233,20 @@ export class SequenceDiagramService {
   }
 
   protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
-      let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.id);
-      let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.id);
-      let averageTime = Math.round((((sourceLifeline.offsetY + destinationLifeline.offsetY) / 2.0) - 180) / 40.0);
+      let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
+      let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
+      let time = sourceLifeline.model.time;
 
       let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
         // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
-        time: averageTime,
+        time: time,
         covered: sourceLifelineModel
       });
-
-      console.log("CAS" + averageTime);
       
       sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
         let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
           // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
-          time: averageTime,
+          time: time,
           covered: destinationLifelineModel
         });
 

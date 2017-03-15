@@ -16,6 +16,7 @@ export class LifelineComponent {
   protected times;
 
   constructor() {
+    // TODO: tam kde je occurrence nevyreslovat gulicku
     // TODO: tahat z configu kolko je guliciek
     let times_max = 20;
     this.times = [];
