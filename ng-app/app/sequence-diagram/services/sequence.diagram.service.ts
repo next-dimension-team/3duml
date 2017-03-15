@@ -160,7 +160,6 @@ export class SequenceDiagramService {
       }
     }
 
-
     if (move) {
       // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
       for (let occurrence of receiveLifeline.occurrenceSpecifications) {
@@ -174,6 +173,7 @@ export class SequenceDiagramService {
           );
         }
       }
+      
       // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
       for (let occurrence of sendLifeline.occurrenceSpecifications) {
         if (occurrence.time >= insertedMessageTime){
@@ -185,6 +185,8 @@ export class SequenceDiagramService {
             }
           );
         }
+      }
+    }
 
     // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
     for (let occurrence of receiveLifeline.occurrenceSpecifications) {
