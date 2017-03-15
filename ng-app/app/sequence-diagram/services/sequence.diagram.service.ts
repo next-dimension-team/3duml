@@ -176,11 +176,6 @@ export class SequenceDiagramService {
   protected destinationLifelineEvent = null;
   
   protected initializeAddMessageOperation() {
-
-    this.inputService.onLeftClick((event) => {
-      console.log(event.offsetY);
-    });
-
     this.inputService.onLeftClick((event) => {
       if (event.model.type == "LifelinePoint") {
         if (this.sourceLifelineEvent) {
