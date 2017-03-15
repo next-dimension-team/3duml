@@ -23,8 +23,6 @@ export class LifelineComponent implements OnInit {
       occupied.push(occurrence.time);
     }
 
-    console.log(occupied);
-
     // TODO: tam kde je occurrence nevyreslovat gulicku
     // TODO: tahat z configu kolko je guliciek
     let times_max = 20;

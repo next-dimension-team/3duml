@@ -107,7 +107,6 @@ export class SequenceDiagramService {
             let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
             this.calculateLifelinesOrder(lifeline);
             this.datastore.deleteRecord(M.Lifeline, lifeline.id).subscribe(() => {
-              console.log("Maze sa lifeline:", lifeline);
               location.reload();
             });
             this.performingDelete = false;
@@ -184,7 +183,6 @@ export class SequenceDiagramService {
             this.sourceLifelineEvent = this.destinationLifelineEvent;
           } else {
             this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
-              console.log("Vytvorena message v DB");
               location.reload();
             });
             this.sourceLifelineEvent = null;
