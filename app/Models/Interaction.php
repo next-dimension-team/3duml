@@ -24,7 +24,7 @@ class Interaction extends Model
 
     public function lifelines()
     {
-        return $this->hasMany(Lifeline::class);
+        return $this->hasMany(Lifeline::class)->orderBy('order');
     }
 
     public function fragment()

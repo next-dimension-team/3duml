@@ -11,6 +11,13 @@
 |
 */
 
+function autoIncrementGenerator()
+{
+    for ($i = 1; $i < PHP_INT_MAX; $i++) {
+        yield $i;
+    }
+}
+
 /** @var $factory \Illuminate\Database\Eloquent\Factory */
 $factory->define(App\Models\CombinedFragment::class, function (Faker\Generator $faker) {
     return [
@@ -44,10 +51,22 @@ $factory->define(App\Models\InteractionOperand::class, function (Faker\Generator
     ];
 });
 
-$factory->define(App\Models\Lifeline::class, function (Faker\Generator $faker) {
+$lifelineAutoIncrement = autoIncrementGenerator();
+
+$factory->define(App\Models\Lifeline::class, function (Faker\Generator $faker) use (&$lifelineAutoIncrement) {
+    $lifelineAutoIncrement->next();
+
     return [
         'name' => $faker->name,
-        'order' => $faker->unique()->randomNumber(),
+        'order' => $lifelineAutoIncrement->current(),
+    ];
+});
+
+$factory->state(App\Models\Lifeline::class, 'resetOrder', function (Faker\Generator $faker) use (&$lifelineAutoIncrement) {
+    $lifelineAutoIncrement = autoIncrementGenerator();
+
+    return [
+        'order' => $lifelineAutoIncrement->current(),
     ];
 });
 
@@ -60,6 +79,6 @@ $factory->define(App\Models\Message::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Models\OccurrenceSpecification::class, function (Faker\Generator $faker) {
     return [
-        'time' => $faker->numberBetween(0, 100),
+        'time' => $faker->numberBetween(1, 100),
     ];
 });
