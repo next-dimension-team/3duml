@@ -27,6 +27,7 @@ export class SequenceDiagramService {
   public initialize() {
     this.initializeDeleteOperation();
     this.initializeAddMessageOperation();
+    this.initializeAddLifeline();
   }
 
   /**
@@ -76,6 +77,37 @@ export class SequenceDiagramService {
       });
 
       interactionFragment.save().subscribe(callback);
+    });
+  }
+
+  protected lifelineBefore:M.Lifeline;
+
+  public initializeAddLifeline(){
+    this.inputService.onLeftClick((event) => {
+      if (event.model.type == "LifelinePoint" || event.model.type == "Lifeline") {
+        this.lifelineBefore = this.datastore.peekRecord(M.Lifeline, event.model.id);
+      }
+    });
+  }
+
+  public createLifeline(name: string, callback: any) {
+    let interaction = this.lifelineBefore.interaction;
+    let lifelinesInInteraction = interaction.lifelines;
+    let maxOrder = this.lifelineBefore.order;
+    for (let lifeline of lifelinesInInteraction) {
+      if (lifeline.order > maxOrder) {
+        lifeline.order++;
+        lifeline.save().subscribe();
+      }
+    }
+    console.log("hmm");
+    let lifeline = this.datastore.createRecord(M.Lifeline, {
+      name: name,
+      order: maxOrder+1,
+      interaction: interaction 
+    });
+    lifeline.save().subscribe(() => {
+      location.reload();
     });
   }
 
