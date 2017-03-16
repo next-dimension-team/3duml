@@ -138,33 +138,18 @@ export class SequenceDiagramService {
   protected calculateTimeOnMessageDelete(message: M.Message){
 
     let deletedMessageTime = message.sendEvent.time;
-    let receiveLifeline = message.receiveEvent.covered;
-    let sendLifeline = message.sendEvent.covered;
+    let lifelinesInCurrentLayer = message.interaction.lifelines;
 
-    // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
-    for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-      if (occurrence.time > deletedMessageTime){
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time - 1;
-            occurrenceSpecification.save().subscribe();
+    // prechadzam Occurence Spec. na vsetkych lifelinach a znizujem time o 1
+    for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time >= deletedMessageTime) {
+            let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+            occurenceForChange.time = occurenceForChange.time - 1;
+            occurenceForChange.save().subscribe();
           }
-        );
-      }
-    }
-    // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
-    for (let occurrence of sendLifeline.occurrenceSpecifications) {
-      if (occurrence.time > deletedMessageTime){
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time - 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
-      }
-    }
+        }
+      }  
   }
 
   /**
