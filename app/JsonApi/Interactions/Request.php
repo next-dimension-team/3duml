@@ -22,6 +22,7 @@ class Request extends RequestHandler
      */
     protected $hasMany = [
         'messages',
+        'lifelines',
     ];
 
     /**

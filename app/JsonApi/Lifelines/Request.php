@@ -12,7 +12,7 @@ class Request extends RequestHandler
      * @var array
      */
     protected $hasOne = [
-        //
+        'interaction',
     ];
 
     /**
@@ -21,7 +21,7 @@ class Request extends RequestHandler
      * @var array
      */
     protected $hasMany = [
-        'occurrence-specifications',
+        'occurrenceSpecifications',
     ];
 
     /**

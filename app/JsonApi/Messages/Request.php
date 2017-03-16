@@ -13,8 +13,8 @@ class Request extends RequestHandler
      */
     protected $hasOne = [
         'interaction',
-        'send-event',
-        'receive-event',
+        'sendEvent',
+        'receiveEvent',
     ];
 
     /**

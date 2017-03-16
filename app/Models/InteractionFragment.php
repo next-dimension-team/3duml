@@ -13,6 +13,9 @@ class InteractionFragment extends Node
      */
     protected $table = 'interaction_fragments';
 
+    /**
+     * References the concrete fragment type of current tree node.
+     */
     public function fragmentable()
     {
         return $this->morphTo();
