@@ -15,8 +15,8 @@ class Validators extends AbstractValidatorProvider
      * @var array
      */
     protected $filterRules = [
-        'roots' => 'boolean',
-        'descendants' => 'exists:interaction_fragments',
+        'roots' => 'sometimes|required|boolean',
+        'descendants' => 'sometimes|required|exists:interaction_fragments,id',
     ];
 
     /**
