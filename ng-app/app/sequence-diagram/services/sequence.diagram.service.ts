@@ -81,34 +81,59 @@ export class SequenceDiagramService {
   }
 
   protected lifelineBefore:M.Lifeline;
+  protected layer:M.Interaction;
 
   public initializeAddLifeline(){
     this.inputService.onLeftClick((event) => {
       if (event.model.type == "LifelinePoint" || event.model.type == "Lifeline") {
         this.lifelineBefore = this.datastore.peekRecord(M.Lifeline, event.model.id);
       }
+      if (event.model.type == "Layer"){
+        this.layer = this.datastore.peekRecord(M.Interaction, event.model.id);
+      }
     });
   }
 
   public createLifeline(name: string, callback: any) {
-    let interaction = this.lifelineBefore.interaction;
-    let lifelinesInInteraction = interaction.lifelines;
-    let maxOrder = this.lifelineBefore.order;
-    for (let lifeline of lifelinesInInteraction) {
-      if (lifeline.order > maxOrder) {
-        lifeline.order++;
-        lifeline.save().subscribe();
+    if (this.lifelineBefore){
+      let interaction = this.lifelineBefore.interaction;
+      let lifelinesInInteraction = interaction.lifelines;
+      let maxOrder = this.lifelineBefore.order;
+      for (let lifeline of lifelinesInInteraction) {
+        if (lifeline.order > maxOrder) {
+          lifeline.order++;
+          lifeline.save().subscribe();
+        }
       }
+      let lifeline = this.datastore.createRecord(M.Lifeline, {
+        name: name,
+        order: maxOrder+1,
+        interaction: interaction 
+      });
+      lifeline.save().subscribe(() => {
+        location.reload();
+      });
     }
-    console.log("hmm");
-    let lifeline = this.datastore.createRecord(M.Lifeline, {
-      name: name,
-      order: maxOrder+1,
-      interaction: interaction 
-    });
-    lifeline.save().subscribe(() => {
-      location.reload();
-    });
+    if (this.layer){
+      let lifelinesInInteraction = this.layer.lifelines;
+      let maxOrder = 0;
+      for (let lifeline of lifelinesInInteraction) {
+        if (lifeline.order > maxOrder) {
+          lifeline.order++;
+          lifeline.save().subscribe();
+        }
+      }
+      let lifeline = this.datastore.createRecord(M.Lifeline, {
+        name: name,
+        order: 1,
+        interaction: this.layer 
+      });
+      lifeline.save().subscribe(() => {
+        location.reload();
+      });
+    }
+    this.lifelineBefore = null;
+    this.layer = null;
   }
 
   /**
