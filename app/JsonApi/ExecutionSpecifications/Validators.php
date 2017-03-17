@@ -4,6 +4,7 @@ namespace App\JsonApi\ExecutionSpecifications;
 
 use CloudCreativity\JsonApi\Contracts\Validators\RelationshipsValidatorInterface;
 use CloudCreativity\LaravelJsonApi\Validators\AbstractValidatorProvider;
+use App\JsonApi\OccurrenceSpecifications\Schema as OccurrenceSpecificationsSchema;
 
 class Validators extends AbstractValidatorProvider
 {
@@ -35,6 +36,7 @@ class Validators extends AbstractValidatorProvider
      */
     protected function relationshipRules(RelationshipsValidatorInterface $relationships, $resourceType, $record = null)
     {
-        //
+        $relationships->hasOne('start', OccurrenceSpecificationsSchema::RESOURCE_TYPE, is_null($record), false);
+        $relationships->hasOne('finish', OccurrenceSpecificationsSchema::RESOURCE_TYPE, is_null($record), false);
     }
 }

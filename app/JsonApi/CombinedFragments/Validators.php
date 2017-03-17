@@ -4,6 +4,7 @@ namespace App\JsonApi\CombinedFragments;
 
 use CloudCreativity\JsonApi\Contracts\Validators\RelationshipsValidatorInterface;
 use CloudCreativity\LaravelJsonApi\Validators\AbstractValidatorProvider;
+use Illuminate\Validation\Rule;
 
 class Validators extends AbstractValidatorProvider
 {
@@ -18,8 +19,17 @@ class Validators extends AbstractValidatorProvider
      */
     protected function attributeRules($resourceType, $record = null)
     {
+        $required = ! is_null($record) ? ['sometimes', 'required'] : ['required'];
+
         return [
-            //
+            'name' => array_merge($required, [
+                'string',
+                'between:1,255',
+            ]),
+            'operator' => array_merge($required, [
+                'string',
+                 Rule::in(['alt', 'opt', 'par', 'loop', 'critical', 'neg', 'assert', 'strict', 'seq', 'ignore', 'consider']),
+            ]),
         ];
     }
 

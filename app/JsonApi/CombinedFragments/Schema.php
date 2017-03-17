@@ -17,7 +17,7 @@ class Schema extends EloquentSchema
      */
     protected $attributes = [
         'name',
-        'operator'
+        'operator',
     ];
 
     /**

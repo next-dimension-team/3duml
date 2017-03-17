@@ -18,9 +18,5 @@ class Hydrator extends EloquentHydrator
      */
     protected $relationships = [
         'covered',
-        'sendingEventMessages',
-        'receivingEventMessages',
-        'startingExecutionSpecifications',
-        'finishingExecutionSpecifications',
     ];
 }
