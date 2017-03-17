@@ -4,6 +4,10 @@ namespace App\JsonApi\Messages;
 
 use CloudCreativity\JsonApi\Contracts\Validators\RelationshipsValidatorInterface;
 use CloudCreativity\LaravelJsonApi\Validators\AbstractValidatorProvider;
+use App\JsonApi\Interactions\Schema as InteractionsSchema;
+use App\JsonApi\OccurrenceSpecifications\Schema as OccurrenceSpecificationsSchema;
+use Illuminate\Validation\Rule;
+
 
 class Validators extends AbstractValidatorProvider
 {
@@ -18,8 +22,17 @@ class Validators extends AbstractValidatorProvider
      */
     protected function attributeRules($resourceType, $record = null)
     {
+        $required = ! is_null($record) ? ['sometimes', 'required'] : ['required'];
+
         return [
-            //
+            'name' => array_merge($required, [
+                'string',
+                'between:1,255',
+            ]),
+            'sort' => array_merge($required, [
+                'string',
+                 Rule::in(['synchCall', 'asynchCall', 'asynchSignal', 'createMessage', 'deleteMessage', 'reply']),
+            ]),
         ];
     }
 
@@ -35,6 +48,8 @@ class Validators extends AbstractValidatorProvider
      */
     protected function relationshipRules(RelationshipsValidatorInterface $relationships, $resourceType, $record = null)
     {
-        //
+        $relationships->hasOne('interaction', InteractionsSchema::RESOURCE_TYPE, is_null($record), false);
+        $relationships->hasOne('sendEvent', OccurrenceSpecificationsSchema::RESOURCE_TYPE, is_null($record), true);
+        $relationships->hasOne('receiveEvent', OccurrenceSpecificationsSchema::RESOURCE_TYPE, is_null($record), true);
     }
 }
