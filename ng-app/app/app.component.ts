@@ -23,8 +23,6 @@ export class AppComponent {
   }
 
   public createLayer(layerName: string, sequenceDiagramComponent: SequenceDiagramComponent) {
-    this.service.createLayer(layerName, this.openedSequenceDiagram, (interaction: M.InteractionFragment) => {
-        console.log("Platno bolo vytvorene");
-      });
+    this.service.createLayer(layerName, this.openedSequenceDiagram);
   }
 }
