@@ -74,7 +74,7 @@ export class MenuComponent implements OnInit {
     })
   }
 
-  public createInputDialog(title?: String, message?: String, placeholder?: String): MdDialogRef<any> {
+  public createInputDialog(title?: string, message?: string, placeholder?: string): MdDialogRef<any> {
     let dialogRef: MdDialogRef<any> = this.dialog.open(InputDialogComponent);
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.message = message;

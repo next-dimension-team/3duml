@@ -33,6 +33,7 @@ import { SequenceDiagramService, InputService } from './sequence-diagram/service
 
 // Component for menu
 import { MenuComponent } from './menu/components/menu.component';
+import { InputDialogComponent } from './menu/components/input-dialog.component';
 import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
 import { AppState, InternalStateType } from './app.service';
 import { Datastore } from './datastore';
@@ -73,6 +74,7 @@ type StoreType = {
     InteractionOperandComponent,
     LayerComponent,
     InteractionFragmentComponent,
+    InputDialogComponent,
 
     // Directives
     SelectableDirective
@@ -83,6 +85,9 @@ type StoreType = {
     HttpModule,
     JsonApiModule,
     MaterialModule
+  ],
+  entryComponents: [
+    InputDialogComponent
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
