@@ -1,6 +1,9 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewContainerRef } from '@angular/core';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
+import { MdDialog, MdDialogRef } from '@angular/material';
+import { InputDialogComponent } from './input-dialog.component';
 import * as M from '../../sequence-diagram/models';
+
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -16,10 +19,12 @@ export class MenuComponent implements OnInit {
   @Output()
   public createLayer = new EventEmitter;
 
+  dialogRef: MdDialogRef<any>;
+
   private sequenceDiagrams: M.Interaction[];
   private openedSequenceDiagram: M.Interaction;
 
-  constructor(private sequenceDiagramService: SequenceDiagramService) { }
+  constructor(private sequenceDiagramService: SequenceDiagramService, public dialog: MdDialog,  public viewContainerRef: ViewContainerRef) { }
 
   ngOnInit() {
     this.loadSequenceDiagrams();
@@ -44,22 +49,36 @@ export class MenuComponent implements OnInit {
 
   createDiagram(): void {
     // TODO
-    //console.log('Menu component said: Clicked on "Create Diagram" link');
-    var diagramName = window.prompt("Choose name of new digram", "NewSeqDiagram");
-
-    //console.log(diagramName);
-    //vytvorenie noveho diagramu
-    this.sequenceDiagramService.createDiagram(diagramName, (interaction: M.InteractionFragment) => {
-      console.log("JE TO VYTVORENE");
-    });
+    this.createInputDialog("Creating diagram", "" ,"Enter name of new digram.").componentInstance.onOk.subscribe(result => {
+      let diagramName = result;
+      this.sequenceDiagramService.createDiagram(diagramName, (interaction: M.InteractionFragment) => {
+        console.log("JE TO VYTVORENE");
+      });
+    })
   }
 
   private createLayerHandler(): void {
-    var layerName = window.prompt("Choose name of new layer", "NewLayer");
-    this.createLayer.emit(layerName);
+    this.createInputDialog("Creating layer", "" ,"Enter name of new layer.").componentInstance.onOk.subscribe(result => {
+      this.createLayer.emit(result);
+    })
   }
 
   protected delete() {
     this.sequenceDiagramService.performDelete();
+  }
+
+  // Priklad pre dialog s textom ako vstup
+  openInputDialog() {
+    this.createInputDialog("Creating layer", "Enter layer name.", "layer name").componentInstance.onOk.subscribe(result => {
+      console.log(result);
+    })
+  }
+
+  public createInputDialog(title?: String, message?: String, placeholder?: String): MdDialogRef<any> {
+    let dialogRef: MdDialogRef<any> = this.dialog.open(InputDialogComponent);
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.message = message;
+    dialogRef.componentInstance.placeholder = placeholder;
+    return dialogRef;
   }
 }
