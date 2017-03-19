@@ -96,6 +96,7 @@ export class SequenceDiagramService {
 
   public createLifeline(name: string, callback: any) {
     if (this.lifelineBefore){
+      console.log(this.lifelineBefore);
       let interaction = this.lifelineBefore.interaction;
       let lifelinesInInteraction = interaction.lifelines;
       let maxOrder = this.lifelineBefore.order;
@@ -105,16 +106,16 @@ export class SequenceDiagramService {
           lifeline.save().subscribe();
         }
       }
-      let lifeline = this.datastore.createRecord(M.Lifeline, {
+      let lifelineNew = this.datastore.createRecord(M.Lifeline, {
         name: name,
         order: maxOrder+1,
         interaction: interaction 
       });
-      lifeline.save().subscribe(() => {
+      lifelineNew.save().subscribe(() => {
         location.reload();
       });
     }
-    if (this.layer){
+    else if (this.layer){
       let lifelinesInInteraction = this.layer.lifelines;
       let maxOrder = 0;
       for (let lifeline of lifelinesInInteraction) {
