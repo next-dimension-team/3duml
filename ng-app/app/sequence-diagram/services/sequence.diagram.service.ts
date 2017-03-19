@@ -135,7 +135,7 @@ export class SequenceDiagramService {
     }
   }
 
-  protected calculateTimeOnMessageDelete(message: M.Message){
+  protected calculateTimeOnMessageDelete(message: M.Message) {
 
     let deletedMessageTime = message.sendEvent.time;
     let lifelinesInCurrentLayer = message.interaction.lifelines;
@@ -182,40 +182,19 @@ export class SequenceDiagramService {
     });
   }
 
+  //TODO: Prepocitavat pridavanie aj ked je tam fragment (odskakovanie aj ked mame fragmenty)
   protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
       let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
       let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
       let currentInteraction = this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id);
       let time = Math.round(sourceLifeline.model.time);
       let maxTimeValue = 0;
-      //let Ontime = false;
-
-      //Odskocim ak kliknem presne na hranu Combined fragmentu
-      //Odskocim aj ked kliknem na malu gulicku nad fragmentom
-      //Nefunguje spravne
-       /*for (let lifeline of currentInteraction.lifelines) {
-              for (let occurrence of lifeline.occurrenceSpecifications) {
-                if ((occurrence.time == (time + 1))) {
-                  for (let message of occurrence.receivingEventMessages){
-                      if (message.interaction.isBasicInteraction){
-                        time++;
-                        Ontime = true;
-                      }
-                      console.log(currentInteraction.id);
-              }
-            }
-          }
-        }*/
 
       //Najprv vypocitam ci su za nasou ktoru chcem pridat nejake message, ak ano, zmenim occurenci
       //Takto to funguje spravne
       //Najprv odskocia message a potom sa prida
       maxTimeValue = this.calculateTimeOnMessageInsert(currentInteraction, time, sourceLifelineModel, destinationLifelineModel);
-      
-     /* if (Ontime){
-        time--;
-      }*/
-
+    
       //Napad: Pridavat message vzdy najviac na vrch ako sa da, podla mna to sa tak ma aj v EAcku
       //Problem: Treba brat do uvahy comibed fragments a to je nejako vyriesit, keby vieme kolko occurence zabera
       //alebo podobne.
@@ -254,7 +233,7 @@ export class SequenceDiagramService {
 
   // TODO: pridavanie 3D sipky
   protected calculateTimeOnMessageInsert(currentInteraction: M.Interaction, time: number, 
-  sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline){
+  sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline) {
 
     let move = false;
     let maxTimeValue = 0;
