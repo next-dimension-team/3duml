@@ -114,6 +114,10 @@ export class SequenceDiagramService {
             let interaction = this.datastore.peekRecord(M.Interaction, event.model.id);
             this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
               console.log("Maze sa interakcia:", interaction);
+              this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id)
+              .subscribe(() => {
+                console.log("Maze sa Int Fragment:");
+              });
               location.reload();
             });
             this.performingDelete = false;
