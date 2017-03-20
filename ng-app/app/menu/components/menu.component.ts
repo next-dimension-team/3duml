@@ -55,4 +55,8 @@ export class MenuComponent implements OnInit {
   protected delete() {
     this.sequenceDiagramService.performDelete();
   }
+
+  protected deleteDiagram(sequenceDiagram: M.Interaction) {
+    this.sequenceDiagramService.deleteDiagram(sequenceDiagram);
+  }
 }
