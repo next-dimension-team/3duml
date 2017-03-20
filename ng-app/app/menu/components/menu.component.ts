@@ -21,10 +21,14 @@ export class MenuComponent implements OnInit {
   private sequenceDiagrams: M.Interaction[];
   private openedSequenceDiagram: M.Interaction;
 
-  constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService) { }
+  constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService, public dialog: MdDialog,  public viewContainerRef: ViewContainerRef) { }
 
   ngOnInit() {
     this.loadSequenceDiagrams();
+  }
+
+  protected changeTab(event) {
+    this.editMode = (event.tab.textLabel == "Edit");
   }
 
   private loadSequenceDiagrams() {
@@ -54,7 +58,7 @@ export class MenuComponent implements OnInit {
     })
   }
 
-  createLifeline(): void{
+  createLifeline(): void {
     this.inputService.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
       this.sequenceDiagramService.createLifeline(result, (lifeline: M.Lifeline) => {
       });

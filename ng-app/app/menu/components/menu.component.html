@@ -24,7 +24,7 @@
     </md-menu>
 </md-toolbar>
 
-<md-tab-group>
+<md-tab-group (focusChange)="changeTab($event)">
     <md-tab label="View" class="menu-tab">
         <ul class="sidebar-nav">
             <li *ngFor="let sequenceDiagram of sequenceDiagrams" [class.active]="sequenceDiagram==openedSequenceDiagram">

@@ -17,6 +17,9 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
   @Input()
   public interactionFragmentModel: M.InteractionFragment;
 
+  @Input()
+  public is3D: boolean;
+
   protected fragments = [];
 
   constructor(protected element: ElementRef) {
@@ -24,12 +27,13 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   public ngOnInit() {
-    this.object = new CSS3DObject(this.element.nativeElement);
-    console.log(this.interactionFragmentModel.fragmentable);
+    if (this.is3D) {
+      this.object = new CSS3DObject(this.element.nativeElement);
+    }
   }
 
   public ngOnDestroy() {
-    if (this.object.parent) {
+    if (this.is3D && this.object.parent) {
       this.object.parent.remove(this.object);
     }
   }
