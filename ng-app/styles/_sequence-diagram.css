@@ -5,9 +5,39 @@
   outline: 1px solid transparent!important;
 }
 
+[hidden] {
+  display: none!important;
+}
+
 input {
   z-index: 999!important;
   border: 0;
+}
+
+/* 3D mode */
+app-sequence-diagram > app-layer {
+  display: none;
+}
+
+app-sequence-diagram > div {
+  display: block;
+}
+
+/* 2D mode */
+app-sequence-diagram.editMode > app-layer {
+  display: block;
+}
+
+app-sequence-diagram.editMode .sequence-diagram {
+  height: auto;
+}
+
+app-sequence-diagram.editMode .layer {
+  margin: auto;
+}
+
+app-sequence-diagram.editMode > div {
+  display: none;
 }
 
 /* Layers */
