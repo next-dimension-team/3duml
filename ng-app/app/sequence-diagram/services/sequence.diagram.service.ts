@@ -85,7 +85,7 @@ export class SequenceDiagramService {
 
   public initializeAddLifeline(){
     this.inputService.onLeftClick((event) => {
-      if (event.model.type == "LifelinePoint" || event.model.type == "Lifeline") {
+      if (event.model.type == "Lifeline") {
         this.lifelineBefore = this.datastore.peekRecord(M.Lifeline, event.model.id);
       }
       if (event.model.type == "Layer"){
@@ -95,46 +95,48 @@ export class SequenceDiagramService {
   }
 
   public createLifeline(name: string, callback: any) {
-    if (this.lifelineBefore){
-      console.log(this.lifelineBefore);
+    if (this.lifelineBefore) {
       let interaction = this.lifelineBefore.interaction;
       let lifelinesInInteraction = interaction.lifelines;
-      let maxOrder = this.lifelineBefore.order;
+      let newLifineOrder = this.lifelineBefore.order;
       for (let lifeline of lifelinesInInteraction) {
-        if (lifeline.order > maxOrder) {
+        if (lifeline.order > newLifineOrder) {
           lifeline.order++;
           lifeline.save().subscribe();
         }
       }
       let lifelineNew = this.datastore.createRecord(M.Lifeline, {
         name: name,
-        order: maxOrder+1,
+        order: newLifineOrder+1,
         interaction: interaction 
       });
       lifelineNew.save().subscribe(() => {
+        this.lifelineBefore = null;
+        this.layer = null;
         location.reload();
       });
     }
-    else if (this.layer){
+    else if (this.layer) {
       let lifelinesInInteraction = this.layer.lifelines;
-      let maxOrder = 0;
+      let newLifineOrder = 0;
       for (let lifeline of lifelinesInInteraction) {
-        if (lifeline.order > maxOrder) {
+        if (lifeline.order > newLifineOrder) {
           lifeline.order++;
           lifeline.save().subscribe();
         }
       }
       let lifeline = this.datastore.createRecord(M.Lifeline, {
         name: name,
+        //TO DO dorobit podla offesetX
         order: 1,
         interaction: this.layer 
       });
       lifeline.save().subscribe(() => {
+        this.lifelineBefore = null;
+        this.layer = null;
         location.reload();
       });
     }
-    this.lifelineBefore = null;
-    this.layer = null;
   }
 
   /**
