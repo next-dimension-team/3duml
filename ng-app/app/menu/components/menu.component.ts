@@ -34,10 +34,6 @@ export class MenuComponent implements OnInit {
     this.sequenceDiagramService.getSequenceDiagrams().subscribe(
       (diagrams: M.Interaction[]) => {
         this.sequenceDiagrams = diagrams;
-
-        if (this.sequenceDiagrams.length > 0) {
-          this.openSequenceDiagramHandler(this.sequenceDiagrams[0]);
-        }
       }
     );
   }
@@ -47,13 +43,9 @@ export class MenuComponent implements OnInit {
     this.openSequenceDiagram.emit(this.openedSequenceDiagram);
   }
 
-  createDiagram(): void {
-    // TODO
+  createDiagram(): void { 
     this.createInputDialog("Creating diagram", "" ,"Enter name of new digram.").componentInstance.onOk.subscribe(result => {
-      let diagramName = result;
-      this.sequenceDiagramService.createDiagram(diagramName, (interaction: M.InteractionFragment) => {
-        console.log("JE TO VYTVORENE");
-      });
+      this.sequenceDiagramService.createDiagram(result);
     })
   }
 

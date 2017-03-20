@@ -65,7 +65,7 @@ export class SequenceDiagramService {
   /**
    * Create Operation
    */
-  public createDiagram(name: string, callback: any) {
+  public createDiagram(name: string) {
     let interaction = this.datastore.createRecord(M.Interaction, {
       name: name
     });
@@ -75,7 +75,7 @@ export class SequenceDiagramService {
         fragmentable: interaction
       });
 
-      interactionFragment.save().subscribe(callback);
+      interactionFragment.save().subscribe();
     });
   }
 
