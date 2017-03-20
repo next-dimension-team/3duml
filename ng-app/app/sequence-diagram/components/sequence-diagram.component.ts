@@ -27,6 +27,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   protected renderer: THREE.CSS3DRenderer;
 
   protected renderQueued = false;
+  protected editingLayer: M.InteractionFragment = null;
 
   constructor(protected ngZone: NgZone, protected element: ElementRef, protected config: ConfigService) {
     //
@@ -65,14 +66,17 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     );
 
     this.controls.addEventListener('change', () => this.queueRender());
+
+    // Initialize edit mode
+    if (this.rootInteractionFragment.children.length > 0) {
+      this.editingLayer = this.rootInteractionFragment.children[0];
+    }
   }
 
   public ngOnChanges(changes: SimpleChanges) {
-    if (! changes.rootInteractionFragment.isFirstChange()) {
+    if (changes.rootInteractionFragment && ! changes.rootInteractionFragment.isFirstChange()) {
       this.controls.reset();
     }
-
-    console.log(changes.rootInteractionFragment);
   }
 
   public ngAfterViewInit() {
@@ -98,6 +102,35 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     this.renderer.setSize(width, height);
 
     this.queueRender();
+  }
+
+  // Change edit layer
+  @HostListener('window:mousewheel', ['$event'])
+  public onMouseScroll($event) {
+    let layers = this.rootInteractionFragment.children;
+    let currentIndex = layers.indexOf(this.editingLayer);
+    let maxIndex = layers.length - 1;
+
+    if (currentIndex == -1) {
+      currentIndex = 0;
+      this.editingLayer = layers[0];
+    }
+
+    if ($event.deltaY > 0) {
+      currentIndex--;
+    } else {
+      currentIndex++;
+    }
+
+    if (currentIndex < 0) {
+      currentIndex = 0;
+    }
+
+    if (currentIndex > maxIndex) {
+      currentIndex = maxIndex;
+    }
+
+    this.editingLayer = layers[currentIndex];
   }
 
   public queueRender() {

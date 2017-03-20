@@ -2,6 +2,7 @@
 
     <div id="sidebar-wrapper">
         <app-sidebar-menu
+            #sidebarMenuComponent
             (openSequenceDiagram)="openSequenceDiagram($event)"
             (createLayer)="createLayer($event, sequenceDiagramComponent)">
         </app-sidebar-menu>
@@ -11,7 +12,8 @@
         <app-sequence-diagram
             #sequenceDiagramComponent
             *ngIf="openedSequenceDiagram"
-            [rootInteractionFragment]="openedSequenceDiagram">
+            [rootInteractionFragment]="openedSequenceDiagram"
+            [class.editMode]="sidebarMenuComponent.editMode">
         </app-sequence-diagram>
     </div>
 
