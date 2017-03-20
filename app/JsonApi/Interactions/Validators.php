@@ -18,8 +18,10 @@ class Validators extends AbstractValidatorProvider
      */
     protected function attributeRules($resourceType, $record = null)
     {
+        $required = ! is_null($record) ? 'sometimes|required' : 'required';
+
         return [
-            //
+            'name' => "{$required}|string|between:1,255",
         ];
     }
 

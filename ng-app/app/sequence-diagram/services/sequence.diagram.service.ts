@@ -137,6 +137,22 @@ export class SequenceDiagramService {
         location.reload();
       });
     }
+
+  public createLayer(name: string, openedSequenceDiagram: M.InteractionFragment) {
+    
+    let layer = this.datastore.createRecord(M.Interaction, {
+      name: name
+    });
+
+    layer.save().subscribe((layer: M.Interaction) => {
+      let interactionFragment = this.datastore.createRecord(M.InteractionFragment, {
+        fragmentable: layer,
+        parent: openedSequenceDiagram
+      });
+      interactionFragment.save().subscribe(() => {
+        location.reload();
+      });
+    });
   }
 
   /**
