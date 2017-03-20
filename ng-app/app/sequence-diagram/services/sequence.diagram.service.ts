@@ -257,38 +257,38 @@ export class SequenceDiagramService {
   }
 
   protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
-      let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
-      let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
-      let time = Math.round(sourceLifeline.model.time);
+    let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
+    let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
+    let time = Math.round(sourceLifeline.model.time);
 
-      let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+    let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+      // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
+      time: time,
+      covered: sourceLifelineModel
+    });
+    
+    sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
+      let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
         // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
         time: time,
-        covered: sourceLifelineModel
+        covered: destinationLifelineModel
       });
-      
-      sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
-        let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-          // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
-          time: time,
-          covered: destinationLifelineModel
-        });
 
-        destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
-          this.datastore.createRecord(M.Message, {
-            // TODO nazvat message ako chcem
-            name: "send",
-            sort: "synchCall",
-            // TODO zmenit dynamicky na interaction / fragment v ktorom som
-            interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
-            sendEvent: sourceOccurence,
-            receiveEvent: destinationOccurence
-          }).save().subscribe((message: M.Message) => {
-            //this.calculateTimeOnMessageInsert(message);
-            callback(message);
-          });
+      destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
+        this.datastore.createRecord(M.Message, {
+          // TODO nazvat message ako chcem
+          name: "send",
+          sort: "synchCall",
+          // TODO zmenit dynamicky na interaction / fragment v ktorom som
+          interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
+          sendEvent: sourceOccurence,
+          receiveEvent: destinationOccurence
+        }).save().subscribe((message: M.Message) => {
+          //this.calculateTimeOnMessageInsert(message);
+          callback(message);
         });
       });
+    });
   }
 
   // TODO: pridavanie 3D sipky
