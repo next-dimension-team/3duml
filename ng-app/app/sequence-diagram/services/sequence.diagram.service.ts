@@ -127,7 +127,7 @@ export class SequenceDiagramService {
       }
       let lifeline = this.datastore.createRecord(M.Lifeline, {
         name: name,
-        //TO DO dorobit podla offesetX
+        //TODO dorobit podla offesetX
         order: 1,
         interaction: this.layer 
       });
