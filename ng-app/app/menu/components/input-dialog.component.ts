@@ -1,12 +1,8 @@
-//our root app component
-import {Component, NgModule, EventEmitter, ViewContainerRef} from '@angular/core'
-import {BrowserModule} from '@angular/platform-browser'
-import { MaterialModule } from '@angular/material';
-
-import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+import { Component, EventEmitter } from '@angular/core'
+import { MdDialogRef } from '@angular/material';
 
 @Component({
-  selector: 'dialog-component',
+  selector: 'app-input-dialog',
   template: `<h2>{{title}}</h2>
       <p>{{message}}</p>
       <md-input-container>

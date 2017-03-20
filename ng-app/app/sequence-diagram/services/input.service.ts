@@ -1,6 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { MdDialog, MdDialogRef } from '@angular/material';
 import { InputDialogComponent } from '../../menu/components/input-dialog.component';
+import { ConfirmDialogComponent } from '../../menu/components/confirm-dialog.component';
 
 @Injectable()
 export class InputService {
@@ -71,6 +72,13 @@ export class InputService {
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.message = message;
     dialogRef.componentInstance.placeholder = placeholder;
+    return dialogRef;
+  }
+
+  public createConfirmDialog(title?: string, message?: string): MdDialogRef<any> {
+    let dialogRef: MdDialogRef<any> = this.dialog.open(ConfirmDialogComponent);
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.message = message;
     return dialogRef;
   }
 }

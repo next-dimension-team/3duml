@@ -40,6 +40,8 @@ export class MenuComponent implements OnInit {
     this.openSequenceDiagram.emit(this.openedSequenceDiagram);
   }
 
+
+  // CREATE
   createDiagram(): void { 
     this.inputService.createInputDialog("Creating diagram", "" ,"Enter name of new digram.").componentInstance.onOk.subscribe(result => {
       this.sequenceDiagramService.createDiagram(result);
@@ -59,11 +61,25 @@ export class MenuComponent implements OnInit {
     });
   }
 
+  // DELETE
   protected delete() {
     this.sequenceDiagramService.performDelete();
   }
 
   protected deleteDiagram(sequenceDiagram: M.Interaction) {
     this.sequenceDiagramService.deleteDiagram(sequenceDiagram);
+  }
+
+  // TEST
+  protected confirmTest() {
+    let confirmDialog = this.inputService.createConfirmDialog("Test confirm", "Confirm it");
+
+    confirmDialog.componentInstance.onYes.subscribe(result => {
+      console.log("Confirm dialog - YES");
+    });
+
+    confirmDialog.componentInstance.onNo.subscribe(result => {
+      console.log("Confirm dialog - NO");
+    });
   }
 }
