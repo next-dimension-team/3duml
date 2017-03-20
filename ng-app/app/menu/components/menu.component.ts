@@ -55,7 +55,7 @@ export class MenuComponent implements OnInit {
   createLifeline(): void{
     var lifelineName = window.prompt("Choose the name of lifeline", "New Lifeline");
     this.sequenceDiagramService.createLifeline(lifelineName, (lifeline: M.Lifeline) => {
-        console.log("JE TO VYTVORENE");
+        
       });
   }
 
