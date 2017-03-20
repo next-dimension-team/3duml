@@ -27,6 +27,7 @@ export class SequenceDiagramService {
   public initialize() {
     this.initializeDeleteOperation();
     this.initializeAddMessageOperation();
+    this.initializeAddLifeline();
   }
 
   /**
@@ -78,6 +79,64 @@ export class SequenceDiagramService {
       interactionFragment.save().subscribe();
     });
   }
+
+  protected lifelineBefore:M.Lifeline;
+  protected layer:M.Interaction;
+
+  public initializeAddLifeline(){
+    this.inputService.onLeftClick((event) => {
+      if (event.model.type == "Lifeline") {
+        this.lifelineBefore = this.datastore.peekRecord(M.Lifeline, event.model.id);
+      }
+      if (event.model.type == "Layer"){
+        this.layer = this.datastore.peekRecord(M.Interaction, event.model.id);
+      }
+    });
+  }
+
+  public createLifeline(name: string, callback: any) {
+    if (this.lifelineBefore) {
+      let interaction = this.lifelineBefore.interaction;
+      let lifelinesInInteraction = interaction.lifelines;
+      let newLifineOrder = this.lifelineBefore.order;
+      for (let lifeline of lifelinesInInteraction) {
+        if (lifeline.order > newLifineOrder) {
+          lifeline.order++;
+          lifeline.save().subscribe();
+        }
+      }
+      let lifelineNew = this.datastore.createRecord(M.Lifeline, {
+        name: name,
+        order: newLifineOrder+1,
+        interaction: interaction 
+      });
+      lifelineNew.save().subscribe(() => {
+        this.lifelineBefore = null;
+        this.layer = null;
+        location.reload();
+      });
+    }
+    else if (this.layer) {
+      let lifelinesInInteraction = this.layer.lifelines;
+      let newLifineOrder = 0;
+      for (let lifeline of lifelinesInInteraction) {
+        if (lifeline.order > newLifineOrder) {
+          lifeline.order++;
+          lifeline.save().subscribe();
+        }
+      }
+      let lifeline = this.datastore.createRecord(M.Lifeline, {
+        name: name,
+        //TODO dorobit podla offesetX
+        order: 1,
+        interaction: this.layer 
+      });
+      lifeline.save().subscribe(() => {
+        this.lifelineBefore = null;
+        this.layer = null;
+        location.reload();
+      });
+    }
 
   public createLayer(name: string, openedSequenceDiagram: M.InteractionFragment) {
     
@@ -214,38 +273,38 @@ export class SequenceDiagramService {
   }
 
   protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
-      let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
-      let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
-      let time = Math.round(sourceLifeline.model.time);
+    let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
+    let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
+    let time = Math.round(sourceLifeline.model.time);
 
-      let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+    let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+      // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
+      time: time,
+      covered: sourceLifelineModel
+    });
+    
+    sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
+      let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
         // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
         time: time,
-        covered: sourceLifelineModel
+        covered: destinationLifelineModel
       });
-      
-      sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
-        let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-          // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
-          time: time,
-          covered: destinationLifelineModel
-        });
 
-        destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
-          this.datastore.createRecord(M.Message, {
-            // TODO nazvat message ako chcem
-            name: "send",
-            sort: "synchCall",
-            // TODO zmenit dynamicky na interaction / fragment v ktorom som
-            interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
-            sendEvent: sourceOccurence,
-            receiveEvent: destinationOccurence
-          }).save().subscribe((message: M.Message) => {
-            //this.calculateTimeOnMessageInsert(message);
-            callback(message);
-          });
+      destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
+        this.datastore.createRecord(M.Message, {
+          // TODO nazvat message ako chcem
+          name: "send",
+          sort: "synchCall",
+          // TODO zmenit dynamicky na interaction / fragment v ktorom som
+          interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
+          sendEvent: sourceOccurence,
+          receiveEvent: destinationOccurence
+        }).save().subscribe((message: M.Message) => {
+          //this.calculateTimeOnMessageInsert(message);
+          callback(message);
         });
       });
+    });
   }
 
   // TODO: pridavanie 3D sipky

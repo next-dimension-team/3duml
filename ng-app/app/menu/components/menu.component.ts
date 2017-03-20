@@ -55,6 +55,16 @@ export class MenuComponent implements OnInit {
     })
   }
 
+  createLifeline(): void{
+    this.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
+      this.sequenceDiagramService.createLifeline(result, (lifeline: M.Lifeline) => {
+        
+      });
+    });
+   // var lifelineName = window.prompt("Choose the name of lifeline", "New Lifeline");
+    
+  }
+
   protected delete() {
     this.sequenceDiagramService.performDelete();
   }
