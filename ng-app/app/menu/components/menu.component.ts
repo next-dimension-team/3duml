@@ -1,9 +1,8 @@
-import { Component, OnInit, Output, EventEmitter, ViewContainerRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { InputService } from '../../sequence-diagram/services/input.service';
 import { InputDialogComponent } from './input-dialog.component';
 import * as M from '../../sequence-diagram/models';
-
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -19,12 +18,10 @@ export class MenuComponent implements OnInit {
   @Output()
   public createLayer = new EventEmitter;
 
-  dialogRef: MdDialogRef<any>;
-
   private sequenceDiagrams: M.Interaction[];
   private openedSequenceDiagram: M.Interaction;
 
-  constructor(private sequenceDiagramService: SequenceDiagramService, public dialog: MdDialog,  public viewContainerRef: ViewContainerRef) { }
+  constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService) { }
 
   ngOnInit() {
     this.loadSequenceDiagrams();
@@ -44,25 +41,22 @@ export class MenuComponent implements OnInit {
   }
 
   createDiagram(): void { 
-    this.createInputDialog("Creating diagram", "" ,"Enter name of new digram.").componentInstance.onOk.subscribe(result => {
+    this.inputService.createInputDialog("Creating diagram", "" ,"Enter name of new digram.").componentInstance.onOk.subscribe(result => {
       this.sequenceDiagramService.createDiagram(result);
     })
   }
 
   private createLayerHandler(): void {
-    this.createInputDialog("Creating layer", "" ,"Enter name of new layer.").componentInstance.onOk.subscribe(result => {
+    this.inputService.createInputDialog("Creating layer", "" ,"Enter name of new layer.").componentInstance.onOk.subscribe(result => {
       this.createLayer.emit(result);
     })
   }
 
   createLifeline(): void{
-    this.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
+    this.inputService.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
       this.sequenceDiagramService.createLifeline(result, (lifeline: M.Lifeline) => {
-        
       });
     });
-   // var lifelineName = window.prompt("Choose the name of lifeline", "New Lifeline");
-    
   }
 
   protected delete() {
@@ -71,16 +65,8 @@ export class MenuComponent implements OnInit {
 
   // Priklad pre dialog s textom ako vstup
   openInputDialog() {
-    this.createInputDialog("Creating layer", "Enter layer name.", "layer name").componentInstance.onOk.subscribe(result => {
+    this.inputService.createInputDialog("Creating layer", "Enter layer name.", "layer name").componentInstance.onOk.subscribe(result => {
       console.log(result);
     })
-  }
-
-  public createInputDialog(title?: string, message?: string, placeholder?: string): MdDialogRef<any> {
-    let dialogRef: MdDialogRef<any> = this.dialog.open(InputDialogComponent);
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.message = message;
-    dialogRef.componentInstance.placeholder = placeholder;
-    return dialogRef;
   }
 }

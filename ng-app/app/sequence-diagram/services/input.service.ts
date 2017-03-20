@@ -1,4 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
+import { MdDialog, MdDialogRef } from '@angular/material';
+import { InputDialogComponent } from '../../menu/components/input-dialog.component';
 
 @Injectable()
 export class InputService {
@@ -7,6 +9,10 @@ export class InputService {
 
   /* Left Click - The event occurs when the user clicks on an element */
   public leftClick = new EventEmitter;
+
+  dialogRef: MdDialogRef<any>;
+
+  constructor(public dialog: MdDialog) {}
 
   public broadcastLeftClick(param: any) {
     this.leftClick.emit(param);
@@ -60,4 +66,11 @@ export class InputService {
     this.mouseMove.subscribe(callback);
   }
 
+  public createInputDialog(title?: string, message?: string, placeholder?: string): MdDialogRef<any> {
+    let dialogRef: MdDialogRef<any> = this.dialog.open(InputDialogComponent);
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.message = message;
+    dialogRef.componentInstance.placeholder = placeholder;
+    return dialogRef;
+  }
 }
