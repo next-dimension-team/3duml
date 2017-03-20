@@ -24,10 +24,16 @@ export class MenuComponent implements OnInit {
   private sequenceDiagrams: M.Interaction[];
   private openedSequenceDiagram: M.Interaction;
 
+  protected editMode = false;
+
   constructor(private sequenceDiagramService: SequenceDiagramService, public dialog: MdDialog,  public viewContainerRef: ViewContainerRef) { }
 
   ngOnInit() {
     this.loadSequenceDiagrams();
+  }
+
+  protected changeTab(event) {
+    this.editMode = (event.tab.textLabel == "Edit");
   }
 
   private loadSequenceDiagrams() {
