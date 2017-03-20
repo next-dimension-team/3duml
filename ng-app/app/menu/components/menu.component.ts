@@ -63,10 +63,7 @@ export class MenuComponent implements OnInit {
     this.sequenceDiagramService.performDelete();
   }
 
-  // Priklad pre dialog s textom ako vstup
-  openInputDialog() {
-    this.inputService.createInputDialog("Creating layer", "Enter layer name.", "layer name").componentInstance.onOk.subscribe(result => {
-      console.log(result);
-    })
+  protected deleteDiagram(sequenceDiagram: M.Interaction) {
+    this.sequenceDiagramService.deleteDiagram(sequenceDiagram);
   }
 }

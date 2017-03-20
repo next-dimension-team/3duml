@@ -167,7 +167,21 @@ export class SequenceDiagramService {
     this.performingDelete = true;
   }
 
+  /**
+   * Funkcia maze iba z tabulky Interaction Fragment 
+   * na backende sa dorobi automaticke mazanie morph vztahu
+   */
+  public deleteDiagram(sequenceDiagram: M.Interaction) {
+    // this.datastore.deleteRecord(M.Interaction, sequenceDiagram.id).subscribe(() => {
+    //   console.log("Maze sa diagram:", sequenceDiagram);
+      this.datastore.deleteRecord(M.InteractionFragment, sequenceDiagram.fragment.fragmentable.id)
+      .subscribe();
+      location.reload();
+    // });
+  }
+
   protected initializeDeleteOperation() {
+
     this.inputService.onLeftClick((event) => {
       if (this.performingDelete) {
         switch (event.model.type) {
@@ -188,8 +202,18 @@ export class SequenceDiagramService {
               location.reload();
             });
             this.performingDelete = false;
-            break;
-
+          break;
+          case 'Layer':
+            let interaction = this.datastore.peekRecord(M.Interaction, event.model.id);
+            // maze iba z tabulky Interaction Fragment, na backende sa dorobi automaticke mazanie morph vztahu 
+            // this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
+            // console.log("Maze sa interakcia:", interaction);
+              this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id)
+              .subscribe();
+              location.reload();
+            // });
+            this.performingDelete = false;
+          break;
         }
       }
     });
