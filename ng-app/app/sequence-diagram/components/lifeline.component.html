@@ -21,4 +21,12 @@
     ></app-execution>-->
 
   </div>
+  <div class="points">
+    <div
+      *ngFor="let point of points"
+      class="point"
+      [class.hidden]="point.hidden"
+      [selectable]="{type: 'LifelinePoint', lifelineID: lifelineModel.id, time: point.time}">
+    </div>
+  </div>
 </div>

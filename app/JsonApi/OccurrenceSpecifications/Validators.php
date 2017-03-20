@@ -4,6 +4,8 @@ namespace App\JsonApi\OccurrenceSpecifications;
 
 use CloudCreativity\JsonApi\Contracts\Validators\RelationshipsValidatorInterface;
 use CloudCreativity\LaravelJsonApi\Validators\AbstractValidatorProvider;
+use App\JsonApi\Lifelines\Schema as LifelinesSchema;
+use Illuminate\Validation\Rule;
 
 class Validators extends AbstractValidatorProvider
 {
@@ -18,8 +20,10 @@ class Validators extends AbstractValidatorProvider
      */
     protected function attributeRules($resourceType, $record = null)
     {
+        $required = ! is_null($record) ? 'sometimes|required' : 'required';
+
         return [
-            //
+            'time' => "{$required}|integer|min:1",
         ];
     }
 
@@ -35,6 +39,6 @@ class Validators extends AbstractValidatorProvider
      */
     protected function relationshipRules(RelationshipsValidatorInterface $relationships, $resourceType, $record = null)
     {
-        //
+        $relationships->hasOne('covered', LifelinesSchema::RESOURCE_TYPE, is_null($record), false);
     }
 }

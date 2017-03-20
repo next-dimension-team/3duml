@@ -21,10 +21,10 @@ class Request extends RequestHandler
      * @var array
      */
     protected $hasMany = [
-        'sending-event-messages',
-        'receiving-event-messages',
-        'starting-execution-specifications',
-        'finishing-execution-specifications',
+        'sendingEventMessages',
+        'receivingEventMessages',
+        'startingExecutionSpecifications',
+        'finishingExecutionSpecifications',
     ];
 
     /**

@@ -18,7 +18,6 @@ class Hydrator extends EloquentHydrator
      * @var array
      */
     protected $relationships = [
-        'occurrenceSpecifications',
         'interaction',
     ];
 }

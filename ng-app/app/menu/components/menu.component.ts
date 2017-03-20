@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { Interaction } from '../../sequence-diagram/models';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
+import { InputService } from '../../sequence-diagram/services/input.service';
+import { InputDialogComponent } from './input-dialog.component';
 import * as M from '../../sequence-diagram/models';
 
 @Component({
@@ -13,10 +14,14 @@ export class MenuComponent implements OnInit {
 
   @Output()
   public openSequenceDiagram = new EventEmitter;
-  private sequenceDiagrams: Interaction[];
-  private openedSequenceDiagram: Interaction;
 
-  constructor(private sequenceDiagramService: SequenceDiagramService) { }
+  @Output()
+  public createLayer = new EventEmitter;
+
+  private sequenceDiagrams: M.Interaction[];
+  private openedSequenceDiagram: M.Interaction;
+
+  constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService) { }
 
   ngOnInit() {
     this.loadSequenceDiagrams();
@@ -24,32 +29,34 @@ export class MenuComponent implements OnInit {
 
   private loadSequenceDiagrams() {
     this.sequenceDiagramService.getSequenceDiagrams().subscribe(
-      (diagrams: Interaction[]) => {
+      (diagrams: M.Interaction[]) => {
         this.sequenceDiagrams = diagrams;
-
-        if (this.sequenceDiagrams.length > 0) {
-          this.openSequenceDiagramHandler(this.sequenceDiagrams[0]);
-        }
       }
     );
   }
 
-  private openSequenceDiagramHandler(sequenceDiagram: Interaction) {
+  private openSequenceDiagramHandler(sequenceDiagram: M.Interaction) {
     this.openedSequenceDiagram = sequenceDiagram;
     this.openSequenceDiagram.emit(this.openedSequenceDiagram);
   }
 
-  createDiagram(): void {
-    // TODO
-    //console.log('Menu component said: Clicked on "Create Diagram" link');
-    var diagramName = window.prompt("Choose name of new digram", "NewSeqDiagram");
+  createDiagram(): void { 
+    this.inputService.createInputDialog("Creating diagram", "" ,"Enter name of new digram.").componentInstance.onOk.subscribe(result => {
+      this.sequenceDiagramService.createDiagram(result);
+    })
+  }
 
-    //console.log(diagramName);
-    //vytvorenie noveho diagramu
-    this.sequenceDiagramService.createDiagram(diagramName, (interaction: M.InteractionFragment) => {
-        console.log("JE TO VYTVORENE");
+  private createLayerHandler(): void {
+    this.inputService.createInputDialog("Creating layer", "" ,"Enter name of new layer.").componentInstance.onOk.subscribe(result => {
+      this.createLayer.emit(result);
+    })
+  }
+
+  createLifeline(): void{
+    this.inputService.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
+      this.sequenceDiagramService.createLifeline(result, (lifeline: M.Lifeline) => {
       });
-    
+    });
   }
 
   protected delete() {

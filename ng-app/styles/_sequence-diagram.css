@@ -18,10 +18,12 @@ input {
   height: 880px;
   background-color: rgba(240, 240, 240, 0.75);
   padding: 30px;
+  border: 5px solid rgba(240, 240, 240, 0.75);
 }
 
 .layer:hover {
-  background-color: rgba(210, 240, 255, 0.75);
+  /*background-color: rgba(210, 240, 255, 0.75);*/
+  border: 5px solid rgba(0, 0, 0, 0.05);
 }
 
 /* Sequence Diagram */
@@ -37,6 +39,11 @@ input {
 .sequence-diagram * {
   margin: 0;
   padding: 0;
+  cursor: default;
+}
+
+.sequence-diagram .hidden {
+  visibility: hidden;
 }
 
 .sequence-diagram div,
@@ -45,16 +52,17 @@ input {
   position: absolute;
 }
 
-.sequence-diagram :hover {
+/*.sequence-diagram :hover {
   color: blue!important;
   background-color: rgba(0, 255, 0, 0.1)!important;
-}
+}*/
 
 /* Lifeline */
 .sequence-diagram .lifeline {
   top: 0;
   width: 120px;
   height: 880px;
+  overflow: hidden;
 }
 
 .sequence-diagram .lifeline .title {
@@ -109,6 +117,39 @@ input {
   border: 1px solid #000;
   background-color: #fff;
   width: 11px;
+}
+
+/* Lifeline - Points */
+.sequence-diagram .lifeline .points {
+  top: 55.5px;
+  left: 54px;
+}
+
+.sequence-diagram .lifeline .points .point {
+  position: relative;
+  margin-top: 10px;
+  width: 11px;
+  height: 10px;
+  border: 1px solid #000;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.sequence-diagram .lifeline .points .point:nth-child(2n+1) {
+  position: relative;
+  width: 7px;
+  height: 6px;
+  margin-left: 2px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+.sequence-diagram .lifeline .points .point:hover {
+  background-color: #000;
 }
 
 /* Message - Lines */
@@ -180,6 +221,10 @@ input {
 
 .sequence-diagram .lifeline .executions .execution {
   z-index: 20;
+}
+
+.sequence-diagram .lifeline .points .point {
+  z-index: 21;
 }
 
 .sequence-diagram .fragment {
