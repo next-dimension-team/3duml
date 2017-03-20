@@ -20,8 +20,9 @@ export class MenuComponent implements OnInit {
 
   private sequenceDiagrams: M.Interaction[];
   private openedSequenceDiagram: M.Interaction;
+  protected editMode: Boolean;
 
-  constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService, public dialog: MdDialog,  public viewContainerRef: ViewContainerRef) { }
+  constructor( private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService ) { }
 
   ngOnInit() {
     this.loadSequenceDiagrams();
