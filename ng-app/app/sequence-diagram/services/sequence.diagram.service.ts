@@ -135,36 +135,21 @@ export class SequenceDiagramService {
     }
   }
 
-  protected calculateTimeOnMessageDelete(message: M.Message){
+  protected calculateTimeOnMessageDelete(message: M.Message) {
 
     let deletedMessageTime = message.sendEvent.time;
-    let receiveLifeline = message.receiveEvent.covered;
-    let sendLifeline = message.sendEvent.covered;
+    let lifelinesInCurrentLayer = message.interaction.lifelines;
 
-    // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
-    for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-      if (occurrence.time > deletedMessageTime){
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time - 1;
-            occurrenceSpecification.save().subscribe();
+    // prechadzam Occurence Spec. na vsetkych lifelinach a znizujem time o 1
+    for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time >= deletedMessageTime) {
+            let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+            occurenceForChange.time = occurenceForChange.time - 1;
+            occurenceForChange.save().subscribe();
           }
-        );
-      }
-    }
-    // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
-    for (let occurrence of sendLifeline.occurrenceSpecifications) {
-      if (occurrence.time > deletedMessageTime){
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time - 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
-      }
-    }
+        }
+      }  
   }
 
   /**
@@ -183,23 +168,39 @@ export class SequenceDiagramService {
             this.sourceLifelineEvent = this.destinationLifelineEvent;
           } else {
             this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
-              location.reload();
+            //Location.reload robil chybu ked som volal calcuteTimeOnMessage, az po vytvoreni message
+            //Teraz je to OK
+            location.reload(); 
             });
             this.sourceLifelineEvent = null;
             this.destinationLifelineEvent = null;
           }
-        }
-        else {
+        } else {
           this.sourceLifelineEvent = event;
         }
       }
     });
   }
 
+  //TODO: Prepocitavat pridavanie aj ked je tam fragment (odskakovanie aj ked mame fragmenty)
   protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
       let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
       let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
+      let currentInteraction = this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id);
       let time = Math.round(sourceLifeline.model.time);
+      let maxTimeValue = 0;
+
+      //Najprv vypocitam ci su za nasou ktoru chcem pridat nejake message, ak ano, zmenim occurenci
+      //Takto to funguje spravne
+      //Najprv odskocia message a potom sa prida
+      maxTimeValue = this.calculateTimeOnMessageInsert(currentInteraction, time, sourceLifelineModel, destinationLifelineModel);
+    
+      //Napad: Pridavat message vzdy najviac na vrch ako sa da, podla mna to sa tak ma aj v EAcku
+      //Problem: Treba brat do uvahy comibed fragments a to je nejako vyriesit, keby vieme kolko occurence zabera
+      //alebo podobne.
+      /* if (maxTimeValue > 0){
+        time = maxTimeValue + 1;
+      }*/
 
       let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
         // TODO: konstantu 40 treba tahat z configu, aj 180 brat z configu
@@ -217,14 +218,13 @@ export class SequenceDiagramService {
         destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
           this.datastore.createRecord(M.Message, {
             // TODO nazvat message ako chcem
-            name: "send",
+            name: "send()",
             sort: "synchCall",
             // TODO zmenit dynamicky na interaction / fragment v ktorom som
-            interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
+            interaction: currentInteraction,
             sendEvent: sourceOccurence,
             receiveEvent: destinationOccurence
-          }).save().subscribe((message: M.Message) => {
-            //this.calculateTimeOnMessageInsert(message);
+          }).save().subscribe((message: M.Message) => {    
             callback(message);
           });
         });
@@ -232,56 +232,51 @@ export class SequenceDiagramService {
   }
 
   // TODO: pridavanie 3D sipky
-  /*protected calculateTimeOnMessageInsert(message: M.Message){
+  protected calculateTimeOnMessageInsert(currentInteraction: M.Interaction, time: number, 
+  sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline) {
 
     let move = false;
-    let insertedMessageTime = message.sendEvent.time;
-    let sendLifeline = message.sendEvent.covered;
-    let receiveLifeline = message.receiveEvent.covered;
+    let maxTimeValue = 0;
+    let lifelinesInCurrentLayer = currentInteraction.lifelines;
 
-    for (let occurrence of sendLifeline.occurrenceSpecifications) {
-      if (occurrence.time == insertedMessageTime) {
-        move = true;
-        break;
-      }
-    }
-
-    if (move) {
-      for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-        if (occurrence.time == insertedMessageTime) {
+    //Prechadzam vsetky lifeliny v aktualnom platne
+    for (let lifeline of lifelinesInCurrentLayer) {
+      for (let occurrence of lifeline.occurrenceSpecifications) {
+        if (occurrence.time == time) {
           move = true;
+          break;
+        }
+        if (move) {
           break;
         }
       }
     }
 
-    if (move) {
-      // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
-      for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-        if (occurrence.time >= insertedMessageTime){
-          // teraz to znizit o 1 treba, zober id occurence spec a znizit
-          this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-            (occurrenceSpecification: M.OccurrenceSpecification) => {
-              occurrenceSpecification.time = occurrenceSpecification.time + 1;
-              occurrenceSpecification.save().subscribe();
-            }
-          );
+    //Napad: ak sme nenasli taku messageu ze musime pod nou daco posuvat, tak nastavim maxTimeValue a dame ju navrch
+    if (!move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time > maxTimeValue) {
+            maxTimeValue = occurrence.time;
+          }
         }
-      }
-      // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
-      for (let occurrence of sendLifeline.occurrenceSpecifications) {
-        if (occurrence.time >= insertedMessageTime){
-          // teraz to znizit o 1 treba, zober id occurence spec a znizit
-          this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-            (occurrenceSpecification: M.OccurrenceSpecification) => {
-              occurrenceSpecification.time = occurrenceSpecification.time + 1;
-              occurrenceSpecification.save().subscribe();
-            }
-          );
-        }
-      }
+      }      
     }
-  }*/
+
+    //Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej
+    if (move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time >= time) {
+            let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+            occurenceForChange.time = occurenceForChange.time + 1;
+            occurenceForChange.save().subscribe();
+          }
+        }
+      }    
+    }
+    return maxTimeValue;
+  }
 
   /**
    * Update Operation
