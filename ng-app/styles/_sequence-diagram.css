@@ -1,8 +1,11 @@
 /* Global */
 * {
-  backface-visibility: hidden!important;
-  -webkit-backface-visibility: hidden!important;
   outline: 1px solid transparent!important;
+  -webkit-user-select: none;    
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
 
 [hidden] {

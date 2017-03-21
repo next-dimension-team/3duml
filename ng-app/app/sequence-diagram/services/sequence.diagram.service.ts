@@ -4,6 +4,7 @@ import { JsonApiModel, ModelType } from 'angular2-jsonapi';
 import { Observable } from 'rxjs';
 import { InputService } from './input.service';
 import { InputDialogComponent } from './input-dialog.component';
+import { MessageComponent } from '../components/message.component';
 import * as _ from 'lodash';
 import * as M from '../models';
 
@@ -29,6 +30,7 @@ export class SequenceDiagramService {
     this.initializeDeleteOperation();
     this.initializeAddMessageOperation();
     this.initializeAddLifeline();
+    this.initializeVerticalMessageMove();
   }
 
   /**
@@ -95,6 +97,29 @@ export class SequenceDiagramService {
     });
   }
 
+  //inicializacia message move
+  protected draggingMessage: MessageComponent = null;
+  public initializeVerticalMessageMove() {
+    this.inputService.onMouseDown((event) => {
+      if (event.model.type == "Message") {
+        this.draggingMessage = event.model.component;
+      }
+    });
+
+    this.inputService.onMouseMove((event) => {
+      if (this.draggingMessage) {
+        this.draggingMessage.top = event.offsetY - 50;
+      }
+    });
+    
+    this.inputService.onMouseUp((event) => {
+      if (event.model.type == "Message") {
+        //this.draggingMessage.top = null;
+        this.draggingMessage = null;
+      }
+    });
+  }
+
   public createLifeline(name: string, callback: any) {
     if (this.lifelineBefore) {
       let interaction = this.lifelineBefore.interaction;
@@ -128,7 +153,7 @@ export class SequenceDiagramService {
       }
       let lifeline = this.datastore.createRecord(M.Lifeline, {
         name: name,
-        //TODO dorobit podla offesetX
+        //TODO dorobit podla offsetX
         order: 1,
         interaction: this.layer
       });
@@ -174,9 +199,9 @@ export class SequenceDiagramService {
   public deleteDiagram(sequenceDiagram: M.Interaction) {
     // this.datastore.deleteRecord(M.Interaction, sequenceDiagram.id).subscribe(() => {
     //   console.log("Maze sa diagram:", sequenceDiagram);
-      this.datastore.deleteRecord(M.InteractionFragment, sequenceDiagram.fragment.fragmentable.id)
+    this.datastore.deleteRecord(M.InteractionFragment, sequenceDiagram.fragment.fragmentable.id)
       .subscribe();
-      location.reload();
+    location.reload();
     // });
   }
 
@@ -202,18 +227,18 @@ export class SequenceDiagramService {
               location.reload();
             });
             this.performingDelete = false;
-          break;
+            break;
           case 'Layer':
             let interaction = this.datastore.peekRecord(M.Interaction, event.model.id);
             // maze iba z tabulky Interaction Fragment, na backende sa dorobi automaticke mazanie morph vztahu 
             // this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
             // console.log("Maze sa interakcia:", interaction);
-              this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id)
+            this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id)
               .subscribe();
-              location.reload();
+            location.reload();
             // });
             this.performingDelete = false;
-          break;
+            break;
         }
       }
     });

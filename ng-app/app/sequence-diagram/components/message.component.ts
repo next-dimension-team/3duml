@@ -7,6 +7,8 @@ import * as M from '../models';
 })
 export class MessageComponent {
 
+  protected staticTop: number = null;
+
   // Konstantu vytiahnut niekam do konfigu
   protected VZDIALENOST_LAJFLAJN = 400;
   protected SIRKA_LAJFLAJNY = 120; // TOTO musi byt parne cislo delitelne 4 bezo zvysku 120/4 = 30 ez
@@ -17,13 +19,21 @@ export class MessageComponent {
   @Input()
   public messageModel: M.Message;
 
-  protected get top() {
-    let globalOffset = this.VYSKA_HLAVICKY_LAJFLAJNY - this.VZDIALENOST_OD_VRCHU_MESSAGE_PO_VRCH_CIARY_MESSAGE;
-    let sendTime = this.messageModel.sendEvent.time;
-    let receiveTime = this.messageModel.receiveEvent.time;
-    let time = (sendTime < receiveTime) ? sendTime : receiveTime;
-    let messageOffset = time * this.VYSKA_ZUBKU;
-    return globalOffset + messageOffset;
+  public get top() {
+    if (this.staticTop) { 
+      return this.staticTop; 
+    } else {
+      let globalOffset = this.VYSKA_HLAVICKY_LAJFLAJNY - this.VZDIALENOST_OD_VRCHU_MESSAGE_PO_VRCH_CIARY_MESSAGE;
+      let sendTime = this.messageModel.sendEvent.time;
+      let receiveTime = this.messageModel.receiveEvent.time;
+      let time = (sendTime < receiveTime) ? sendTime : receiveTime;
+      let messageOffset = time * this.VYSKA_ZUBKU;
+      return globalOffset + messageOffset;
+    }
+  }
+
+  public set top(currentTop: number) {
+    this.staticTop = currentTop;
   }
 
   // TODO: implementovat logiku
@@ -32,7 +42,7 @@ export class MessageComponent {
     let targetLifelineOrder = this.messageModel.receiveEvent.covered.order;
     let firstLifelineOrder = (sourceLifelineOrder < targetLifelineOrder) ? sourceLifelineOrder : targetLifelineOrder;
 
-    let leftOffset = (firstLifelineOrder - 1) * this.VZDIALENOST_LAJFLAJN;    
+    let leftOffset = (firstLifelineOrder - 1) * this.VZDIALENOST_LAJFLAJN;
     let lifelineHalfWith = this.SIRKA_LAJFLAJNY / 2;
 
     return leftOffset + lifelineHalfWith;
@@ -42,7 +52,7 @@ export class MessageComponent {
   protected get length() {
     let sourceLifelineOrder = this.messageModel.sendEvent.covered.order;
     let targetLifelineOrder = this.messageModel.receiveEvent.covered.order;
-    
+
     return Math.abs(sourceLifelineOrder - targetLifelineOrder) * this.VZDIALENOST_LAJFLAJN;
   }
 
