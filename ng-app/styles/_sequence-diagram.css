@@ -152,10 +152,6 @@ app-sequence-diagram.editMode > div {
   background-color: #f1c40f!important;
 }
 
-.sequence-diagram .lifeline .title.editingTitle span {
-  display: none;
-}
-
 /* Lifeline - Line */
 .sequence-diagram .lifeline .line {
   border-left: 1px dashed #000;
