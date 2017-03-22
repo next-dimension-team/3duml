@@ -1,7 +1,5 @@
 /* Global */
 * {
-  backface-visibility: hidden!important;
-  -webkit-backface-visibility: hidden!important;
   outline: 1px solid transparent!important;
 }
 
