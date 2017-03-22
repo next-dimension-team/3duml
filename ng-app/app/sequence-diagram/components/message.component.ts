@@ -20,8 +20,8 @@ export class MessageComponent {
   public messageModel: M.Message;
 
   public get top() {
-    if (this.staticTop) { 
-      return this.staticTop; 
+    if (this.staticTop) {
+      return this.staticTop;
     } else {
       let globalOffset = this.VYSKA_HLAVICKY_LAJFLAJNY - this.VZDIALENOST_OD_VRCHU_MESSAGE_PO_VRCH_CIARY_MESSAGE;
       let sendTime = this.messageModel.sendEvent.time;
@@ -36,7 +36,6 @@ export class MessageComponent {
     this.staticTop = currentTop;
   }
 
-  // TODO: implementovat logiku
   protected get left() {
     let sourceLifelineOrder = this.messageModel.sendEvent.covered.order;
     let targetLifelineOrder = this.messageModel.receiveEvent.covered.order;
@@ -48,7 +47,6 @@ export class MessageComponent {
     return leftOffset + lifelineHalfWith;
   }
 
-  // TODO: implementovat logiku
   protected get length() {
     let sourceLifelineOrder = this.messageModel.sendEvent.covered.order;
     let targetLifelineOrder = this.messageModel.receiveEvent.covered.order;
@@ -56,7 +54,6 @@ export class MessageComponent {
     return Math.abs(sourceLifelineOrder - targetLifelineOrder) * this.VZDIALENOST_LAJFLAJN;
   }
 
-  // TODO: implementovat logiku
   protected get direction() {
     let sourceLifeline = this.messageModel.sendEvent.covered;
     let targetLifeline = this.messageModel.receiveEvent.covered;
