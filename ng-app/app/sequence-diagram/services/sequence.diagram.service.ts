@@ -97,29 +97,6 @@ export class SequenceDiagramService {
     });
   }
 
-  //inicializacia message move
-  protected draggingMessage: MessageComponent = null;
-  public initializeVerticalMessageMove() {
-    this.inputService.onMouseDown((event) => {
-      if (event.model.type == "Message") {
-        this.draggingMessage = event.model.component;
-      }
-    });
-
-    this.inputService.onMouseMove((event) => {
-      if (this.draggingMessage) {
-        this.draggingMessage.top = event.offsetY - 50;
-      }
-    });
-    
-    this.inputService.onMouseUp((event) => {
-      if (event.model.type == "Message") {
-        //this.draggingMessage.top = null;
-        this.draggingMessage = null;
-      }
-    });
-  }
-
   public createLifeline(name: string, callback: any) {
     if (this.lifelineBefore) {
       let interaction = this.lifelineBefore.interaction;
@@ -179,6 +156,41 @@ export class SequenceDiagramService {
       interactionFragment.save().subscribe(() => {
         location.reload();
       });
+    });
+  }
+
+  /**
+   * Update Operation
+   */
+
+  // TODO: dorobit upratovanie messagov
+  protected draggingMessage: MessageComponent = null;
+  public initializeVerticalMessageMove() {
+    this.inputService.onMouseDown((event) => {
+      if (event.model.type == "Message") {
+        this.draggingMessage = event.model.component;
+        console.log(this.draggingMessage);
+      }
+    });
+
+    this.inputService.onMouseMove((event) => {
+      if (this.draggingMessage) {
+        this.draggingMessage.top = event.offsetY - 50;
+      }
+    });
+
+    this.inputService.onMouseUp((event) => {
+      if (this.draggingMessage && event.model.type == "Message") {
+        // TODO: Pouzit z configu nie iba /40.0
+        console.log(event.offsetY);
+        console.log(Math.round((event.offsetY - 50) / 40.0));
+        this.draggingMessage.messageModel.sendEvent.time = Math.round((event.offsetY - 80) / 40.0);
+        this.draggingMessage.messageModel.receiveEvent.time = Math.round((event.offsetY - 80) / 40.0);
+        this.draggingMessage.messageModel.sendEvent.save().subscribe(() => { });
+        this.draggingMessage.messageModel.receiveEvent.save().subscribe(() => { });
+        this.draggingMessage.top = null;
+        this.draggingMessage = null;
+      }
     });
   }
 
@@ -347,10 +359,10 @@ export class SequenceDiagramService {
 
         destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
           this.datastore.createRecord(M.Message, {
-            // TODO nazvat message ako chcem
+            // TODO: nazvat message ako chcem
             name: result,
             sort: "synchCall",
-            // TODO zmenit dynamicky na interaction / fragment v ktorom som
+            // TODO: zmenit dynamicky na interaction / fragment v ktorom som
             interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
             sendEvent: sourceOccurence,
             receiveEvent: destinationOccurence
@@ -414,10 +426,4 @@ export class SequenceDiagramService {
       }
     }
   }*/
-
-  /**
-   * Update Operation
-   */
-
-  // TODO
 }
