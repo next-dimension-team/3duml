@@ -29,6 +29,7 @@ export class SequenceDiagramService {
     this.initializeDeleteOperation();
     this.initializeAddMessageOperation();
     this.initializeAddLifeline();
+    this.initializeMoveMessageOperation();
   }
 
   /**
@@ -174,9 +175,9 @@ export class SequenceDiagramService {
   public deleteDiagram(sequenceDiagram: M.Interaction) {
     // this.datastore.deleteRecord(M.Interaction, sequenceDiagram.id).subscribe(() => {
     //   console.log("Maze sa diagram:", sequenceDiagram);
-      this.datastore.deleteRecord(M.InteractionFragment, sequenceDiagram.fragment.fragmentable.id)
+    this.datastore.deleteRecord(M.InteractionFragment, sequenceDiagram.fragment.fragmentable.id)
       .subscribe();
-      location.reload();
+    location.reload();
     // });
   }
 
@@ -202,18 +203,18 @@ export class SequenceDiagramService {
               location.reload();
             });
             this.performingDelete = false;
-          break;
+            break;
           case 'Layer':
             let interaction = this.datastore.peekRecord(M.Interaction, event.model.id);
             // maze iba z tabulky Interaction Fragment, na backende sa dorobi automaticke mazanie morph vztahu 
             // this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
             // console.log("Maze sa interakcia:", interaction);
-              this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id)
+            this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id)
               .subscribe();
-              location.reload();
+            location.reload();
             // });
             this.performingDelete = false;
-          break;
+            break;
         }
       }
     });
@@ -240,31 +241,16 @@ export class SequenceDiagramService {
   protected calculateTimeOnMessageDelete(message: M.Message) {
 
     let deletedMessageTime = message.sendEvent.time;
-    let receiveLifeline = message.receiveEvent.covered;
-    let sendLifeline = message.sendEvent.covered;
+    let lifelinesInCurrentLayer = message.interaction.lifelines;
 
-    // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
-    for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-      if (occurrence.time > deletedMessageTime) {
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time - 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
-      }
-    }
-    // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
-    for (let occurrence of sendLifeline.occurrenceSpecifications) {
-      if (occurrence.time > deletedMessageTime) {
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time - 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
+    // prechadzam Occurence Spec. na vsetkych lifelinach a znizujem time o 1
+    for (let lifeline of lifelinesInCurrentLayer) {
+      for (let occurrence of lifeline.occurrenceSpecifications) {
+        if (occurrence.time >= deletedMessageTime) {
+          let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+          occurenceForChange.time = occurenceForChange.time - 1;
+          occurenceForChange.save().subscribe();
+        }
       }
     }
   }
@@ -301,8 +287,22 @@ export class SequenceDiagramService {
   protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
     let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
     let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
+    let currentInteraction = this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id);
     let time = Math.round(sourceLifeline.model.time);
+    let maxTimeValue = 0;
     let messageName;
+
+    //Najprv vypocitam ci su za nasou ktoru chcem pridat nejake message, ak ano, zmenim occurenci
+    //Takto to funguje spravne
+    //Najprv odskocia message a potom sa prida
+    maxTimeValue = this.calculateTimeOnMessageInsert(currentInteraction, time, sourceLifelineModel, destinationLifelineModel);
+
+    //Napad: Pridavat message vzdy najviac na vrch ako sa da, podla mna to sa tak ma aj v EAcku
+    //Problem: Treba brat do uvahy comibed fragments a to je nejako vyriesit, keby vieme kolko occurence zabera
+    //alebo podobne.
+    /* if (maxTimeValue > 0){
+      time = maxTimeValue + 1;
+    }*/
 
     this.inputService.createInputDialog("Creating message", "", "Enter message name").componentInstance.onOk.subscribe(result => {
       messageName = result;
@@ -339,60 +339,90 @@ export class SequenceDiagramService {
   }
 
   // TODO: pridavanie 3D sipky
-  /*protected calculateTimeOnMessageInsert(message: M.Message){
+  protected calculateTimeOnMessageInsert(currentInteraction: M.Interaction, time: number,
+    sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline) {
 
     let move = false;
-    let insertedMessageTime = message.sendEvent.time;
-    let sendLifeline = message.sendEvent.covered;
-    let receiveLifeline = message.receiveEvent.covered;
+    let maxTimeValue = 0;
+    let lifelinesInCurrentLayer = currentInteraction.lifelines;
 
-    for (let occurrence of sendLifeline.occurrenceSpecifications) {
-      if (occurrence.time == insertedMessageTime) {
-        move = true;
-        break;
-      }
-    }
-
-    if (move) {
-      for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-        if (occurrence.time == insertedMessageTime) {
+    //Prechadzam vsetky lifeliny v aktualnom platne
+    for (let lifeline of lifelinesInCurrentLayer) {
+      for (let occurrence of lifeline.occurrenceSpecifications) {
+        if (occurrence.time == time) {
           move = true;
+          break;
+        }
+        if (move) {
           break;
         }
       }
     }
 
-    if (move) {
-      // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
-      for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-        if (occurrence.time >= insertedMessageTime){
-          // teraz to znizit o 1 treba, zober id occurence spec a znizit
-          this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-            (occurrenceSpecification: M.OccurrenceSpecification) => {
-              occurrenceSpecification.time = occurrenceSpecification.time + 1;
-              occurrenceSpecification.save().subscribe();
-            }
-          );
+    //Napad: ak sme nenasli taku messageu ze musime pod nou daco posuvat, tak nastavim maxTimeValue a dame ju navrch
+    /*if (!move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time > maxTimeValue) {
+            maxTimeValue = occurrence.time;
+          }
         }
       }
-      // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
-      for (let occurrence of sendLifeline.occurrenceSpecifications) {
-        if (occurrence.time >= insertedMessageTime){
-          // teraz to znizit o 1 treba, zober id occurence spec a znizit
-          this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-            (occurrenceSpecification: M.OccurrenceSpecification) => {
-              occurrenceSpecification.time = occurrenceSpecification.time + 1;
-              occurrenceSpecification.save().subscribe();
-            }
-          );
+    }*/
+
+    //Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej
+    if (move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time >= time) {
+            let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+            occurenceForChange.time = occurenceForChange.time + 1;
+            occurenceForChange.save().subscribe();
+          }
         }
       }
     }
-  }*/
+    return maxTimeValue;
+  }
 
   /**
    * Update Operation
    */
+  protected initializeMoveMessageOperation() {
+
+    let messageMove = false;
+    let lifelineModel;
+    let occurrenceSpecification;
+
+    this.inputService.onRightClick((event) => {
+      if (event.model.type == "LifelinePoint") {
+        if (messageMove) {
+
+          lifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.lifelineID);
+          console.log(occurrenceSpecification.time);
+          console.log(event.model.time);
+          occurrenceSpecification.time = event.model.time;
+          occurrenceSpecification.covered = lifelineModel;
+          occurrenceSpecification.save().subscribe(() => {
+            location.reload();
+          });
+          messageMove = false;
+        }
+        else {
+          lifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.lifelineID);
+          //prejdem occurrence specifications a zistim ci taky uz je t.j., ci uz na tom time je message
+          for (let occurrence of lifelineModel.occurrenceSpecifications) {
+            if (occurrence.time == event.model.time) {
+              messageMove = true;
+              //tu mam occurrence z DB na ktorom je message
+              occurrenceSpecification = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+              break;
+            }
+          }
+        }
+      }
+    });
+  }
 
   // TODO
 }
