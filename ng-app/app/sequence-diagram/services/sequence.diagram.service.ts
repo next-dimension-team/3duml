@@ -186,10 +186,18 @@ export class SequenceDiagramService {
         console.log(Math.round((event.offsetY - 50) / 40.0));
         this.draggingMessage.messageModel.sendEvent.time = Math.round((event.offsetY - 80) / 40.0);
         this.draggingMessage.messageModel.receiveEvent.time = Math.round((event.offsetY - 80) / 40.0);
+        this.calculateTimeOnMessageUpdate(
+          this.draggingMessage.messageModel.sendEvent.covered.interaction,
+          this.draggingMessage.messageModel.sendEvent.time,
+          this.draggingMessage.messageModel.sendEvent.covered,
+          this.draggingMessage.messageModel.receiveEvent.covered,
+        );
         this.draggingMessage.messageModel.sendEvent.save().subscribe(() => { });
-        this.draggingMessage.messageModel.receiveEvent.save().subscribe(() => { });
+        this.draggingMessage.messageModel.receiveEvent.save().subscribe(() => {
+          this.draggingMessage = null;
+          //location.reload();
+        });
         this.draggingMessage.top = null;
-        this.draggingMessage = null;
       }
     });
   }
@@ -277,31 +285,16 @@ export class SequenceDiagramService {
   protected calculateTimeOnMessageDelete(message: M.Message) {
 
     let deletedMessageTime = message.sendEvent.time;
-    let receiveLifeline = message.receiveEvent.covered;
-    let sendLifeline = message.sendEvent.covered;
+    let lifelinesInCurrentLayer = message.interaction.lifelines;
 
-    // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
-    for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-      if (occurrence.time > deletedMessageTime) {
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time - 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
-      }
-    }
-    // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
-    for (let occurrence of sendLifeline.occurrenceSpecifications) {
-      if (occurrence.time > deletedMessageTime) {
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time - 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
+    // prechadzam Occurence Spec. na vsetkych lifelinach a znizujem time o 1
+    for (let lifeline of lifelinesInCurrentLayer) {
+      for (let occurrence of lifeline.occurrenceSpecifications) {
+        if (occurrence.time >= deletedMessageTime) {
+          let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+          occurenceForChange.time = occurenceForChange.time - 1;
+          occurenceForChange.save().subscribe();
+        }
       }
     }
   }
@@ -338,8 +331,22 @@ export class SequenceDiagramService {
   protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
     let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
     let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
+    let currentInteraction = this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id);
     let time = Math.round(sourceLifeline.model.time);
+    let maxTimeValue = 0;
     let messageName;
+
+    //Najprv vypocitam ci su za nasou ktoru chcem pridat nejake message, ak ano, zmenim occurenci
+    //Takto to funguje spravne
+    //Najprv odskocia message a potom sa prida
+    maxTimeValue = this.calculateTimeOnMessageInsert(currentInteraction, time, sourceLifelineModel, destinationLifelineModel);
+
+    // TODO: Napad - Pridavat message vzdy najviac na vrch ako sa da, podla mna to sa tak ma aj v EAcku
+    //Problem: Treba brat do uvahy comibed fragments a to je nejako vyriesit, keby vieme kolko occurence zabera
+    //alebo podobne.
+    /* if (maxTimeValue > 0){
+      time = maxTimeValue + 1;
+    }*/
 
     this.inputService.createInputDialog("Creating message", "", "Enter message name").componentInstance.onOk.subscribe(result => {
       messageName = result;
@@ -376,54 +383,96 @@ export class SequenceDiagramService {
   }
 
   // TODO: pridavanie 3D sipky
-  /*protected calculateTimeOnMessageInsert(message: M.Message){
+  protected calculateTimeOnMessageInsert(currentInteraction: M.Interaction, time: number,
+    sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline) {
 
     let move = false;
-    let insertedMessageTime = message.sendEvent.time;
-    let sendLifeline = message.sendEvent.covered;
-    let receiveLifeline = message.receiveEvent.covered;
+    let maxTimeValue = 0;
+    let lifelinesInCurrentLayer = currentInteraction.lifelines;
 
-    for (let occurrence of sendLifeline.occurrenceSpecifications) {
-      if (occurrence.time == insertedMessageTime) {
-        move = true;
-        break;
-      }
-    }
-
-    if (move) {
-      for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-        if (occurrence.time == insertedMessageTime) {
+    //Prechadzam vsetky lifeliny v aktualnom platne
+    for (let lifeline of lifelinesInCurrentLayer) {
+      for (let occurrence of lifeline.occurrenceSpecifications) {
+        if (occurrence.time == time) {
           move = true;
+          break;
+        }
+        if (move) {
           break;
         }
       }
     }
 
-    if (move) {
-      // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
-      for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-        if (occurrence.time >= insertedMessageTime){
-          // teraz to znizit o 1 treba, zober id occurence spec a znizit
-          this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-            (occurrenceSpecification: M.OccurrenceSpecification) => {
-              occurrenceSpecification.time = occurrenceSpecification.time + 1;
-              occurrenceSpecification.save().subscribe();
-            }
-          );
+    //Napad: ak sme nenasli taku messageu ze musime pod nou daco posuvat, tak nastavim maxTimeValue a dame ju navrch
+    /*if (!move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time > maxTimeValue) {
+            maxTimeValue = occurrence.time;
+          }
         }
       }
-      // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
-      for (let occurrence of sendLifeline.occurrenceSpecifications) {
-        if (occurrence.time >= insertedMessageTime){
-          // teraz to znizit o 1 treba, zober id occurence spec a znizit
-          this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-            (occurrenceSpecification: M.OccurrenceSpecification) => {
-              occurrenceSpecification.time = occurrenceSpecification.time + 1;
-              occurrenceSpecification.save().subscribe();
-            }
-          );
+    }*/
+
+    //Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej
+    if (move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time >= time) {
+            let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+            occurenceForChange.time = occurenceForChange.time + 1;
+            occurenceForChange.save().subscribe();
+          }
         }
       }
     }
-  }*/
+    return maxTimeValue;
+  }
+
+  protected calculateTimeOnMessageUpdate(currentInteraction: M.Interaction, time: number,
+    sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline) {
+
+    let move = false;
+    let maxTimeValue = 0;
+    let lifelinesInCurrentLayer = currentInteraction.lifelines;
+
+    //Prechadzam vsetky lifeliny v aktualnom platne
+    for (let lifeline of lifelinesInCurrentLayer) {
+      for (let occurrence of lifeline.occurrenceSpecifications) {
+        if (occurrence.time == time) {
+          move = true;
+          break;
+        }
+        if (move) {
+          break;
+        }
+      }
+    }
+
+    //Napad: ak sme nenasli taku messageu ze musime pod nou daco posuvat, tak nastavim maxTimeValue a dame ju navrch
+    /*if (!move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time > maxTimeValue) {
+            maxTimeValue = occurrence.time;
+          }
+        }
+      }
+    }*/
+
+    //TODO : doriesit aby sa neposunuli obe message na rovnake miesto ---  if (occurrence.time >= time), nejak id porovnat alebo podobne
+    //Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej
+    if (move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time >= time) {
+            let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+            occurenceForChange.time = occurenceForChange.time + 1;
+            occurenceForChange.save().subscribe();
+          }
+        }
+      }
+    }
+    return maxTimeValue;
+  }
 }
