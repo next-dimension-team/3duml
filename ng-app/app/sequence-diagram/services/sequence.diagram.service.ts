@@ -78,8 +78,8 @@ export class SequenceDiagramService {
       let interactionFragment = this.datastore.createRecord(M.InteractionFragment, {
         fragmentable: interaction
       });
-
       interactionFragment.save().subscribe();
+      location.reload();
     });
   }
 
@@ -243,6 +243,7 @@ export class SequenceDiagramService {
   }
 
   protected initializeDeleteOperation() {
+    let confirmDialog;
 
     this.inputService.onLeftClick((event) => {
       if (this.performingDelete) {
@@ -250,31 +251,44 @@ export class SequenceDiagramService {
 
           case 'Message':
             let message = this.datastore.peekRecord(M.Message, event.model.id);
-            this.calculateTimeOnMessageDelete(message);
-            this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
-              location.reload();
+            confirmDialog = this.inputService.createConfirmDialog("Delete message", "Do you really want to delete message \"" + message.name + "\" ?");
+
+            confirmDialog.componentInstance.onYes.subscribe(result => {
+              this.calculateTimeOnMessageDelete(message);
+              this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
+                location.reload();
+              });
+              this.performingDelete = false;
             });
-            this.performingDelete = false;
             break;
 
           case 'Lifeline':
             let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
-            this.calculateLifelinesOrder(lifeline);
-            this.datastore.deleteRecord(M.Lifeline, lifeline.id).subscribe(() => {
-              location.reload();
+            confirmDialog = this.inputService.createConfirmDialog("Delete lifeline", "Do you really want to delete lifeline \"" + lifeline.name + "\" ?");
+
+            confirmDialog.componentInstance.onYes.subscribe(result => {
+              this.calculateLifelinesOrder(lifeline);
+              this.datastore.deleteRecord(M.Lifeline, lifeline.id).subscribe(() => {
+                location.reload();
+              });
+              this.performingDelete = false;
             });
-            this.performingDelete = false;
           break;
+            
           case 'Layer':
             let interaction = this.datastore.peekRecord(M.Interaction, event.model.id);
-            // maze iba z tabulky Interaction Fragment, na backende sa dorobi automaticke mazanie morph vztahu 
-            // this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
-            // console.log("Maze sa interakcia:", interaction);
-              this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id)
-              .subscribe();
-              location.reload();
-            // });
-            this.performingDelete = false;
+            confirmDialog = this.inputService.createConfirmDialog("Delete layer", "Do you really want to delete layer \"" + interaction.name + "\" ?");
+
+            confirmDialog.componentInstance.onYes.subscribe(result => {
+              // maze iba z tabulky Interaction Fragment, na backende sa dorobi automaticke mazanie morph vztahu 
+              // this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
+              // console.log("Maze sa interakcia:", interaction);
+                this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id)
+                .subscribe();
+                location.reload();
+              // });
+              this.performingDelete = false;
+            });
           break;
         }
       }
