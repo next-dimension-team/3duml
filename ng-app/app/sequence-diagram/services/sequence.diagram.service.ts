@@ -260,6 +260,9 @@ export class SequenceDiagramService {
               });
               this.performingDelete = false;
             });
+            confirmDialog.componentInstance.onNo.subscribe(result => {
+              this.performingDelete = false;
+            });
             break;
 
           case 'Lifeline':
@@ -271,7 +274,9 @@ export class SequenceDiagramService {
               this.datastore.deleteRecord(M.Lifeline, lifeline.id).subscribe(() => {
                 location.reload();
               });
-              this.performingDelete = false;
+              confirmDialog.componentInstance.onNo.subscribe(result => {
+                this.performingDelete = false;
+              });
             });
           break;
             
@@ -287,6 +292,9 @@ export class SequenceDiagramService {
                 .subscribe();
                 location.reload();
               // });
+              this.performingDelete = false;
+            });
+            confirmDialog.componentInstance.onNo.subscribe(result => {
               this.performingDelete = false;
             });
           break;

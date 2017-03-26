@@ -112,10 +112,10 @@ app-sequence-diagram.editMode > div {
   position: absolute;
 }
 
-/*.sequence-diagram :hover {
+.sequence-diagram :hover {
   color: blue!important;
   background-color: rgba(0, 255, 0, 0.1)!important;
-}*/
+}
 
 /* Lifeline */
 .sequence-diagram .lifeline {
