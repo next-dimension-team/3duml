@@ -14,6 +14,19 @@ class InteractionFragment extends Node
     protected $table = 'interaction_fragments';
 
     /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot() {
+      parent::boot();
+
+      static::deleting(function($model) {
+        $model->fragmentable->delete();
+      });
+    }
+
+    /**
      * References the concrete fragment type of current tree node.
      */
     public function fragmentable()
