@@ -24,11 +24,13 @@ export class SequenceDiagramService {
    * Select Operation
    */
   protected selectedElement = null;
+  private editMode = false;
 
   public initialize() {
     this.initializeDeleteOperation();
     this.initializeAddMessageOperation();
     this.initializeAddLifeline();
+    this.moveLifeline();
   }
 
   /**
@@ -82,6 +84,7 @@ export class SequenceDiagramService {
   }
 
   protected lifelineBefore: M.Lifeline;
+  protected selectedLifeline: M.Lifeline;
   protected layer: M.Interaction;
 
   public initializeAddLifeline() {
@@ -93,6 +96,65 @@ export class SequenceDiagramService {
         this.layer = this.datastore.peekRecord(M.Interaction, event.model.id);
       }
     });
+  }
+
+  public setEditMode(type : boolean) {
+    this.editMode = type;
+  }
+
+  public moveLifeline(){
+    let moveBool = false;
+    this.inputService.onMouseDown((event) => {
+      if (event.model.type == 'Lifeline') {
+        this.selectedLifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
+        moveBool = true;
+      }
+    });
+    this.inputService.onMouseUp((event) => {
+      if (moveBool && this.selectedLifeline != null) {
+        console.log(this.editMode);
+        if (this.editMode == false) {
+          this.selectedLifeline = null;
+          return;
+        }
+        moveBool = false;
+        let interaction = this.selectedLifeline.interaction;
+        let lifelinesInInteraction = interaction.lifelines;
+        let lifelineOrder = this.selectedLifeline.order;
+        let position = Math.floor(event.offsetX / 400.0);
+        let numOfLifelines = lifelinesInInteraction.length;
+        if (position <= 0) {
+          position = 1;
+        }
+        if (position > numOfLifelines) {
+          position = numOfLifelines;
+        }
+        if (position == this.selectedLifeline.order) {
+          return;
+        }
+        console.log(position);
+        for (let lifeline of lifelinesInInteraction) {
+          console.log(lifeline);
+          if (lifeline.id == this.selectedLifeline.id) {
+            lifeline.order = position;
+            lifeline.save().subscribe();
+            continue;
+          }
+          else if (lifeline.order > this.selectedLifeline.order && lifeline.order <= position) {
+            lifeline.order--;
+            lifeline.save().subscribe();
+            continue;
+          }
+          else if (lifeline.order < this.selectedLifeline.order && lifeline.order >= position) {
+            lifeline.order++;
+            lifeline.save().subscribe();
+            continue;
+          }
+        }
+        location.reload();
+      }
+    });
+    this.selectedLifeline = null;
   }
 
   public createLifeline(name: string, callback: any) {

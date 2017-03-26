@@ -67,6 +67,28 @@ export class InputService {
     this.mouseMove.subscribe(callback);
   }
 
+  /* Mouse Down - nebolo to EZ ale vygooglili sme to vdaka dobrym komentom od Mata*/
+  public mouseDown = new EventEmitter;
+
+  public broadcastMouseDown(param: any) {
+    this.mouseDown.emit(param);
+  }
+
+  public onMouseDown(callback: any) {
+    this.mouseDown.subscribe(callback);
+  }
+
+  /* Mouse UP - lebo ked ides hore tak si TOP TOP a cela skola je EZ*/
+  public mouseUp = new EventEmitter;
+
+  public broadcastMouseUp(param: any) {
+    this.mouseUp.emit(param);
+  }
+
+  public onMouseUp(callback: any) {
+    this.mouseUp.subscribe(callback);
+  }
+
   public createInputDialog(title?: string, message?: string, placeholder?: string): MdDialogRef<any> {
     let dialogRef: MdDialogRef<any> = this.dialog.open(InputDialogComponent);
     dialogRef.componentInstance.title = title;
