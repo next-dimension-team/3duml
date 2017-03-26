@@ -1,5 +1,6 @@
 import { Component, Input, ElementRef, OnChanges, OnInit, OnDestroy } from '@angular/core';
 import * as M from '../models';
+import { SequenceDiagramService } from '../../sequence-diagram/services';
 import * as THREE from 'three';
 let { Object: CSS3DObject } : { Object: typeof THREE.CSS3DObject } = require('three.css')(THREE);
 
@@ -22,7 +23,7 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
 
   protected fragments = [];
 
-  constructor(protected element: ElementRef) {
+  constructor(private sequenceDiagramService: SequenceDiagramService, protected element: ElementRef) {
     //
   }
 
@@ -165,6 +166,9 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       min: Math.min(a.min, b.min),
       max: Math.max(a.max, b.max)
     };
+  }
+  protected renameLayer(interactionFragmentModel : M.InteractionFragment) {
+    this.sequenceDiagramService.renameLayer(interactionFragmentModel);
   }
 
 }

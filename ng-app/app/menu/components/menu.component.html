@@ -29,7 +29,7 @@
         <ul class="sidebar-nav">
             <li *ngFor="let sequenceDiagram of sequenceDiagrams" [class.active]="sequenceDiagram==openedSequenceDiagram">
                 <md-card>
-                    <md-card-content>
+                    <md-card-content (dblclick)="renameDiagram(sequenceDiagram)">
                         <h3>{{sequenceDiagram.name}}</h3>
                     </md-card-content>
                     <md-card-actions>
