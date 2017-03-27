@@ -45,7 +45,7 @@
         </ul>
     </md-tab>
 
-    <md-tab *ngIf="openedSequenceDiagramId" label="Edit" class="menu-tab">
+    <md-tab label="Edit" class="menu-tab">
         <md-list>
             <h3 md-subheader>CREATE</h3>
             <md-list-item>
@@ -53,26 +53,20 @@
                     <md-icon>add_to_queue</md-icon> Create Diagram
                 </button>
             </md-list-item>
-            <md-list-item>
+            <md-list-item *ngIf="openedSequenceDiagramId">
                 <button md-button class="list-item-button" (click)="createLayerHandler()">
                     <md-icon>library_add</md-icon> Create Layer
                 </button>
             </md-list-item>
-            <md-list-item>
+            <md-list-item *ngIf="openedSequenceDiagramId">
                 <button md-button class="list-item-button" (click)="createLifeline()">
                     <md-icon>add</md-icon> Create Lifeline
                 </button>
             </md-list-item>
-            <h3 md-subheader>DELETE</h3>
-             <md-list-item>
+            <h3 md-subheader *ngIf="openedSequenceDiagramId">DELETE</h3>
+            <md-list-item *ngIf="openedSequenceDiagramId">
                 <button md-button class="list-item-button" (click)="delete()">
                     <md-icon>delete</md-icon> Delete Component
-                </button>
-            </md-list-item>
-            <h3 md-subheader>TEST</h3>
-             <md-list-item>
-                <button md-button class="list-item-button" (click)="confirmTest()">
-                    <md-icon>done</md-icon> Confirm Dialog
                 </button>
             </md-list-item>
         </md-list>
