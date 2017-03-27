@@ -21,7 +21,9 @@ export class MenuComponent implements OnInit {
   private openedSequenceDiagramId: string;
   protected editMode: Boolean = false;
 
-  constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService) { }
+  constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService) {
+    //
+  }
 
   public ngOnInit() {
     this.sequenceDiagramService.menuReload$.subscribe(
