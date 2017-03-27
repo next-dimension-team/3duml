@@ -22,126 +22,120 @@ class MinimalLayerSeeder extends Seeder
         $rootInteraction = factory(Interaction::class)->create([
             'name' => 'Minimal Layers Diagram',
         ]);
-        $rootInteractionFragment = factory(InteractionFragment::class)
-            ->make()
-            ->fragmentable()
-            ->associate($rootInteraction)
-            ->save();
+        $rootInteractionFragment = tap(
+            factory(InteractionFragment::class)->make()
+            ->fragmentable()->associate($rootInteraction),
+            function ($m) {
+                $m->save();
+            }
+        );
 
         // Create interactions
         $interactionA = factory(Interaction::class)->create([
             'name' => 'Interaction A',
         ]);
         $interactionFragmentA = tap(
-            factory(InteractionFragment::class)
-            ->make()
-            ->fragmentable()
-            ->associate($interactionA),
-            function ($interactionFragmentA) {
-                $interactionFragmentA->save();
+            factory(InteractionFragment::class)->make()
+            ->fragmentable()->associate($interactionA)
+            ->parent()->associate($rootInteractionFragment),
+            function ($m) {
+                $m->save();
             }
         );
-        $interactionFragmentA->makeChildOf($rootInteractionFragment);
 
         $interactionB = factory(Interaction::class)->create([
             'name' => 'Interaction B',
         ]);
         $interactionFragmentB = tap(
-            factory(InteractionFragment::class)
-            ->make()
-            ->fragmentable()
-            ->associate($interactionB),
-            function ($interactionFragmentB) {
-                $interactionFragmentB->save();
+            factory(InteractionFragment::class)->make()
+            ->fragmentable()->associate($interactionB)
+            ->parent()->associate($rootInteractionFragment),
+            function ($m) {
+                $m->save();
             }
         );
-        $interactionFragmentB->makeChildOf($rootInteractionFragment);
 
         // Create lifelines
         $lifelineA = tap(
-            factory(Lifeline::class)->make([
-                'name' => 'john: Person',
-                'order' => 1
+            factory(Lifeline::class)->states('resetOrder')->make([
+                'name' => 'john: Person'
             ])
-            ->interaction()
-            ->associate($interactionA),
-            function ($lifeline) {
-            $lifeline->save();
-        });
+            ->interaction()->associate($interactionA),
+            function ($m) {
+                $m->save();
+            }
+        );
 
         $lifelineB = tap(
             factory(Lifeline::class)->make([
-                'name' => 'anna: Person',
-                'order' => 2
+                'name' => 'anna: Person'
             ])
-            ->interaction()
-            ->associate($interactionA),
-            function ($lifeline) {
-            $lifeline->save();
-        });
+            ->interaction()->associate($interactionA),
+            function ($m) {
+                $m->save();
+            }
+        );
 
         $lifelineC = tap(
-            factory(Lifeline::class)->make([
-                'name' => 'peter: Person',
-                'order' => 1
+            factory(Lifeline::class)->states('resetOrder')->make([
+                'name' => 'peter: Person'
             ])
-            ->interaction()
-            ->associate($interactionB),
-            function ($lifeline) {
-            $lifeline->save();
-        });
+            ->interaction()->associate($interactionB),
+            function ($m) {
+                $m->save();
+            }
+        );
 
         $lifelineD = tap(
             factory(Lifeline::class)->make([
-                'name' => 'bill: Person',
-                'order' => 2
+                'name' => 'bill: Person'
             ])
-            ->interaction()
-            ->associate($interactionB),
-            function ($lifeline) {
-            $lifeline->save();
-        });
+            ->interaction()->associate($interactionB),
+            function ($m) {
+                $m->save();
+            }
+        );
 
         // Occurrence Specifications
         $occurrenceSpecificationA = tap(
             factory(OccurrenceSpecification::class)->make([
                 'time' => 1
             ])
-            ->covered()
-            ->associate($lifelineA),
-            function ($occurrenceSpecificationA) {
-            $occurrenceSpecificationA->save();
-        });
+            ->covered()->associate($lifelineA),
+            function ($m) {
+                $m->save();
+            }
+        );
 
         $occurrenceSpecificationB = tap(
             factory(OccurrenceSpecification::class)->make([
                 'time' => 1
             ])
-            ->covered()
-            ->associate($lifelineB),
-            function ($occurrenceSpecificationB) {
-            $occurrenceSpecificationB->save();
-        });
+            ->covered()->associate($lifelineB),
+            function ($m) {
+                $m->save();
+            }
+        );
 
         $occurrenceSpecificationC = tap(
             factory(OccurrenceSpecification::class)->make([
                 'time' => 2
             ])
-            ->covered()
-            ->associate($lifelineC),
-            function ($occurrenceSpecificationC) {
-            $occurrenceSpecificationC->save();
-        });
+            ->covered()->associate($lifelineC),
+            function ($m) {
+                $m->save();
+            }
+        );
 
         $occurrenceSpecificationD = tap(
             factory(OccurrenceSpecification::class)->make([
                 'time' => 2
             ])
-            ->covered()
-            ->associate($lifelineD),
-            function ($occurrenceSpecificationD) {
-            $occurrenceSpecificationD->save();
-        });
+            ->covered()->associate($lifelineD),
+            function ($m) {
+                $m->save();
+            }
+        );
 
         // Messages
         factory(Message::class)->make([
@@ -167,53 +161,46 @@ class MinimalLayerSeeder extends Seeder
             'operator' => 'opt',
         ]);
         $optF = tap(
-            factory(InteractionFragment::class)
-            ->make()
-            ->fragmentable()
-            ->associate($opt),
-            function ($optF) {
-                $optF->save();
+            factory(InteractionFragment::class)->make()
+            ->fragmentable()->associate($opt)
+            ->parent()->associate($interactionFragmentA),
+            function ($m) {
+                $m->save();
             }
         );
-        $optF->makeChildOf($interactionFragmentA);
 
         // Interaction Operand
         $optIO1 = factory(InteractionOperand::class)->create([
             'constraint' => 'N > 0',
         ]);
         $optIO1F = tap(
-            factory(InteractionFragment::class)
-            ->make()
-            ->fragmentable()
-            ->associate($optIO1),
-            function ($optIO1F) {
-                $optIO1F->save();
+            factory(InteractionFragment::class)->make()
+            ->fragmentable()->associate($optIO1)
+            ->parent()->associate($optF),
+            function ($m) {
+                $m->save();
             }
         );
-        $optIO1F->makeChildOf($optF);
 
         // Opt interaction
         $optI = factory(Interaction::class)->create();
         $optIF = tap(
-            factory(InteractionFragment::class)
-            ->make()
-            ->fragmentable()
-            ->associate($optI),
-            function ($optIF) {
-                $optIF->save();
+            factory(InteractionFragment::class)->make()
+            ->fragmentable()->associate($optI)
+            ->parent()->associate($optIO1F),
+            function ($m) {
+                $m->save();
             }
         );
-        $optIF->makeChildOf($optIO1F);
 
         // Interaction Operand Occurrence Specifications
         $occurrenceSpecificationX = tap(
             factory(OccurrenceSpecification::class)->make([
                 'time' => 3
             ])
-            ->covered()
-            ->associate($lifelineA),
-            function ($occurrenceSpecificationX) {
-                $occurrenceSpecificationX->save();
+            ->covered()->associate($lifelineA),
+            function ($m) {
+                $m->save();
             }
         );
 
@@ -221,10 +208,9 @@ class MinimalLayerSeeder extends Seeder
             factory(OccurrenceSpecification::class)->make([
                 'time' => 3
             ])
-            ->covered()
-            ->associate($lifelineB),
-            function ($occurrenceSpecificationY) {
-                $occurrenceSpecificationY->save();
+            ->covered()->associate($lifelineB),
+            function ($m) {
+                $m->save();
             }
         );
 
@@ -238,65 +224,51 @@ class MinimalLayerSeeder extends Seeder
             ->receiveEvent()->associate($occurrenceSpecificationY)
             ->save();
 
-        
-
-
-
-
-        if (true):
-
         // Combined Fragment
         $opt2 = factory(CombinedFragment::class)->create([
             'operator' => 'alt',
         ]);
         $opt2F = tap(
-            factory(InteractionFragment::class)
-            ->make()
-            ->fragmentable()
-            ->associate($opt2),
-            function ($opt2F) {
-                $opt2F->save();
+            factory(InteractionFragment::class)->make()
+            ->fragmentable()->associate($opt2)
+            ->parent()->associate($optIF),
+            function ($m) {
+                $m->save();
             }
         );
-        $opt2F->makeChildOf($optIF);
 
         // Interaction Operand
         $optIO12 = factory(InteractionOperand::class)->create([
             'constraint' => 'N > 0',
         ]);
         $optIO1F2 = tap(
-            factory(InteractionFragment::class)
-            ->make()
-            ->fragmentable()
-            ->associate($optIO12),
-            function ($optIO1F2) {
-                $optIO1F2->save();
+            factory(InteractionFragment::class)->make()
+            ->fragmentable()->associate($optIO12)
+            ->parent()->associate($opt2F),
+            function ($m) {
+                $m->save();
             }
         );
-        $optIO1F2->makeChildOf($opt2F);
 
         // Opt interaction
         $optI2 = factory(Interaction::class)->create();
         $optIF2 = tap(
-            factory(InteractionFragment::class)
-            ->make()
-            ->fragmentable()
-            ->associate($optI2),
-            function ($optIF2) {
-                $optIF2->save();
+            factory(InteractionFragment::class)->make()
+            ->fragmentable()->associate($optI2)
+            ->parent()->associate($optIO1F2),
+            function ($m) {
+                $m->save();
             }
         );
-        $optIF2->makeChildOf($optIO1F2);
 
         // Interaction Operand Occurrence Specifications
         $occurrenceSpecificationX2 = tap(
             factory(OccurrenceSpecification::class)->make([
                 'time' => 5
             ])
-            ->covered()
-            ->associate($lifelineA),
-            function ($occurrenceSpecificationX2) {
-                $occurrenceSpecificationX2->save();
+            ->covered()->associate($lifelineA),
+            function ($m) {
+                $m->save();
             }
         );
 
@@ -304,10 +276,9 @@ class MinimalLayerSeeder extends Seeder
             factory(OccurrenceSpecification::class)->make([
                 'time' => 5
             ])
-            ->covered()
-            ->associate($lifelineB),
-            function ($occurrenceSpecificationY2) {
-                $occurrenceSpecificationY2->save();
+            ->covered()->associate($lifelineB),
+            function ($m) {
+                $m->save();
             }
         );
 
@@ -320,7 +291,5 @@ class MinimalLayerSeeder extends Seeder
             ->sendEvent()->associate($occurrenceSpecificationX2)
             ->receiveEvent()->associate($occurrenceSpecificationY2)
             ->save();
-
-        endif;
     }
 }
