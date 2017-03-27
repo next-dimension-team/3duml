@@ -50,7 +50,6 @@ export class MenuComponent implements OnInit {
     this.openSequenceDiagram.emit(sequenceDiagram);
   }
 
-
   // CREATE
   createDiagram(): void {
     this.inputService.createInputDialog("Creating diagram", "" ,"Enter name of new digram.").componentInstance.onOk.subscribe(result => {
@@ -59,7 +58,7 @@ export class MenuComponent implements OnInit {
   }
 
   private createLayerHandler(): void {
-    this.inputService.createInputDialog("Creating layer", "" ,"Enter name of new layer.").componentInstance.onOk.subscribe(result => {
+    this.inputService.createInputDialog("Creating layer", "", "Enter name of new layer.").componentInstance.onOk.subscribe(result => {
       this.createLayer.emit(result);
     })
   }
@@ -77,7 +76,11 @@ export class MenuComponent implements OnInit {
   }
 
   protected deleteDiagram(sequenceDiagram: M.Interaction) {
-    this.sequenceDiagramService.deleteDiagram(sequenceDiagram);
+    let confirmDialog = this.inputService.createConfirmDialog("Delete diagram", "Do you really want to delete diagram \"" +
+      sequenceDiagram.name + "\" ?");
+    confirmDialog.componentInstance.onYes.subscribe(result => {
+      this.sequenceDiagramService.deleteDiagram(sequenceDiagram);
+    });
   }
 
   // TEST
