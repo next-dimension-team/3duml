@@ -22,7 +22,7 @@ export class MenuComponent implements OnInit {
   private openedSequenceDiagram: M.Interaction;
   protected editMode: Boolean;
 
-  constructor( private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService ) { }
+  constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService) { }
 
   ngOnInit() {
     this.loadSequenceDiagrams();
@@ -49,14 +49,14 @@ export class MenuComponent implements OnInit {
 
 
   // CREATE
-  createDiagram(): void { 
-    this.inputService.createInputDialog("Creating diagram", "" ,"Enter name of new digram.").componentInstance.onOk.subscribe(result => {
+  createDiagram(): void {
+    this.inputService.createInputDialog("Creating diagram", "", "Enter name of new digram.").componentInstance.onOk.subscribe(result => {
       this.sequenceDiagramService.createDiagram(result);
     })
   }
 
   private createLayerHandler(): void {
-    this.inputService.createInputDialog("Creating layer", "" ,"Enter name of new layer.").componentInstance.onOk.subscribe(result => {
+    this.inputService.createInputDialog("Creating layer", "", "Enter name of new layer.").componentInstance.onOk.subscribe(result => {
       this.createLayer.emit(result);
     })
   }
@@ -74,7 +74,11 @@ export class MenuComponent implements OnInit {
   }
 
   protected deleteDiagram(sequenceDiagram: M.Interaction) {
-    this.sequenceDiagramService.deleteDiagram(sequenceDiagram);
+    let confirmDialog = this.inputService.createConfirmDialog("Delete diagram", "Do you really want to delete diagram \"" +
+      sequenceDiagram.name + "\" ?");
+    confirmDialog.componentInstance.onYes.subscribe(result => {
+      this.sequenceDiagramService.deleteDiagram(sequenceDiagram);
+    });
   }
 
   // TEST
