@@ -1,7 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
 import { InputService } from '../../sequence-diagram/services/input.service';
-import { InputDialogComponent } from './input-dialog.component';
 import * as M from '../../sequence-diagram/models';
 
 @Component({
@@ -19,13 +18,15 @@ export class MenuComponent implements OnInit {
   public createLayer = new EventEmitter;
 
   private sequenceDiagrams: M.Interaction[];
-  private openedSequenceDiagram: M.Interaction;
-  protected editMode: Boolean;
+  private openedSequenceDiagramId: string;
+  protected editMode: Boolean = false;
 
-  constructor( private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService ) { }
+  constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService) { }
 
-  ngOnInit() {
-    this.loadSequenceDiagrams();
+  public ngOnInit() {
+    this.sequenceDiagramService.menuReload$.subscribe(
+      () => this.loadSequenceDiagrams()
+    );
   }
 
   protected changeTab(event) {
@@ -43,13 +44,13 @@ export class MenuComponent implements OnInit {
 
   private openSequenceDiagramHandler(sequenceDiagram: M.Interaction) {
     this.sequenceDiagramService.setEditMode(false);
-    this.openedSequenceDiagram = sequenceDiagram;
-    this.openSequenceDiagram.emit(this.openedSequenceDiagram);
+    this.openedSequenceDiagramId = sequenceDiagram.id;
+    this.openSequenceDiagram.emit(sequenceDiagram);
   }
 
 
   // CREATE
-  createDiagram(): void { 
+  createDiagram(): void {
     this.inputService.createInputDialog("Creating diagram", "" ,"Enter name of new digram.").componentInstance.onOk.subscribe(result => {
       this.sequenceDiagramService.createDiagram(result);
     })

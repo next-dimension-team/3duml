@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Datastore } from '../../datastore';
 import { JsonApiModel, ModelType } from 'angular2-jsonapi';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { InputService } from './input.service';
 import { InputDialogComponent } from './input-dialog.component';
 import * as _ from 'lodash';
@@ -11,6 +11,9 @@ import * as M from '../models';
 export class SequenceDiagramService {
 
   protected static initialized = false;
+
+  private menuReloadSource = new BehaviorSubject<any>(null);
+  public menuReload$ = this.menuReloadSource.asObservable();
 
   constructor(protected datastore: Datastore, protected inputService: InputService) {
     // Initialize the service
@@ -44,7 +47,7 @@ export class SequenceDiagramService {
       }
     }).map(
       (fragments: M.InteractionFragment[]) => _.map(fragments, 'fragmentable')
-      );
+    );
   }
 
   public loadSequenceDiagramTree(interaction: M.Interaction): Observable<M.InteractionFragment> {
@@ -63,7 +66,7 @@ export class SequenceDiagramService {
       }
     }).map(
       (fragments: M.InteractionFragment[]) => _.find(fragments, ['id', id])
-      );
+    );
   }
 
   /**
@@ -79,7 +82,8 @@ export class SequenceDiagramService {
         fragmentable: interaction
       });
       interactionFragment.save().subscribe();
-      location.reload();
+
+      this.menuReloadSource.next(null);
     });
   }
 
@@ -230,16 +234,13 @@ export class SequenceDiagramService {
   }
 
   /**
-   * Funkcia maze iba z tabulky Interaction Fragment 
+   * Funkcia maze iba z tabulky Interaction Fragment
    * na backende sa dorobi automaticke mazanie morph vztahu
    */
   public deleteDiagram(sequenceDiagram: M.Interaction) {
-    // this.datastore.deleteRecord(M.Interaction, sequenceDiagram.id).subscribe(() => {
-    //   console.log("Maze sa diagram:", sequenceDiagram);
-      this.datastore.deleteRecord(M.InteractionFragment, sequenceDiagram.fragment.fragmentable.id)
-      .subscribe();
-      location.reload();
-    // });
+    this.datastore.deleteRecord(M.InteractionFragment, sequenceDiagram.fragment.id).subscribe();
+
+    this.menuReloadSource.next(null);
   }
 
   protected initializeDeleteOperation() {
@@ -279,13 +280,13 @@ export class SequenceDiagramService {
               });
             });
           break;
-            
+
           case 'Layer':
             let interaction = this.datastore.peekRecord(M.Interaction, event.model.id);
             confirmDialog = this.inputService.createConfirmDialog("Delete layer", "Do you really want to delete layer \"" + interaction.name + "\" ?");
 
             confirmDialog.componentInstance.onYes.subscribe(result => {
-              // maze iba z tabulky Interaction Fragment, na backende sa dorobi automaticke mazanie morph vztahu 
+              // maze iba z tabulky Interaction Fragment, na backende sa dorobi automaticke mazanie morph vztahu
               // this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
               // console.log("Maze sa interakcia:", interaction);
                 this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id)
@@ -369,7 +370,7 @@ export class SequenceDiagramService {
             this.sourceLifelineEvent = this.destinationLifelineEvent;
           } else {
             this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
-              location.reload();
+              //location.reload();
             });
             this.sourceLifelineEvent = null;
             this.destinationLifelineEvent = null;

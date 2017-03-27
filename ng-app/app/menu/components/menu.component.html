@@ -27,7 +27,7 @@
 <md-tab-group (focusChange)="changeTab($event)">
     <md-tab label="View" class="menu-tab">
         <ul class="sidebar-nav">
-            <li *ngFor="let sequenceDiagram of sequenceDiagrams" [class.active]="sequenceDiagram==openedSequenceDiagram">
+            <li *ngFor="let sequenceDiagram of sequenceDiagrams" [class.active]="sequenceDiagram.id==openedSequenceDiagramId">
                 <md-card>
                     <md-card-content>
                         <h3>{{sequenceDiagram.name}}</h3>
@@ -37,7 +37,7 @@
                             <md-icon>touch_app</md-icon> Select
                         </button>
                         <button md-button (click)="deleteDiagram(sequenceDiagram)">
-                            <md-icon>delete</md-icon> Delete 
+                            <md-icon>delete</md-icon> Delete
                         </button>
                     </md-card-actions>
                 </md-card>
@@ -50,7 +50,7 @@
             <h3 md-subheader>CREATE</h3>
             <md-list-item>
                 <button md-button class="list-item-button" (click)="createDiagram()">
-                    <md-icon>add_to_queue</md-icon> Create Diagram 
+                    <md-icon>add_to_queue</md-icon> Create Diagram
                 </button>
             </md-list-item>
             <md-list-item>
