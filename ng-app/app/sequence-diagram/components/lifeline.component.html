@@ -26,7 +26,7 @@
       *ngFor="let point of points"
       class="point"
       [class.hidden]="point.hidden"
-      [selectable]="{type: 'LifelinePoint', lifelineID: lifelineModel.id, time: point.time}">
+      [selectable]="{type: 'LifelinePoint', lifelineID: lifelineModel.id, time: point.time, component:this}">
     </div>
   </div>
 </div>

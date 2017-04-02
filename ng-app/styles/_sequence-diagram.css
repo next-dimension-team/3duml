@@ -35,9 +35,10 @@ app-sequence-diagram.editMode .sequence-diagram {
   height: auto;
 }
 
+/* Centrovanie Layeru dosere offset pri move lifeline
 app-sequence-diagram.editMode .layer-wrapper {
-  margin: auto;
-}
+  margin: auto; 
+} */
 
 app-sequence-diagram.editMode > div {
   display: none;

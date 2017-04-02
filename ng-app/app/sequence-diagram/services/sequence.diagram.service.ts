@@ -4,6 +4,7 @@ import { JsonApiModel, ModelType } from 'angular2-jsonapi';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { InputService } from './input.service';
 import { InputDialogComponent } from './input-dialog.component';
+import { LifelineComponent } from '../components/lifeline.component';
 import * as _ from 'lodash';
 import * as M from '../models';
 
@@ -106,17 +107,21 @@ export class SequenceDiagramService {
     this.editMode = type;
   }
 
+  protected draggingLifeline: LifelineComponent = null;
   public moveLifeline() {
     let moveBool = false;
     this.inputService.onMouseDown((event) => {
       if (event.model.type == 'Lifeline') {
+        this.draggingLifeline = event.model.component;
         this.selectedLifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
         moveBool = true;
       }
     });
+    this.inputService.onMouseMove((event) => {
+    
+    });
     this.inputService.onMouseUp((event) => {
       if (moveBool && this.selectedLifeline != null) {
-        console.log(this.editMode);
         if (this.editMode == false) {
           this.selectedLifeline = null;
           return;
@@ -125,31 +130,41 @@ export class SequenceDiagramService {
         let interaction = this.selectedLifeline.interaction;
         let lifelinesInInteraction = interaction.lifelines;
         let lifelineOrder = this.selectedLifeline.order;
-        let position = Math.floor(event.offsetX / 400.0);
-        let numOfLifelines = lifelinesInInteraction.length;
-        if (position <= 0) {
-          position = 1;
+        let position = 0, count = 1;
+        let orderBot = 0, orderTop = 518;
+        while (position == 0) {
+          if (event.offsetX < orderTop && event.offsetX > orderBot) {
+            position = count;
+            break;
+          } else {
+            count++;
+            orderBot = orderTop;
+            orderTop += 400;
+          }
         }
+        let numOfLifelines = lifelinesInInteraction.length;
         if (position > numOfLifelines) {
           position = numOfLifelines;
+        }
+        if (position > this.selectedLifeline.order) {
+          position--;
         }
         if (position == this.selectedLifeline.order) {
           return;
         }
-        console.log(position);
+        let originalOrder = this.selectedLifeline.order;
         for (let lifeline of lifelinesInInteraction) {
-          console.log(lifeline);
           if (lifeline.id == this.selectedLifeline.id) {
             lifeline.order = position;
             lifeline.save().subscribe();
             continue;
           }
-          else if (lifeline.order > this.selectedLifeline.order && lifeline.order <= position) {
+          else if (lifeline.order >= originalOrder && lifeline.order <= position) {
             lifeline.order--;
             lifeline.save().subscribe();
             continue;
           }
-          else if (lifeline.order < this.selectedLifeline.order && lifeline.order >= position) {
+          else if (lifeline.order < originalOrder && lifeline.order >= position) {
             lifeline.order++;
             lifeline.save().subscribe();
             continue;
