@@ -113,14 +113,17 @@ export class SequenceDiagramService {
     this.inputService.onMouseDown((event) => {
       if (event.model.type == 'Lifeline') {
         this.draggingLifeline = event.model.component;
+        console.log(this.draggingLifeline);
         this.selectedLifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
         moveBool = true;
       }
     });
     this.inputService.onMouseMove((event) => {
-    
+      if (this.draggingLifeline)
+        this.draggingLifeline.left = event.offsetX - 518;
     });
     this.inputService.onMouseUp((event) => {
+      this.draggingLifeline = null;
       if (moveBool && this.selectedLifeline != null) {
         if (this.editMode == false) {
           this.selectedLifeline = null;
@@ -146,7 +149,7 @@ export class SequenceDiagramService {
         if (position > numOfLifelines) {
           position = numOfLifelines;
         }
-        if (position > this.selectedLifeline.order) {
+        if (position > this.selectedLifeline.order  && numOfLifelines > 2) {
           position--;
         }
         if (position == this.selectedLifeline.order) {
@@ -174,6 +177,7 @@ export class SequenceDiagramService {
       }
     });
     this.selectedLifeline = null;
+    this.draggingLifeline = null;
   }
 
   public createLifeline(name: string, callback: any) {

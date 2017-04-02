@@ -1,7 +1,7 @@
 <!-- Render lifeline -->
 <div
   class="lifeline"
-  [selectable]="{type: 'Lifeline', id: lifelineModel.id}"
+  [selectable]="{type: 'Lifeline', id: lifelineModel.id, component: this}"
   [style.left]="left + 'px'">
 
   <div
@@ -26,7 +26,7 @@
       *ngFor="let point of points"
       class="point"
       [class.hidden]="point.hidden"
-      [selectable]="{type: 'LifelinePoint', lifelineID: lifelineModel.id, time: point.time, component:this}">
+      [selectable]="{type: 'LifelinePoint', lifelineID: lifelineModel.id, time: point.time}">
     </div>
   </div>
 </div>
