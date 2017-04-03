@@ -28,7 +28,7 @@ export class SequenceDiagramService {
    * Select Operation
    */
   protected selectedElement = null;
-  private editMode = false;
+  private editMode : Boolean = false;
 
   public initialize() {
     this.initializeDeleteOperation();
@@ -91,19 +91,26 @@ export class SequenceDiagramService {
   protected lifelineBefore: M.Lifeline;
   protected selectedLifeline: M.Lifeline;
   protected layer: M.Interaction;
+  protected savedEvent : Event;
 
   public initializeAddLifeline() {
     this.inputService.onLeftClick((event) => {
+      console.log(event);
+       if (event.model.type == "Layer") {
+        this.layer = this.datastore.peekRecord(M.Interaction, event.model.id);
+        this.savedEvent = event;
+       } /*else
       if (event.model.type == "Lifeline") {
         this.lifelineBefore = this.datastore.peekRecord(M.Lifeline, event.model.id);
-      }
-      if (event.model.type == "Layer") {
-        this.layer = this.datastore.peekRecord(M.Interaction, event.model.id);
-      }
+        this.layer = null;
+        //event.stopPropagation();
+      } */
+      //console.log(this.lifelineBefore);
+      //console.log(this.layer);
     });
   }
 
-  public setEditMode(type: boolean) {
+  public setEditMode(type: Boolean) {
     this.editMode = type;
   }
 
@@ -113,17 +120,16 @@ export class SequenceDiagramService {
     this.inputService.onMouseDown((event) => {
       if (event.model.type == 'Lifeline') {
         this.draggingLifeline = event.model.component;
-        console.log(this.draggingLifeline);
+   //     console.log(this.draggingLifeline);
         this.selectedLifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
         moveBool = true;
       }
     });
     this.inputService.onMouseMove((event) => {
-      if (this.draggingLifeline)
-        this.draggingLifeline.left = event.offsetX - 518;
+      if (this.draggingLifeline && this.editMode.valueOf() == true)
+        this.draggingLifeline.left = event.offsetX - 436;
     });
     this.inputService.onMouseUp((event) => {
-      this.draggingLifeline = null;
       if (moveBool && this.selectedLifeline != null) {
         if (this.editMode == false) {
           this.selectedLifeline = null;
@@ -135,9 +141,11 @@ export class SequenceDiagramService {
         let lifelineOrder = this.selectedLifeline.order;
         let position = 0, count = 1;
         let orderBot = 0, orderTop = 518;
+        let offsetX = 0;
         while (position == 0) {
           if (event.offsetX < orderTop && event.offsetX > orderBot) {
             position = count;
+            offsetX = orderTop;
             break;
           } else {
             count++;
@@ -147,12 +155,14 @@ export class SequenceDiagramService {
         }
         let numOfLifelines = lifelinesInInteraction.length;
         if (position > numOfLifelines) {
-          position = numOfLifelines;
+          position = numOfLifelines + 1;
         }
         if (position > this.selectedLifeline.order  && numOfLifelines > 2) {
           position--;
         }
         if (position == this.selectedLifeline.order) {
+          this.draggingLifeline.left = (position - 1) * 400;
+          this.draggingLifeline = null;
           return;
         }
         let originalOrder = this.selectedLifeline.order;
@@ -181,7 +191,46 @@ export class SequenceDiagramService {
   }
 
   public createLifeline(name: string, callback: any) {
-    if (this.lifelineBefore) {
+    let lifelinesInInteraction = this.layer.lifelines;
+   // let lifelineOrder = this.selectedLifeline.order;
+    let position = 0, count = 1;
+    let orderBot = 0, orderTop = 518;
+    let offsetX = 0;
+    while (position == 0) {
+      if (this.savedEvent.offsetX < orderTop && this.savedEvent.offsetX > orderBot) {
+        position = count;
+        offsetX = orderTop;
+        break;
+      } else {
+        count++;
+        orderBot = orderTop;
+        orderTop += 400;
+      }
+    }
+    let numOfLifelines = lifelinesInInteraction.length;
+    if (position > numOfLifelines) {
+      position = numOfLifelines + 1;
+    }
+    console.log(position);
+    for (let lifeline of lifelinesInInteraction) {
+        if (lifeline.order >= position) {
+          lifeline.order++;
+          lifeline.save().subscribe();
+        }
+      }
+    let lifelineNew = this.datastore.createRecord(M.Lifeline, {
+      name: name,
+      order: position,
+      interaction: this.layer
+    });
+    lifelineNew.save().subscribe(() => {
+      this.lifelineBefore = null;
+      this.layer = null;
+      location.reload();
+    });
+
+   // console.log(this.layer);
+/*    if (this.lifelineBefore) {
       let interaction = this.lifelineBefore.interaction;
       let lifelinesInInteraction = interaction.lifelines;
       let newLifineOrder = this.lifelineBefore.order;
@@ -222,7 +271,7 @@ export class SequenceDiagramService {
         this.layer = null;
         location.reload();
       });
-    }
+    } */
   }
 
   public createLayer(name: string, openedSequenceDiagram: M.InteractionFragment) {

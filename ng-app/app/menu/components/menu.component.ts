@@ -33,7 +33,7 @@ export class MenuComponent implements OnInit {
 
   protected changeTab(event) {
     this.editMode = (event.tab.textLabel == "Edit");
-    this.sequenceDiagramService.setEditMode(true);
+    this.sequenceDiagramService.setEditMode(this.editMode);
   }
 
   private loadSequenceDiagrams() {
@@ -45,7 +45,7 @@ export class MenuComponent implements OnInit {
   }
 
   private openSequenceDiagramHandler(sequenceDiagram: M.Interaction) {
-    this.sequenceDiagramService.setEditMode(false);
+    //this.sequenceDiagramService.setEditMode(false);
     this.openedSequenceDiagramId = sequenceDiagram.id;
     this.openSequenceDiagram.emit(sequenceDiagram);
   }
