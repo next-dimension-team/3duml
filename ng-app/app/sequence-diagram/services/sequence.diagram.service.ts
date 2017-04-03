@@ -15,6 +15,7 @@ export class SequenceDiagramService {
 
   private menuReloadSource = new BehaviorSubject<any>(null);
   public menuReload$ = this.menuReloadSource.asObservable();
+  private layerForDelete;
 
   constructor(protected datastore: Datastore, protected inputService: InputService) {
     // Initialize the service
@@ -48,7 +49,7 @@ export class SequenceDiagramService {
       }
     }).map(
       (fragments: M.InteractionFragment[]) => _.map(fragments, 'fragmentable')
-    );
+      );
   }
 
   public loadSequenceDiagramTree(interaction: M.Interaction): Observable<M.InteractionFragment> {
@@ -67,7 +68,7 @@ export class SequenceDiagramService {
       }
     }).map(
       (fragments: M.InteractionFragment[]) => _.find(fragments, ['id', id])
-    );
+      );
   }
 
   /**
@@ -157,7 +158,7 @@ export class SequenceDiagramService {
         if (position > numOfLifelines) {
           position = numOfLifelines + 1;
         }
-        if (position > this.selectedLifeline.order  && numOfLifelines > 2) {
+        if (position > this.selectedLifeline.order && numOfLifelines > 2) {
           position--;
         }
         if (position == this.selectedLifeline.order) {
@@ -351,24 +352,23 @@ export class SequenceDiagramService {
             });
             event.stopPropagation();
             break;
+          // case 'Layer':
+          //   let interaction = this.datastore.peekRecord(M.Interaction, event.model.id);
+          //   confirmDialog = this.inputService.createConfirmDialog("Delete layer", "Do you really want to delete layer \"" + interaction.name + "\" ?");
 
-          case 'Layer':
-            let interaction = this.datastore.peekRecord(M.Interaction, event.model.id);
-            confirmDialog = this.inputService.createConfirmDialog("Delete layer", "Do you really want to delete layer \"" + interaction.name + "\" ?");
-
-            confirmDialog.componentInstance.onYes.subscribe(result => {
-              // maze iba z tabulky Interaction Fragment, na backende sa dorobi automaticke mazanie morph vztahu
-              // this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
-              // console.log("Maze sa interakcia:", interaction);
-              this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id).subscribe(() => {
-                location.reload();
-              });
-              this.performingDelete = false;
-            });
-            confirmDialog.componentInstance.onNo.subscribe(result => {
-              this.performingDelete = false;
-            });
-            break;
+          //   confirmDialog.componentInstance.onYes.subscribe(result => {
+          //     // maze iba z tabulky Interaction Fragment, na backende sa dorobi automaticke mazanie morph vztahu
+          //     // this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
+          //     // console.log("Maze sa interakcia:", interaction);
+          //     this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id).subscribe(() => {
+          //       location.reload();
+          //     });
+          //     this.performingDelete = false;
+          //   });
+          //   confirmDialog.componentInstance.onNo.subscribe(result => {
+          //     this.performingDelete = false;
+          //   });
+          //   break;
         }
       }
     });
@@ -391,11 +391,25 @@ export class SequenceDiagramService {
       }
     }
   }
+  protected layerInteraction(inputInteractionFragment: M.InteractionFragment) {
+
+    let interactionFragment = inputInteractionFragment;
+
+    if (interactionFragment.fragmentable.isLayerInteraction == null) {
+      this.layerInteraction(interactionFragment.parent);
+    } else if (interactionFragment.fragmentable.isLayerInteraction) {
+      this.layerForDelete = interactionFragment.fragmentable;
+    } else {
+      this.layerInteraction(interactionFragment.parent);
+    }
+  }
 
   protected calculateTimeOnMessageDelete(message: M.Message) {
 
     let deletedMessageTime = message.sendEvent.time;
-    let lifelinesInLayer = message.interaction.lifelines;
+    this.layerInteraction(message.interaction.fragment);
+    let layer = this.layerForDelete;
+    let lifelinesInLayer = layer.lifelines;
 
     // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
     for (let lifeline of lifelinesInLayer) {
@@ -409,7 +423,7 @@ export class SequenceDiagramService {
             }
           );
         }
-      } 
+      }
     }
   }
 

@@ -27,9 +27,9 @@ export class Interaction extends JsonApiModel {
   get isRootInteraction() {
     return (! this.fragment.parent);
   }
-
+  
   get isLayerInteraction() {
-    let parent = this.fragment.parent;
+    let parent = this.fragment.parent.fragmentable;
     return (parent && parent.isRootInteraction);
   }
 
