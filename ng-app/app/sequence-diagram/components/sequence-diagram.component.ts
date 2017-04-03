@@ -87,7 +87,6 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   public ngAfterViewInit() {
-    console.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
     this.layerComponents.changes.subscribe(
       () => {
         this.refreshLayers();
