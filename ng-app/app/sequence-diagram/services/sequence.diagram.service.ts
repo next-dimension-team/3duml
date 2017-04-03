@@ -16,6 +16,7 @@ export class SequenceDiagramService {
 
   private menuReloadSource = new BehaviorSubject<any>(null);
   public menuReload$ = this.menuReloadSource.asObservable();
+  private layerForDelete;
 
   /* Getter & Setter for Sequence Diagram Component Instance */
   protected _sequenceDiagramComponent: SequenceDiagramComponent = null;
@@ -44,7 +45,7 @@ export class SequenceDiagramService {
    * Select Operation
    */
   protected selectedElement = null;
-  private editMode = false;
+  private editMode: Boolean = false;
 
   public initialize() {
     this.initializeDeleteOperation();
@@ -107,19 +108,26 @@ export class SequenceDiagramService {
   protected lifelineBefore: M.Lifeline;
   protected selectedLifeline: M.Lifeline;
   protected layer: M.Interaction;
+  protected savedEvent: Event;
 
   public initializeAddLifeline() {
     this.inputService.onLeftClick((event) => {
-      if (event.model.type == "Lifeline") {
-        this.lifelineBefore = this.datastore.peekRecord(M.Lifeline, event.model.id);
-      }
+      console.log(event);
       if (event.model.type == "Layer") {
         this.layer = this.datastore.peekRecord(M.Interaction, event.model.id);
-      }
+        this.savedEvent = event;
+      } /*else
+      if (event.model.type == "Lifeline") {
+        this.lifelineBefore = this.datastore.peekRecord(M.Lifeline, event.model.id);
+        this.layer = null;
+        //event.stopPropagation();
+      } */
+      //console.log(this.lifelineBefore);
+      //console.log(this.layer);
     });
   }
 
-  public setEditMode(type: boolean) {
+  public setEditMode(type: Boolean) {
     this.editMode = type;
   }
 
@@ -129,17 +137,16 @@ export class SequenceDiagramService {
     this.inputService.onMouseDown((event) => {
       if (event.model.type == 'Lifeline') {
         this.draggingLifeline = event.model.component;
-        console.log(this.draggingLifeline);
+        //     console.log(this.draggingLifeline);
         this.selectedLifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
         moveBool = true;
       }
     });
     this.inputService.onMouseMove((event) => {
-      if (this.draggingLifeline)
-        this.draggingLifeline.left = event.offsetX - 518;
+      if (this.draggingLifeline && this.editMode.valueOf() == true)
+        this.draggingLifeline.left = event.offsetX - 436;
     });
     this.inputService.onMouseUp((event) => {
-      this.draggingLifeline = null;
       if (moveBool && this.selectedLifeline != null) {
         if (this.editMode == false) {
           this.selectedLifeline = null;
@@ -151,9 +158,11 @@ export class SequenceDiagramService {
         let lifelineOrder = this.selectedLifeline.order;
         let position = 0, count = 1;
         let orderBot = 0, orderTop = 518;
+        let offsetX = 0;
         while (position == 0) {
           if (event.offsetX < orderTop && event.offsetX > orderBot) {
             position = count;
+            offsetX = orderTop;
             break;
           } else {
             count++;
@@ -163,12 +172,14 @@ export class SequenceDiagramService {
         }
         let numOfLifelines = lifelinesInInteraction.length;
         if (position > numOfLifelines) {
-          position = numOfLifelines;
+          position = numOfLifelines + 1;
         }
         if (position > this.selectedLifeline.order && numOfLifelines > 2) {
           position--;
         }
         if (position == this.selectedLifeline.order) {
+          this.draggingLifeline.left = (position - 1) * 400;
+          this.draggingLifeline = null;
           return;
         }
         let originalOrder = this.selectedLifeline.order;
@@ -189,56 +200,95 @@ export class SequenceDiagramService {
             continue;
           }
         }
-        this.refresh();
+        location.reload();
       }
     });
     this.selectedLifeline = null;
     this.draggingLifeline = null;
   }
 
-  public createLifeline(name: string) {
-    if (this.lifelineBefore) {
-      let interaction = this.lifelineBefore.interaction;
-      let lifelinesInInteraction = interaction.lifelines;
-      let newLifineOrder = this.lifelineBefore.order;
-      for (let lifeline of lifelinesInInteraction) {
-        if (lifeline.order > newLifineOrder) {
-          lifeline.order++;
-          lifeline.save().subscribe();
-        }
+  public createLifeline(name: string, callback: any) {
+    let lifelinesInInteraction = this.layer.lifelines;
+    // let lifelineOrder = this.selectedLifeline.order;
+    let position = 0, count = 1;
+    let orderBot = 0, orderTop = 518;
+    let offsetX = 0;
+    while (position == 0) {
+      if (this.savedEvent.offsetX < orderTop && this.savedEvent.offsetX > orderBot) {
+        position = count;
+        offsetX = orderTop;
+        break;
+      } else {
+        count++;
+        orderBot = orderTop;
+        orderTop += 400;
       }
-      let lifelineNew = this.datastore.createRecord(M.Lifeline, {
-        name: name,
-        order: newLifineOrder + 1,
-        interaction: interaction
-      });
-      lifelineNew.save().subscribe(() => {
-        this.lifelineBefore = null;
-        this.layer = null;
-        this.refresh();
-      });
     }
-    else if (this.layer) {
-      let lifelinesInInteraction = this.layer.lifelines;
-      let newLifineOrder = 0;
-      for (let lifeline of lifelinesInInteraction) {
-        if (lifeline.order > newLifineOrder) {
-          lifeline.order++;
-          lifeline.save().subscribe();
-        }
+    let numOfLifelines = lifelinesInInteraction.length;
+    if (position > numOfLifelines) {
+      position = numOfLifelines + 1;
+    }
+    console.log(position);
+    for (let lifeline of lifelinesInInteraction) {
+      if (lifeline.order >= position) {
+        lifeline.order++;
+        lifeline.save().subscribe();
       }
-      let lifeline = this.datastore.createRecord(M.Lifeline, {
-        name: name,
-        //TODO dorobit podla offesetX
-        order: 1,
-        interaction: this.layer
-      });
-      lifeline.save().subscribe(() => {
-        this.lifelineBefore = null;
-        this.layer = null;
-        this.refresh();
-      });
     }
+    let lifelineNew = this.datastore.createRecord(M.Lifeline, {
+      name: name,
+      order: position,
+      interaction: this.layer
+    });
+    lifelineNew.save().subscribe(() => {
+      this.lifelineBefore = null;
+      this.layer = null;
+      location.reload();
+    });
+
+    // console.log(this.layer);
+    /*    if (this.lifelineBefore) {
+          let interaction = this.lifelineBefore.interaction;
+          let lifelinesInInteraction = interaction.lifelines;
+          let newLifineOrder = this.lifelineBefore.order;
+          for (let lifeline of lifelinesInInteraction) {
+            if (lifeline.order > newLifineOrder) {
+              lifeline.order++;
+              lifeline.save().subscribe();
+            }
+          }
+          let lifelineNew = this.datastore.createRecord(M.Lifeline, {
+            name: name,
+            order: newLifineOrder + 1,
+            interaction: interaction
+          });
+          lifelineNew.save().subscribe(() => {
+            this.lifelineBefore = null;
+            this.layer = null;
+            location.reload();
+          });
+        }
+        else if (this.layer) {
+          let lifelinesInInteraction = this.layer.lifelines;
+          let newLifineOrder = 0;
+          for (let lifeline of lifelinesInInteraction) {
+            if (lifeline.order > newLifineOrder) {
+              lifeline.order++;
+              lifeline.save().subscribe();
+            }
+          }
+          let lifeline = this.datastore.createRecord(M.Lifeline, {
+            name: name,
+            //TODO dorobit podla offesetX
+            order: 1,
+            interaction: this.layer
+          });
+          lifeline.save().subscribe(() => {
+            this.lifelineBefore = null;
+            this.layer = null;
+            location.reload();
+          });
+        } */
   }
 
   public createLayer(name: string, openedSequenceDiagram: M.InteractionFragment) {
@@ -253,7 +303,7 @@ export class SequenceDiagramService {
         parent: openedSequenceDiagram
       });
       interactionFragment.save().subscribe(() => {
-        this.refresh();
+        location.reload();
       });
     });
   }
@@ -292,7 +342,7 @@ export class SequenceDiagramService {
             confirmDialog.componentInstance.onYes.subscribe(result => {
               this.calculateTimeOnMessageDelete(message);
               this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
-                this.refresh();
+                location.reload();
               });
               this.performingDelete = false;
             });
@@ -309,7 +359,7 @@ export class SequenceDiagramService {
             confirmDialog.componentInstance.onYes.subscribe(result => {
               this.calculateLifelinesOrder(lifeline);
               this.datastore.deleteRecord(M.Lifeline, lifeline.id).subscribe(() => {
-                this.refresh();
+                location.reload();
               });
               this.performingDelete = false;
             });
@@ -318,24 +368,23 @@ export class SequenceDiagramService {
             });
             event.stopPropagation();
             break;
+          // case 'Layer':
+          //   let interaction = this.datastore.peekRecord(M.Interaction, event.model.id);
+          //   confirmDialog = this.inputService.createConfirmDialog("Delete layer", "Do you really want to delete layer \"" + interaction.name + "\" ?");
 
-          case 'Layer':
-            let interaction = this.datastore.peekRecord(M.Interaction, event.model.id);
-            confirmDialog = this.inputService.createConfirmDialog("Delete layer", "Do you really want to delete layer \"" + interaction.name + "\" ?");
-
-            confirmDialog.componentInstance.onYes.subscribe(result => {
-              // maze iba z tabulky Interaction Fragment, na backende sa dorobi automaticke mazanie morph vztahu
-              // this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
-              // console.log("Maze sa interakcia:", interaction);
-              this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id).subscribe(() => {
-                this.refresh();
-              });
-              this.performingDelete = false;
-            });
-            confirmDialog.componentInstance.onNo.subscribe(result => {
-              this.performingDelete = false;
-            });
-            break;
+          //   confirmDialog.componentInstance.onYes.subscribe(result => {
+          //     // maze iba z tabulky Interaction Fragment, na backende sa dorobi automaticke mazanie morph vztahu
+          //     // this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
+          //     // console.log("Maze sa interakcia:", interaction);
+          //     this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id).subscribe(() => {
+          //       location.reload();
+          //     });
+          //     this.performingDelete = false;
+          //   });
+          //   confirmDialog.componentInstance.onNo.subscribe(result => {
+          //     this.performingDelete = false;
+          //   });
+          //   break;
         }
       }
     });
@@ -358,11 +407,25 @@ export class SequenceDiagramService {
       }
     }
   }
+  protected layerInteraction(inputInteractionFragment: M.InteractionFragment) {
+
+    let interactionFragment = inputInteractionFragment;
+
+    if (interactionFragment.fragmentable.isLayerInteraction == null) {
+      this.layerInteraction(interactionFragment.parent);
+    } else if (interactionFragment.fragmentable.isLayerInteraction) {
+      this.layerForDelete = interactionFragment.fragmentable;
+    } else {
+      this.layerInteraction(interactionFragment.parent);
+    }
+  }
 
   protected calculateTimeOnMessageDelete(message: M.Message) {
 
     let deletedMessageTime = message.sendEvent.time;
-    let lifelinesInLayer = message.interaction.lifelines;
+    this.layerInteraction(message.interaction.fragment);
+    let layer = this.layerForDelete;
+    let lifelinesInLayer = layer.lifelines;
 
     // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
     for (let lifeline of lifelinesInLayer) {
@@ -396,7 +459,7 @@ export class SequenceDiagramService {
             this.sourceLifelineEvent = this.destinationLifelineEvent;
           } else {
             this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
-              this.refresh();
+              //location.reload();
             });
             this.sourceLifelineEvent = null;
             this.destinationLifelineEvent = null;
@@ -412,8 +475,22 @@ export class SequenceDiagramService {
   protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
     let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
     let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
+    let currentInteraction = this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id);
     let time = Math.round(sourceLifeline.model.time);
+    let maxTimeValue = 0;
     let messageName;
+
+    //Najprv vypocitam ci su za nasou ktoru chcem pridat nejake message, ak ano, zmenim occurenci
+    //Takto to funguje spravne
+    //Najprv odskocia message a potom sa prida
+    maxTimeValue = this.calculateTimeOnMessageInsert(currentInteraction, time, sourceLifelineModel, destinationLifelineModel);
+
+    //Napad: Pridavat message vzdy najviac na vrch ako sa da, podla mna to sa tak ma aj v EAcku
+    //Problem: Treba brat do uvahy comibed fragments a to je nejako vyriesit, keby vieme kolko occurence zabera
+    //alebo podobne.
+    /* if (maxTimeValue > 0){
+      time = maxTimeValue + 1;
+    }*/
 
     this.inputService.createInputDialog("Creating message", "", "Enter message name").componentInstance.onOk.subscribe(result => {
       messageName = result;
@@ -441,7 +518,6 @@ export class SequenceDiagramService {
             sendEvent: sourceOccurence,
             receiveEvent: destinationOccurence
           }).save().subscribe((message: M.Message) => {
-            //this.calculateTimeOnMessageInsert(message);
             callback(message);
           });
         });
@@ -450,56 +526,51 @@ export class SequenceDiagramService {
   }
 
   // TODO: pridavanie 3D sipky
-  /*protected calculateTimeOnMessageInsert(message: M.Message){
-  
-  let move = false;
-  let insertedMessageTime = message.sendEvent.time;
-  let sendLifeline = message.sendEvent.covered;
-  let receiveLifeline = message.receiveEvent.covered;
-  
-  for (let occurrence of sendLifeline.occurrenceSpecifications) {
-  if (occurrence.time == insertedMessageTime) {
-  move = true;
-  break;
+  protected calculateTimeOnMessageInsert(currentInteraction: M.Interaction, time: number,
+    sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline) {
+
+    let move = false;
+    let maxTimeValue = 0;
+    let lifelinesInCurrentLayer = currentInteraction.lifelines;
+
+    //Prechadzam vsetky lifeliny v aktualnom platne
+    for (let lifeline of lifelinesInCurrentLayer) {
+      for (let occurrence of lifeline.occurrenceSpecifications) {
+        if (occurrence.time == time) {
+          move = true;
+          break;
+        }
+        if (move) {
+          break;
+        }
+      }
+    }
+
+    //Napad: ak sme nenasli taku messageu ze musime pod nou daco posuvat, tak nastavim maxTimeValue a dame ju navrch
+    if (!move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time > maxTimeValue) {
+            maxTimeValue = occurrence.time;
+          }
+        }
+      }
+    }
+
+    //Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej
+    if (move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time >= time) {
+            let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+            occurenceForChange.time = occurenceForChange.time + 1;
+            occurenceForChange.save().subscribe();
+          }
+        }
+      }
+    }
+    return maxTimeValue;
   }
-  }
-  
-  if (move) {
-  for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-  if (occurrence.time == insertedMessageTime) {
-  move = true;
-  break;
-  }
-  }
-  }
-  
-  if (move) {
-  // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
-  for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-  if (occurrence.time >= insertedMessageTime){
-  // teraz to znizit o 1 treba, zober id occurence spec a znizit
-  this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-  (occurrenceSpecification: M.OccurrenceSpecification) => {
-  occurrenceSpecification.time = occurrenceSpecification.time + 1;
-  occurrenceSpecification.save().subscribe();
-  }
-  );
-  }
-  }
-  // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
-  for (let occurrence of sendLifeline.occurrenceSpecifications) {
-  if (occurrence.time >= insertedMessageTime){
-  // teraz to znizit o 1 treba, zober id occurence spec a znizit
-  this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-  (occurrenceSpecification: M.OccurrenceSpecification) => {
-  occurrenceSpecification.time = occurrenceSpecification.time + 1;
-  occurrenceSpecification.save().subscribe();
-  }
-  );
-  }
-  }
-  }
-  }*/
 
   /**
    * Update Operation
