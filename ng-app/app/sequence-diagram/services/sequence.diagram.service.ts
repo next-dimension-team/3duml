@@ -346,32 +346,21 @@ export class SequenceDiagramService {
   protected calculateTimeOnMessageDelete(message: M.Message) {
 
     let deletedMessageTime = message.sendEvent.time;
-    let receiveLifeline = message.receiveEvent.covered;
-    let sendLifeline = message.sendEvent.covered;
+    let lifelinesInLayer = message.interaction.lifelines;
 
     // prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
-    for (let occurrence of receiveLifeline.occurrenceSpecifications) {
-      if (occurrence.time > deletedMessageTime) {
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time - 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
-      }
-    }
-    // prechadzam Occurence Spec. send lifeliny a znizujem time o 1
-    for (let occurrence of sendLifeline.occurrenceSpecifications) {
-      if (occurrence.time > deletedMessageTime) {
-        // teraz to znizit o 1 treba, zober id occurence spec a znizit
-        this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
-          (occurrenceSpecification: M.OccurrenceSpecification) => {
-            occurrenceSpecification.time = occurrenceSpecification.time - 1;
-            occurrenceSpecification.save().subscribe();
-          }
-        );
-      }
+    for (let lifeline of lifelinesInLayer) {
+      for (let occurrence of lifeline.occurrenceSpecifications) {
+        if (occurrence.time > deletedMessageTime) {
+          // teraz to znizit o 1 treba, zober id occurence spec a znizit
+          this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
+            (occurrenceSpecification: M.OccurrenceSpecification) => {
+              occurrenceSpecification.time = occurrenceSpecification.time - 1;
+              occurrenceSpecification.save().subscribe();
+            }
+          );
+        }
+      } 
     }
   }
 
