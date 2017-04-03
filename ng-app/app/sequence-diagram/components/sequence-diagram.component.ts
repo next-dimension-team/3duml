@@ -7,7 +7,8 @@ import { LayerComponent } from './layer.component';
 import { SequenceDiagramControls } from './sequence-diagram.controls';
 import * as M from '../models';
 import { ConfigService } from '../../config';
-let { Renderer: CSS3DRenderer } : { Renderer: typeof THREE.CSS3DRenderer } = require('three.css')(THREE);
+let { Renderer: CSS3DRenderer }: { Renderer: typeof THREE.CSS3DRenderer } = require('three.css')(THREE);
+import { SequenceDiagramService } from '../services';
 
 @Component({
   selector: 'app-sequence-diagram',
@@ -28,9 +29,10 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
 
   protected renderQueued = false;
   protected editingLayer: M.InteractionFragment = null;
+  protected currentIndex: number;
 
-  constructor(protected ngZone: NgZone, protected element: ElementRef, protected config: ConfigService) {
-    //
+  constructor(protected ngZone: NgZone, protected element: ElementRef, protected config: ConfigService, protected sequenceDiagramService: SequenceDiagramService) {
+    this.sequenceDiagramService.sequenceDiagramComponent = this;
   }
 
   public ngOnInit() {
@@ -68,18 +70,24 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     this.controls.addEventListener('change', () => this.queueRender());
 
     // Initialize edit mode
-    if (this.rootInteractionFragment.children.length > 0) {
+    this.initializeEditMode();
+  }
+
+  protected initializeEditMode() {
+    if (this.rootInteractionFragment && this.rootInteractionFragment.children.length > 0) {
       this.editingLayer = this.rootInteractionFragment.children[0];
     }
   }
 
   public ngOnChanges(changes: SimpleChanges) {
-    if (changes.rootInteractionFragment && ! changes.rootInteractionFragment.isFirstChange()) {
+    if (changes.rootInteractionFragment && !changes.rootInteractionFragment.isFirstChange()) {
       this.controls.reset();
+      this.initializeEditMode();
     }
   }
 
   public ngAfterViewInit() {
+    console.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
     this.layerComponents.changes.subscribe(
       () => {
         this.refreshLayers();
@@ -108,33 +116,33 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   @HostListener('window:mousewheel', ['$event'])
   public onMouseScroll($event) {
     let layers = this.rootInteractionFragment.children;
-    let currentIndex = layers.indexOf(this.editingLayer);
+    this.currentIndex = layers.indexOf(this.editingLayer);
     let maxIndex = layers.length - 1;
 
-    if (currentIndex == -1) {
-      currentIndex = 0;
+    if (this.currentIndex == -1) {
+      this.currentIndex = 0;
       this.editingLayer = layers[0];
     }
 
     if ($event.deltaY > 0) {
-      currentIndex--;
+      this.currentIndex--;
     } else {
-      currentIndex++;
+      this.currentIndex++;
     }
 
-    if (currentIndex < 0) {
-      currentIndex = 0;
+    if (this.currentIndex < 0) {
+      this.currentIndex = 0;
     }
 
-    if (currentIndex > maxIndex) {
-      currentIndex = maxIndex;
+    if (this.currentIndex > maxIndex) {
+      this.currentIndex = maxIndex;
     }
 
-    this.editingLayer = layers[currentIndex];
+    this.editingLayer = layers[this.currentIndex];
   }
 
   public queueRender() {
-    if (! this.renderQueued) {
+    if (!this.renderQueued) {
       this.renderQueued = true;
 
       this.ngZone.runOutsideAngular(
@@ -146,7 +154,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   protected refreshLayers() {
     this.layerComponents.forEach(
       (layer, index) => this.scene.add(
-          layer.object.translateZ(this.config.get('layer.gap') * -index)
+        layer.object.translateZ(this.config.get('layer.gap') * -index)
       )
     );
 
