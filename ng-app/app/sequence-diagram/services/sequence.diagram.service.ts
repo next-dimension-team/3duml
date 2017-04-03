@@ -396,7 +396,7 @@ export class SequenceDiagramService {
             this.sourceLifelineEvent = this.destinationLifelineEvent;
           } else {
             this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
-              //this.refresh();
+              this.refresh();
             });
             this.sourceLifelineEvent = null;
             this.destinationLifelineEvent = null;
