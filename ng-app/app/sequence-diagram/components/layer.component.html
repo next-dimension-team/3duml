@@ -3,7 +3,7 @@
 
 <div
   class="layer-wrapper"
-  [style.width]="(interactionFragmentModel.fragmentable.lifelines.length * 320) + 'px'">
+  [style.width]="layerWidth + 'px'">
 
   <div
     class="layer-title">
@@ -13,7 +13,7 @@
   <div
     class="layer"
     [selectable]="{type: 'Layer', id: interactionFragmentModel.fragmentable.id}"
-    [style.width]="(interactionFragmentModel.fragmentable.lifelines.length * 320) + 'px'">
+    [style.width]="layerWidth + 'px'">
 
     <!-- Render sequence diagram -->
     <div class="sequence-diagram">
@@ -22,7 +22,7 @@
       <app-lifeline
         *ngFor="let lifeline of interactionFragmentModel.fragmentable.lifelines; let i = index;"
         [lifelineModel]="lifeline"
-        [left]="i * 400"></app-lifeline>
+        [left]="i * lifelineGap"></app-lifeline>
 
       <!-- Messages -->
       <app-message

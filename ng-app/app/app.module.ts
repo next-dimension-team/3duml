@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { JsonApiModule } from 'angular2-jsonapi';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
 import { MaterialModule } from '@angular/material';
+import { ConfigPipe } from './config';
 import 'hammerjs';
 
 // Platform and Environment providers/directives/pipes
@@ -77,6 +78,7 @@ type StoreType = {
     InteractionFragmentComponent,
     InputDialogComponent,
     ConfirmDialogComponent,
+    ConfigPipe,
 
     // Directives
     SelectableDirective
