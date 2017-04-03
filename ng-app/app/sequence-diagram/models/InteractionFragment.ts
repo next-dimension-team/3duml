@@ -123,5 +123,4 @@ export class InteractionFragment extends JsonApiModel {
   get recursiveMessages(): M.Message[] {
     return this.getRecursiveMessages(this);
   }
-
 }
