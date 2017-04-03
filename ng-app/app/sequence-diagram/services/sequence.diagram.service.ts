@@ -5,6 +5,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { InputService } from './input.service';
 import { InputDialogComponent } from './input-dialog.component';
 import { LifelineComponent } from '../components/lifeline.component';
+import { SequenceDiagramComponent } from '../components/sequence-diagram.component';
 import * as _ from 'lodash';
 import * as M from '../models';
 
@@ -16,6 +17,24 @@ export class SequenceDiagramService {
   private menuReloadSource = new BehaviorSubject<any>(null);
   public menuReload$ = this.menuReloadSource.asObservable();
   private layerForDelete;
+
+  /* Getter & Setter for Sequence Diagram Component Instance */
+  protected _sequenceDiagramComponent: SequenceDiagramComponent = null;
+
+  public set sequenceDiagramComponent(sequenceDiagramComponent: SequenceDiagramComponent) {
+    this._sequenceDiagramComponent = sequenceDiagramComponent;
+  }
+
+  public get sequenceDiagramComponent() {
+    return this._sequenceDiagramComponent;
+  }
+
+  public refresh() {
+    this.loadSequenceDiagramTree(this.sequenceDiagramComponent.rootInteractionFragment.fragmentable)
+      .subscribe((interactionFragment: M.InteractionFragment) => {
+        this.sequenceDiagramComponent.rootInteractionFragment = interactionFragment
+      });
+  }
 
   constructor(protected datastore: Datastore, protected inputService: InputService) {
     // Initialize the service
@@ -184,7 +203,7 @@ export class SequenceDiagramService {
             continue;
           }
         }
-        location.reload();
+        this.refresh();
       }
     });
     this.selectedLifeline = null;
@@ -227,7 +246,7 @@ export class SequenceDiagramService {
     lifelineNew.save().subscribe(() => {
       this.lifelineBefore = null;
       this.layer = null;
-      location.reload();
+      this.refresh();
     });
 
     // console.log(this.layer);
@@ -249,7 +268,7 @@ export class SequenceDiagramService {
           lifelineNew.save().subscribe(() => {
             this.lifelineBefore = null;
             this.layer = null;
-            location.reload();
+            this.refresh();
           });
         }
         else if (this.layer) {
@@ -270,7 +289,7 @@ export class SequenceDiagramService {
           lifeline.save().subscribe(() => {
             this.lifelineBefore = null;
             this.layer = null;
-            location.reload();
+            this.refresh();
           });
         } */
   }
@@ -287,7 +306,7 @@ export class SequenceDiagramService {
         parent: openedSequenceDiagram
       });
       interactionFragment.save().subscribe(() => {
-        location.reload();
+        this.refresh();
       });
     });
   }
@@ -326,7 +345,7 @@ export class SequenceDiagramService {
             confirmDialog.componentInstance.onYes.subscribe(result => {
               this.calculateTimeOnMessageDelete(message);
               this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
-                location.reload();
+                this.refresh();
               });
               this.performingDelete = false;
             });
@@ -343,7 +362,7 @@ export class SequenceDiagramService {
             confirmDialog.componentInstance.onYes.subscribe(result => {
               this.calculateLifelinesOrder(lifeline);
               this.datastore.deleteRecord(M.Lifeline, lifeline.id).subscribe(() => {
-                location.reload();
+                this.refresh();
               });
               this.performingDelete = false;
             });
@@ -361,7 +380,7 @@ export class SequenceDiagramService {
           //     // this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
           //     // console.log("Maze sa interakcia:", interaction);
           //     this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id).subscribe(() => {
-          //       location.reload();
+          //       this.refresh();
           //     });
           //     this.performingDelete = false;
           //   });
@@ -443,7 +462,7 @@ export class SequenceDiagramService {
             this.sourceLifelineEvent = this.destinationLifelineEvent;
           } else {
             this.createMessage(this.sourceLifelineEvent, this.destinationLifelineEvent, (message: M.Message) => {
-              //location.reload();
+              //this.refresh();
             });
             this.sourceLifelineEvent = null;
             this.destinationLifelineEvent = null;

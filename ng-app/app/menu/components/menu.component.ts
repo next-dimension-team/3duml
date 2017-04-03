@@ -52,7 +52,7 @@ export class MenuComponent implements OnInit {
 
   // CREATE
   createDiagram(): void {
-    this.inputService.createInputDialog("Creating diagram", "" ,"Enter name of new digram.").componentInstance.onOk.subscribe(result => {
+    this.inputService.createInputDialog("Creating diagram", "", "Enter name of new digram.").componentInstance.onOk.subscribe(result => {
       this.sequenceDiagramService.createDiagram(result);
     })
   }
@@ -65,8 +65,7 @@ export class MenuComponent implements OnInit {
 
   createLifeline(): void {
     this.inputService.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
-      this.sequenceDiagramService.createLifeline(result, (lifeline: M.Lifeline) => {
-      });
+      this.sequenceDiagramService.createLifeline(result);
     });
   }
 
