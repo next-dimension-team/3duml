@@ -30,7 +30,10 @@ export class SequenceDiagramService {
   }
 
   public refresh() {
-    this.loadSequenceDiagramTree(this.sequenceDiagramComponent.rootInteractionFragment.fragmentable).subscribe((interactionFragment: M.InteractionFragment) => this.sequenceDiagramComponent.rootInteractionFragment = interactionFragment);
+    this.loadSequenceDiagramTree(this.sequenceDiagramComponent.rootInteractionFragment.fragmentable)
+      .subscribe((interactionFragment: M.InteractionFragment) => {
+        this.sequenceDiagramComponent.rootInteractionFragment = interactionFragment
+      });
   }
 
   constructor(protected datastore: Datastore, protected inputService: InputService) {
