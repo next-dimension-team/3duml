@@ -84,6 +84,11 @@ export class MenuComponent implements OnInit {
     });
   }
 
+  // RENAME
+  protected renameDiagram(sequenceDiagram : M.Interaction) {
+    this.sequenceDiagramService.renameDiagram(sequenceDiagram);
+  }
+
   // TEST
   protected confirmTest() {
     let confirmDialog = this.inputService.createConfirmDialog("Test confirm", "Confirm it");
