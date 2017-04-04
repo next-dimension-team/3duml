@@ -121,7 +121,7 @@ app-sequence-diagram.editMode > div {
   position: absolute;
 }
 
-.sequence-diagram :hover {
+.sequence-diagram :not(.point):hover {
   color: blue!important;
   background-color: rgba(0, 255, 0, 0.1)!important;
 }
