@@ -69,6 +69,7 @@ export class SequenceDiagramService {
     this.initializeRenameElement();
     this.moveLifeline();
     this.initializeVerticalMessageMove();
+    this.initializeEditLayerAfterDoubleClick();
   }
 
   /**
@@ -694,5 +695,19 @@ export class SequenceDiagramService {
         }
       }
     }
+  }
+
+  protected initializeEditLayerAfterDoubleClick() {
+    this.inputService.onDoubleClick((event) => {
+      if (event.model.type == 'Layer') {
+        this.sequenceDiagramComponent.editLayer(event.model.component.interactionFragmentModel);
+        // Open edit mode
+        var e = document.createEvent('MouseEvents');
+        e.initEvent('click', true, true); // All events created as bubbling and cancelable.
+        e.synthetic = true; // allow detection of synthetic events
+        // The second parameter says go ahead with the default action
+        document.getElementById('md-tab-label-0-1').dispatchEvent(e, true);
+      }
+    });
   }
 }
