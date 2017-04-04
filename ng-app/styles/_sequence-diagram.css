@@ -12,6 +12,10 @@
   display: none!important;
 }
 
+body {
+  overflow-y: hidden;
+}
+
 body.loading {
   cursor: wait!important;
 }
