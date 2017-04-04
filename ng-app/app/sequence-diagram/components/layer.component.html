@@ -6,13 +6,13 @@
   [style.width]="layerWidth + 'px'">
 
   <div
-    class="layer-title">
+    class="layer-title" (dblclick)="renameLayer(interactionFragmentModel)">
     {{interactionFragmentModel.fragmentable.name}}
   </div>
 
   <div
     class="layer"
-    [selectable]="{type: 'Layer', id: interactionFragmentModel.fragmentable.id}"
+    [selectable]="{type: 'Layer', id: interactionFragmentModel.fragmentable.id, component: this}"
     [style.width]="layerWidth + 'px'">
 
     <!-- Render sequence diagram -->

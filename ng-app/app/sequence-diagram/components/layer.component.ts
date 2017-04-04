@@ -1,5 +1,6 @@
 import { Component, Input, ElementRef, OnChanges, OnInit, OnDestroy } from '@angular/core';
 import * as M from '../models';
+import { SequenceDiagramService } from '../../sequence-diagram/services';
 import * as THREE from 'three';
 import { ConfigService } from '../../config';
 let { Object: CSS3DObject } : { Object: typeof THREE.CSS3DObject } = require('three.css')(THREE);
@@ -23,11 +24,9 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
 
   protected fragments = [];
 
-  public layerWidth: number;
-
   public lifelineGap: number;
 
-  constructor(protected element: ElementRef, protected config: ConfigService) {
+  constructor(private sequenceDiagramService: SequenceDiagramService, protected element: ElementRef, protected config: ConfigService) {
     //
   }
 
@@ -36,7 +35,6 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       this.object = new CSS3DObject(this.element.nativeElement);
     }
     this.lifelineGap = this.config.get('lifeline.gap');
-    this.layerWidth = this.getLayerWidth();
   }
 
   public ngOnDestroy() {
@@ -49,7 +47,7 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
     this.fragments = this.r(this.interactionFragmentModel).children;
   }
 
-  protected getLayerWidth(): number {
+  public get layerWidth(): number {
     let numberOfLifelines = this.interactionFragmentModel.fragmentable.lifelines.length;
     if (numberOfLifelines > 0) {
       let lifelinesWidth = numberOfLifelines * (this.config.get('lifeline.width'));
@@ -181,6 +179,9 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       min: Math.min(a.min, b.min),
       max: Math.max(a.max, b.max)
     };
+  }
+  protected renameLayer(interactionFragmentModel : M.InteractionFragment) {
+    this.sequenceDiagramService.renameLayer(interactionFragmentModel);
   }
 
 }

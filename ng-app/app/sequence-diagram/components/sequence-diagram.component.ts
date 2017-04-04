@@ -80,6 +80,10 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     }
   }
 
+  public editLayer(editingLayer: M.InteractionFragment) {
+    this.editingLayer = editingLayer;
+  }
+
   public ngOnChanges(changes: SimpleChanges) {
     if (changes.rootInteractionFragment && !changes.rootInteractionFragment.isFirstChange()) {
       this.controls.reset();

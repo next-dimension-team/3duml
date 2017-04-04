@@ -66,8 +66,10 @@ export class SequenceDiagramService {
     this.initializeDeleteOperation();
     this.initializeAddMessageOperation();
     this.initializeAddLifeline();
+    this.initializeRenameElement();
     this.moveLifeline();
     this.initializeVerticalMessageMove();
+    this.initializeEditLayerAfterDoubleClick();
   }
 
   /**
@@ -321,6 +323,59 @@ export class SequenceDiagramService {
       interactionFragment.save().subscribe(() => {
         this.refresh();
       });
+    });
+  }
+
+  /**
+   * Rename Operation
+   */
+  protected renamingLayer = false;
+
+  public renameDiagram(sequenceDiagram: M.Interaction){
+
+    let editDialog;
+    editDialog = this.inputService.createEditDialog("Edit Diagram", sequenceDiagram.name, "Enter Diagram name");
+    editDialog.componentInstance.onOk.subscribe(result => {
+      sequenceDiagram.name = result;
+      sequenceDiagram.save().subscribe();
+    });  
+  }
+
+  public renameLayer(interactionFragment: M.InteractionFragment){
+
+    let editDialog;
+    
+    let layer = this.datastore.peekRecord(M.Interaction, interactionFragment.fragmentable.id);
+    editDialog = this.inputService.createEditDialog("Edit layer", layer.name, "Enter Layer name");
+    editDialog.componentInstance.onOk.subscribe(result => {
+      layer.name = result;
+      layer.save().subscribe();
+    });  
+  }
+
+  protected initializeRenameElement(){
+
+    let editDialog;
+
+    this.inputService.onDoubleClick((event) => {
+      switch (event.model.type) {
+        case 'Message':
+          let message = this.datastore.peekRecord(M.Message, event.model.id);
+          editDialog = this.inputService.createEditDialog("Edit message", message.name, "Enter message name");
+          editDialog.componentInstance.onOk.subscribe(result => {
+            message.name = result;
+            message.save().subscribe();
+          });  
+        break;
+        case 'Lifeline':
+          let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
+          editDialog = this.inputService.createEditDialog("Edit lifeline", lifeline.name, "Enter lifeline name");
+          editDialog.componentInstance.onOk.subscribe(result => {
+            lifeline.name = result;
+            lifeline.save().subscribe();
+          });  
+        break;
+      }
     });
   }
 
@@ -640,5 +695,19 @@ export class SequenceDiagramService {
         }
       }
     }
+  }
+
+  protected initializeEditLayerAfterDoubleClick() {
+    this.inputService.onDoubleClick((event) => {
+      if (event.model.type == 'Layer') {
+        this.sequenceDiagramComponent.editLayer(event.model.component.interactionFragmentModel);
+        // Open edit mode
+        var e = document.createEvent('MouseEvents');
+        e.initEvent('click', true, true); // All events created as bubbling and cancelable.
+        e.synthetic = true; // allow detection of synthetic events
+        // The second parameter says go ahead with the default action
+        document.getElementById('md-tab-label-0-1').dispatchEvent(e, true);
+      }
+    });
   }
 }
