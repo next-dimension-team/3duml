@@ -24,8 +24,6 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
 
   protected fragments = [];
 
-  public layerWidth: number;
-
   public lifelineGap: number;
 
   constructor(private sequenceDiagramService: SequenceDiagramService, protected element: ElementRef, protected config: ConfigService) {
@@ -37,7 +35,6 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       this.object = new CSS3DObject(this.element.nativeElement);
     }
     this.lifelineGap = this.config.get('lifeline.gap');
-    this.layerWidth = this.getLayerWidth();
   }
 
   public ngOnDestroy() {
@@ -50,7 +47,7 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
     this.fragments = this.r(this.interactionFragmentModel).children;
   }
 
-  protected getLayerWidth(): number {
+  public get layerWidth(): number {
     let numberOfLifelines = this.interactionFragmentModel.fragmentable.lifelines.length;
     if (numberOfLifelines > 0) {
       let lifelinesWidth = numberOfLifelines * (this.config.get('lifeline.width'));

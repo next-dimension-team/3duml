@@ -83,7 +83,6 @@ app-sequence-diagram.editMode > div {
 
 .layer {
   display: block;
-  min-width: 800px;
   height: calc(880px - 32px);
   background-color: rgba(240, 240, 240, 0.75);
   padding: 30px;
