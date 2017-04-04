@@ -21,9 +21,9 @@ export class LifelineComponent implements OnInit {
 
     // TODO: emove "big points" on fragment intersections
 
-    for (let occurrence of this.lifelineModel.occurrenceSpecifications) {
+    /*for (let occurrence of this.lifelineModel.occurrenceSpecifications) {
       occupied.push(occurrence.time);
-    }
+    }*/
 
     // TODO: tam kde je occurrence nevyreslovat gulicku
     // TODO: tahat z configu kolko je guliciek
@@ -37,7 +37,7 @@ export class LifelineComponent implements OnInit {
     }
 
     // Hide useless points
-    for (let point of this.points) {
+    /*for (let point of this.points) {
       // Small point
       if (point.time != Math.round(point.time)) {
         if (
@@ -47,7 +47,7 @@ export class LifelineComponent implements OnInit {
           point.hidden = true;
         }
       }
-    }
+    }*/
   }
 
 }
