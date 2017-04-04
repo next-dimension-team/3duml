@@ -50,7 +50,6 @@ export class MenuComponent implements OnInit {
     this.openSequenceDiagram.emit(sequenceDiagram);
   }
 
-  // CREATE
   createDiagram(): void {
     this.inputService.createInputDialog("Creating diagram", "", "Enter name of new digram.").componentInstance.onOk.subscribe(result => {
       this.sequenceDiagramService.createDiagram(result);
