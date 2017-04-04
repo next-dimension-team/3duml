@@ -33,6 +33,7 @@ import { SequenceDiagramService, InputService } from './sequence-diagram/service
 
 // Component for menu
 import { MenuComponent } from './menu/components/menu.component';
+import { EditDialogComponent } from './menu/components/edit-dialog.component';
 import { InputDialogComponent } from './menu/components/input-dialog.component';
 import { ConfirmDialogComponent } from './menu/components/confirm-dialog.component';
 import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
@@ -76,6 +77,7 @@ type StoreType = {
     LayerComponent,
     InteractionFragmentComponent,
     InputDialogComponent,
+    EditDialogComponent,
     ConfirmDialogComponent,
 
     // Directives
@@ -89,6 +91,7 @@ type StoreType = {
     MaterialModule
   ],
   entryComponents: [
+    EditDialogComponent,
     InputDialogComponent,
     ConfirmDialogComponent
   ],
