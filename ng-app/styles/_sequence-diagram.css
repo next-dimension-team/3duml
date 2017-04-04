@@ -12,6 +12,10 @@
   display: none!important;
 }
 
+body.loading {
+  cursor: wait!important;
+}
+
 input {
   z-index: 999!important;
   border: 0;

@@ -31,10 +31,20 @@ export class SequenceDiagramService {
     return this._sequenceDiagramComponent;
   }
 
+  protected waitingCursor(state: boolean) {
+    if (state) {
+      document.body.className = 'loading';
+    } else {
+      document.body.className = '';
+    }
+  }
+
   public refresh() {
+    this.waitingCursor(true);
     this.loadSequenceDiagramTree(this.sequenceDiagramComponent.rootInteractionFragment.fragmentable)
       .subscribe((interactionFragment: M.InteractionFragment) => {
         this.sequenceDiagramComponent.rootInteractionFragment = interactionFragment
+        this.waitingCursor(false);
       });
   }
 
