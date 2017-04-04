@@ -121,7 +121,8 @@ app-sequence-diagram.editMode > div {
 }
 
 .sequence-diagram :not(.point):hover {
-  background-color: rgba(0, 0, 255, 0.1)!important;
+  color: blue!important;
+  background-color: rgba(0, 255, 0, 0.1)!important;
 }
 
 /* Lifeline */
