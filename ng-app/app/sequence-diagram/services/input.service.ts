@@ -1,6 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { MdDialog, MdDialogRef } from '@angular/material';
 import { InputDialogComponent } from '../../menu/components/input-dialog.component';
+import { ConfirmDialogComponent } from '../../menu/components/confirm-dialog.component';
 
 @Injectable()
 export class InputService {
@@ -12,7 +13,7 @@ export class InputService {
 
   dialogRef: MdDialogRef<any>;
 
-  constructor(public dialog: MdDialog) {}
+  constructor(public dialog: MdDialog) { }
 
   public broadcastLeftClick(param: any) {
     this.leftClick.emit(param);
@@ -66,11 +67,40 @@ export class InputService {
     this.mouseMove.subscribe(callback);
   }
 
+  /* Mouse Down - nebolo to EZ ale vygooglili sme to vdaka dobrym komentom od Mata*/
+  public mouseDown = new EventEmitter;
+
+  public broadcastMouseDown(param: any) {
+    this.mouseDown.emit(param);
+  }
+
+  public onMouseDown(callback: any) {
+    this.mouseDown.subscribe(callback);
+  }
+
+  /* Mouse UP - lebo ked ides hore tak si TOP TOP a cela skola je EZ*/
+  public mouseUp = new EventEmitter;
+
+  public broadcastMouseUp(param: any) {
+    this.mouseUp.emit(param);
+  }
+
+  public onMouseUp(callback: any) {
+    this.mouseUp.subscribe(callback);
+  }
+
   public createInputDialog(title?: string, message?: string, placeholder?: string): MdDialogRef<any> {
     let dialogRef: MdDialogRef<any> = this.dialog.open(InputDialogComponent);
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.message = message;
     dialogRef.componentInstance.placeholder = placeholder;
+    return dialogRef;
+  }
+
+  public createConfirmDialog(title?: string, message?: string): MdDialogRef<any> {
+    let dialogRef: MdDialogRef<any> = this.dialog.open(ConfirmDialogComponent);
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.message = message;
     return dialogRef;
   }
 }
