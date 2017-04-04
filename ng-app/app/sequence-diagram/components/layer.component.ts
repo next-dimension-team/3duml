@@ -2,6 +2,7 @@ import { Component, Input, ElementRef, OnChanges, OnInit, OnDestroy } from '@ang
 import * as M from '../models';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
 import * as THREE from 'three';
+import { ConfigService } from '../../config';
 let { Object: CSS3DObject } : { Object: typeof THREE.CSS3DObject } = require('three.css')(THREE);
 
 @Component({
@@ -23,7 +24,11 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
 
   protected fragments = [];
 
-  constructor(private sequenceDiagramService: SequenceDiagramService, protected element: ElementRef) {
+  public layerWidth: number;
+
+  public lifelineGap: number;
+
+  constructor(private sequenceDiagramService: SequenceDiagramService, protected element: ElementRef, protected config: ConfigService) {
     //
   }
 
@@ -31,6 +36,8 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
     if (this.is3D) {
       this.object = new CSS3DObject(this.element.nativeElement);
     }
+    this.lifelineGap = this.config.get('lifeline.gap');
+    this.layerWidth = this.getLayerWidth();
   }
 
   public ngOnDestroy() {
@@ -41,6 +48,15 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
 
   public ngOnChanges() {
     this.fragments = this.r(this.interactionFragmentModel).children;
+  }
+
+  protected getLayerWidth(): number {
+    let numberOfLifelines = this.interactionFragmentModel.fragmentable.lifelines.length;
+    if (numberOfLifelines > 0) {
+      let lifelinesWidth = numberOfLifelines * (this.config.get('lifeline.width'));
+      let lifelineGapsWidth = (numberOfLifelines - 1) * (this.config.get('lifeline.gap') - this.config.get('lifeline.width'));
+      return lifelinesWidth + lifelineGapsWidth;
+    }
   }
 
   // TODO: nevykreslovat fragmenty ktore su mimo layeru (top = MAX_INT)

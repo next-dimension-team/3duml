@@ -1,7 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
 import { InputService } from '../../sequence-diagram/services/input.service';
-import { InputDialogComponent } from './input-dialog.component';
 import * as M from '../../sequence-diagram/models';
 
 @Component({
@@ -19,18 +18,22 @@ export class MenuComponent implements OnInit {
   public createLayer = new EventEmitter;
 
   private sequenceDiagrams: M.Interaction[];
-  private openedSequenceDiagram: M.Interaction;
-  protected editMode: Boolean;
+  private openedSequenceDiagramId: string;
+  protected editMode: Boolean = false;
 
-  constructor( private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService ) { }
+  constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService) {
+    //
+  }
 
-  ngOnInit() {
-    this.loadSequenceDiagrams();
+  public ngOnInit() {
+    this.sequenceDiagramService.menuReload$.subscribe(
+      () => this.loadSequenceDiagrams()
+    );
   }
 
   protected changeTab(event) {
     this.editMode = (event.tab.textLabel == "Edit");
-    this.sequenceDiagramService.setEditMode(true);
+    this.sequenceDiagramService.setEditMode(this.editMode);
   }
 
   private loadSequenceDiagrams() {
@@ -42,29 +45,26 @@ export class MenuComponent implements OnInit {
   }
 
   private openSequenceDiagramHandler(sequenceDiagram: M.Interaction) {
-    this.sequenceDiagramService.setEditMode(false);
-    this.openedSequenceDiagram = sequenceDiagram;
-    this.openSequenceDiagram.emit(this.openedSequenceDiagram);
+    //this.sequenceDiagramService.setEditMode(false);
+    this.openedSequenceDiagramId = sequenceDiagram.id;
+    this.openSequenceDiagram.emit(sequenceDiagram);
   }
 
-
-  // CREATE
-  createDiagram(): void { 
-    this.inputService.createInputDialog("Creating diagram", "" ,"Enter name of new digram.").componentInstance.onOk.subscribe(result => {
+  createDiagram(): void {
+    this.inputService.createInputDialog("Creating diagram", "", "Enter name of new digram.").componentInstance.onOk.subscribe(result => {
       this.sequenceDiagramService.createDiagram(result);
     })
   }
 
   private createLayerHandler(): void {
-    this.inputService.createInputDialog("Creating layer", "" ,"Enter name of new layer.").componentInstance.onOk.subscribe(result => {
+    this.inputService.createInputDialog("Creating layer", "", "Enter name of new layer.").componentInstance.onOk.subscribe(result => {
       this.createLayer.emit(result);
     })
   }
 
   createLifeline(): void {
     this.inputService.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
-      this.sequenceDiagramService.createLifeline(result, (lifeline: M.Lifeline) => {
-      });
+      this.sequenceDiagramService.createLifeline(result);
     });
   }
 
@@ -72,9 +72,16 @@ export class MenuComponent implements OnInit {
   protected delete() {
     this.sequenceDiagramService.performDelete();
   }
+  protected deleteLayer() {
+    this.sequenceDiagramService.deleteLayer();
+  }
 
   protected deleteDiagram(sequenceDiagram: M.Interaction) {
-    this.sequenceDiagramService.deleteDiagram(sequenceDiagram);
+    let confirmDialog = this.inputService.createConfirmDialog("Delete diagram", "Do you really want to delete diagram \"" +
+      sequenceDiagram.name + "\" ?");
+    confirmDialog.componentInstance.onYes.subscribe(result => {
+      this.sequenceDiagramService.deleteDiagram(sequenceDiagram);
+    });
   }
 
   // RENAME

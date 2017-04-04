@@ -14,7 +14,7 @@ export class InputService {
 
   dialogRef: MdDialogRef<any>;
 
-  constructor(public dialog: MdDialog) {}
+  constructor(public dialog: MdDialog) { }
 
   public broadcastLeftClick(param: any) {
     this.leftClick.emit(param);

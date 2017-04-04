@@ -4,6 +4,11 @@ export let APP_CONFIG = new OpaqueToken('app.config');
 
 export interface IAppConfig {
   layer: {
+    gap: number,
+    padding: number
+  },
+  lifeline: {
+    width: number,
     gap: number
   },
   camera: {
@@ -22,7 +27,12 @@ export interface IAppConfig {
 
 export const AppConfig: IAppConfig = {
   layer: {
-    gap: 600
+    gap: 1000,
+    padding: 30
+  },
+  lifeline: {
+    width: 120,
+    gap: 400
   },
   camera: {
     fov: 75,

@@ -12,6 +12,14 @@
   display: none!important;
 }
 
+body {
+  overflow-y: hidden;
+}
+
+body.loading {
+  cursor: wait!important;
+}
+
 input {
   z-index: 999!important;
   border: 0;
@@ -35,9 +43,10 @@ app-sequence-diagram.editMode .sequence-diagram {
   height: auto;
 }
 
+/* Centrovanie Layeru dosere offset pri move lifeline
 app-sequence-diagram.editMode .layer-wrapper {
-  margin: auto;
-}
+  margin: auto; 
+} */
 
 app-sequence-diagram.editMode > div {
   display: none;
