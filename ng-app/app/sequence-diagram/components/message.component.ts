@@ -32,7 +32,7 @@ export class MessageComponent {
     let targetLifelineOrder = this.messageModel.receiveEvent.covered.order;
     let firstLifelineOrder = (sourceLifelineOrder < targetLifelineOrder) ? sourceLifelineOrder : targetLifelineOrder;
 
-    let leftOffset = (firstLifelineOrder - 1) * this.VZDIALENOST_LAJFLAJN;    
+    let leftOffset = (firstLifelineOrder - 1) * this.VZDIALENOST_LAJFLAJN;
     let lifelineHalfWith = this.SIRKA_LAJFLAJNY / 2;
 
     return leftOffset + lifelineHalfWith;
@@ -42,7 +42,7 @@ export class MessageComponent {
   protected get length() {
     let sourceLifelineOrder = this.messageModel.sendEvent.covered.order;
     let targetLifelineOrder = this.messageModel.receiveEvent.covered.order;
-    
+
     return Math.abs(sourceLifelineOrder - targetLifelineOrder) * this.VZDIALENOST_LAJFLAJN;
   }
 
