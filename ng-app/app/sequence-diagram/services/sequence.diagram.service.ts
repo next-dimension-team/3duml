@@ -15,6 +15,7 @@ export class SequenceDiagramService {
 
   protected static initialized = false;
 
+  public editingLayer: M.InteractionFragment = null;
   private menuReloadSource = new BehaviorSubject<any>(null);
   public menuReload$ = this.menuReloadSource.asObservable();
   private layerForDelete;
@@ -323,14 +324,18 @@ export class SequenceDiagramService {
     this.performingDelete = true;
   }
 
-  /**
-   * Funkcia maze iba z tabulky Interaction Fragment
-   * na backende sa dorobi automaticke mazanie morph vztahu
-   */
   public deleteDiagram(sequenceDiagram: M.Interaction) {
     this.datastore.deleteRecord(M.InteractionFragment, sequenceDiagram.fragment.id).subscribe();
-
     this.menuReloadSource.next(null);
+  }
+
+  public deleteLayer() {
+    let confirmDialog = this.inputService.createConfirmDialog("Delete layer", "Do you really want to delete layer \"" + this.editingLayer.fragmentable.name + "\" ?");
+    confirmDialog.componentInstance.onYes.subscribe(result => {
+      this.datastore.deleteRecord(M.InteractionFragment, this.editingLayer.id).subscribe(() => {
+        this.refresh();
+      });
+    });
   }
 
   protected initializeDeleteOperation() {
@@ -373,23 +378,6 @@ export class SequenceDiagramService {
             });
             event.stopPropagation();
             break;
-          // case 'Layer':
-          //   let interaction = this.datastore.peekRecord(M.Interaction, event.model.id);
-          //   confirmDialog = this.inputService.createConfirmDialog("Delete layer", "Do you really want to delete layer \"" + interaction.name + "\" ?");
-
-          //   confirmDialog.componentInstance.onYes.subscribe(result => {
-          //     // maze iba z tabulky Interaction Fragment, na backende sa dorobi automaticke mazanie morph vztahu
-          //     // this.datastore.deleteRecord(M.Interaction, interaction.id).subscribe(() => {
-          //     // console.log("Maze sa interakcia:", interaction);
-          //     this.datastore.deleteRecord(M.InteractionFragment, interaction.fragment.fragmentable.id).subscribe(() => {
-          //       this.refresh();
-          //     });
-          //     this.performingDelete = false;
-          //   });
-          //   confirmDialog.componentInstance.onNo.subscribe(result => {
-          //     this.performingDelete = false;
-          //   });
-          //   break;
         }
       }
     });

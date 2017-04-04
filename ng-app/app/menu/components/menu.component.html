@@ -68,6 +68,11 @@
                 <button md-button class="list-item-button" (click)="delete()">
                     <md-icon>delete</md-icon> Delete Component
                 </button>
+            </md-list-item>    
+            <md-list-item *ngIf="openedSequenceDiagramId">    
+                <button md-button class="list-item-button" (click)="deleteLayer()">
+                    <md-icon>remove_from_queue</md-icon> Delete Layer
+                </button>
             </md-list-item>
         </md-list>
     </md-tab>

@@ -73,6 +73,9 @@ export class MenuComponent implements OnInit {
   protected delete() {
     this.sequenceDiagramService.performDelete();
   }
+  protected deleteLayer() {
+    this.sequenceDiagramService.deleteLayer();
+  }
 
   protected deleteDiagram(sequenceDiagram: M.Interaction) {
     let confirmDialog = this.inputService.createConfirmDialog("Delete diagram", "Do you really want to delete diagram \"" +

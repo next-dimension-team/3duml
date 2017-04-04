@@ -76,6 +76,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   protected initializeEditMode() {
     if (this.rootInteractionFragment && this.rootInteractionFragment.children.length > 0) {
       this.editingLayer = this.rootInteractionFragment.children[0];
+      this.sequenceDiagramService.editingLayer = this.rootInteractionFragment.children[0];
     }
   }
 
@@ -137,6 +138,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
       this.currentIndex = maxIndex;
     }
 
+    this.sequenceDiagramService.editingLayer = layers[this.currentIndex];
     this.editingLayer = layers[this.currentIndex];
   }
 
