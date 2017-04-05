@@ -421,13 +421,18 @@ export class SequenceDiagramService {
           
           let options = new RequestOptions({ headers: headers });
           let url = "http://127.0.0.1:8000/api/v1/occurrence-specifications/" + occurrenceSpecification.id;
+          occurrenceSpecification.time = event.model.time;
+          occurrenceSpecification.covered = lifelineModel;
           this.http.patch(url, {
             "data": {
               "type": "occurrence-specifications",
               "id": occurrenceSpecification.id.toString(),
               "relationships": {
                 "covered": {
-                  "data": { "type": "lifelines", "id": lifelineModel.id.toString() }
+                  "data": {
+                    "type": "lifelines",
+                    "id": lifelineModel.id.toString()
+                  }
                 }
               }
             }
