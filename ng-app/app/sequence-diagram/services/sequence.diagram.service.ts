@@ -400,27 +400,15 @@ export class SequenceDiagramService {
         if (messageMove) {
 
           lifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.lifelineID);
-          //console.log(occurrenceSpecification.time);
-          //console.log(event.model.time);
-
-          console.log(occurrenceSpecification.id);
-
-          // TODO: Toto enfnguje lebo to nie je podporovane JSON API kniznicou na frontende
-          /*occurrenceSpecification.time = event.model.time;
-          occurrenceSpecification.covered = lifelineModel;
-          occurrenceSpecification.save().subscribe(() => {
-            location.reload();
-          });*/
-
 
           // Manualna uprava JSON
           let headers = new Headers({
             'Content-Type': 'application/vnd.api+json',
             'Accept': 'application/vnd.api+json'
           });
-          
+
           let options = new RequestOptions({ headers: headers });
-          let url = "http://127.0.0.1:8000/api/v1/occurrence-specifications/" + occurrenceSpecification.id;
+          let url = "/api/v1/occurrence-specifications/" + occurrenceSpecification.id;
           occurrenceSpecification.time = event.model.time;
           occurrenceSpecification.covered = lifelineModel;
           this.http.patch(url, {
@@ -437,7 +425,7 @@ export class SequenceDiagramService {
               }
             }
           }, options).subscribe(() => {
-            console.log("HOTOVO");
+            this.refresh();
           });
 
           messageMove = false;
