@@ -646,11 +646,13 @@ export class SequenceDiagramService {
     this.inputService.onMouseMove((event) => {
       if (this.draggingMessage) {
         this.draggingMessage.top = event.offsetY - 50;
+        console.log(this.draggingMessage);
       }
     });
 
     this.inputService.onMouseUp((event) => {
-      if (this.draggingMessage && event.model.type == "Message") {
+      console.log(event.model.type);
+      if (this.draggingMessage) {
         // TODO: Pouzit z configu nie iba /40.0
         this.draggingMessage.messageModel.sendEvent.time = Math.round((event.offsetY - 80) / 40.0);
         this.draggingMessage.messageModel.receiveEvent.time = Math.round((event.offsetY - 80) / 40.0);
