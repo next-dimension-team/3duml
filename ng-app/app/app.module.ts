@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { JsonApiModule } from 'angular2-jsonapi';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
 import { MaterialModule } from '@angular/material';
+import { ConfigPipe } from './config';
 import 'hammerjs';
 
 // Platform and Environment providers/directives/pipes
@@ -33,7 +34,9 @@ import { SequenceDiagramService, InputService } from './sequence-diagram/service
 
 // Component for menu
 import { MenuComponent } from './menu/components/menu.component';
+import { EditDialogComponent } from './menu/components/edit-dialog.component';
 import { InputDialogComponent } from './menu/components/input-dialog.component';
+import { ConfirmDialogComponent } from './menu/components/confirm-dialog.component';
 import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
 import { AppState, InternalStateType } from './app.service';
 import { Datastore } from './datastore';
@@ -75,6 +78,9 @@ type StoreType = {
     LayerComponent,
     InteractionFragmentComponent,
     InputDialogComponent,
+    EditDialogComponent,
+    ConfirmDialogComponent,
+    ConfigPipe,
 
     // Directives
     SelectableDirective
@@ -87,7 +93,9 @@ type StoreType = {
     MaterialModule
   ],
   entryComponents: [
-    InputDialogComponent
+    EditDialogComponent,
+    InputDialogComponent,
+    ConfirmDialogComponent
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,

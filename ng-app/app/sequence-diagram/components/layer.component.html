@@ -1,31 +1,43 @@
 <!-- Render layer -->
 <!-- TODO CONSTANT -->
+
 <div
-  class="layer"
-  [selectable]="{type: 'Layer', id: interactionFragmentModel.fragmentable.id}"
-  [style.width]="(interactionFragmentModel.fragmentable.lifelines.length * 320) + 'px'">
+  class="layer-wrapper"
+  [style.width]="layerWidth + 'px'">
 
-  <!-- Render sequence diagram -->
-  <div class="sequence-diagram">
+  <div
+    class="layer-title" (dblclick)="renameLayer(interactionFragmentModel)">
+    {{interactionFragmentModel.fragmentable.name}}
+  </div>
 
-    <!-- Lifelines -->
-    <app-lifeline
-      *ngFor="let lifeline of interactionFragmentModel.fragmentable.lifelines; let i = index;"
-      [lifelineModel]="lifeline"
-      [left]="i * 400"></app-lifeline>
+  <div
+    class="layer"
+    [selectable]="{type: 'Layer', id: interactionFragmentModel.fragmentable.id, component: this}"
+    [style.width]="layerWidth + 'px'">
 
-    <!-- Messages -->
-    <app-message
-      *ngFor="let message of interactionFragmentModel.fragmentable.recursiveMessages"
-      [messageModel]="message">
-    </app-message>
+    <!-- Render sequence diagram -->
+    <div class="sequence-diagram">
 
-    <!-- Interaction Fragments -->
-    <app-interaction-fragment
-      *ngFor="let fragment of fragments"
-      [fragment]="fragment">
-    </app-interaction-fragment>
+      <!-- Lifelines -->
+      <app-lifeline
+        *ngFor="let lifeline of interactionFragmentModel.fragmentable.lifelines; let i = index;"
+        [lifelineModel]="lifeline"
+        [left]="i * lifelineGap"></app-lifeline>
 
+      <!-- Messages -->
+      <app-message
+        *ngFor="let message of interactionFragmentModel.fragmentable.recursiveMessages"
+        [messageModel]="message">
+      </app-message>
+
+      <!-- Interaction Fragments -->
+      <app-interaction-fragment
+        *ngFor="let fragment of fragments"
+        [fragment]="fragment">
+      </app-interaction-fragment>
+
+    </div>
+    
   </div>
 
 </div>

@@ -54,6 +54,6 @@ class Validators extends AbstractValidatorProvider
             CombinedFragmentsSchema::RESOURCE_TYPE,
         ], is_null($record), false);
 
-        $relationships->hasOne('parent', $resourceType, is_null($record), true);
+        $relationships->hasOne('parent', $resourceType, false, true);
     }
 }

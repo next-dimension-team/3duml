@@ -53,4 +53,20 @@ export class SelectableDirective {
     $event.model = this.model;
     this.inputService.broadcastMouseMove($event);
   }
+
+  /* Mouse Down */
+  @HostListener('mousedown', ['$event'])
+  protected onMouseDown($event) {
+    $event = this.cloneEvent($event);
+    $event.model = this.model;
+    this.inputService.broadcastMouseDown($event);
+  }
+
+  /* Mouse Up */
+  @HostListener('mouseup', ['$event'])
+  protected onMouseUp($event) {
+    $event = this.cloneEvent($event);
+    $event.model = this.model;
+    this.inputService.broadcastMouseUp($event);
+  }
 }
