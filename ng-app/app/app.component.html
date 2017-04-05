@@ -13,7 +13,8 @@
             #sequenceDiagramComponent
             *ngIf="openedSequenceDiagram"
             [rootInteractionFragment]="openedSequenceDiagram"
-            [class.editMode]="sidebarMenuComponent.editMode">
+            [editMode]="sidebarMenuComponent.editMode"
+            [class.disable3D]="sidebarMenuComponent.editMode">
         </app-sequence-diagram>
     </div>
 

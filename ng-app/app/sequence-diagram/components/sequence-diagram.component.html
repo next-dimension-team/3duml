@@ -1,15 +1,6 @@
-<!-- 3D layers -->
 <app-layer
     #layerComponents
     *ngFor="let interactionFragmentModel of rootInteractionFragment.children"
     [interactionFragmentModel]="interactionFragmentModel"
-    [is3D]="true">
-</app-layer>
-
-<!-- 2D layers -->
-<app-layer
-    *ngFor="let interactionFragmentModel of rootInteractionFragment.children"
-    [interactionFragmentModel]="interactionFragmentModel"
-    [is3D]="false"
-    [hidden]="interactionFragmentModel != editingLayer">
+    [hidden]="false && editMode && (interactionFragmentModel != editingLayer)">
 </app-layer>

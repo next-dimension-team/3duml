@@ -22,6 +22,9 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   @Input()
   public rootInteractionFragment: M.InteractionFragment;
 
+  @Input()
+  public editMode: boolean;
+
   protected scene: THREE.Scene;
   protected camera: THREE.PerspectiveCamera;
   protected controls: SequenceDiagramControls;
@@ -88,6 +91,10 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     if (changes.rootInteractionFragment && !changes.rootInteractionFragment.isFirstChange()) {
       this.controls.reset();
       this.initializeEditMode();
+    }
+
+    if (changes.editMode) {
+      console.log("this.editMode =", this.editMode);
     }
   }
 
