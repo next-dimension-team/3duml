@@ -645,7 +645,7 @@ export class SequenceDiagramService {
 
     this.inputService.onMouseMove((event) => {
       if (this.draggingMessage) {
-        this.draggingMessage.top = event.offsetY - 50;
+        this.draggingMessage.top = event.offsetY - 80;
         console.log(this.draggingMessage);
       }
     });
@@ -654,8 +654,8 @@ export class SequenceDiagramService {
       console.log(event.model.type);
       if (this.draggingMessage) {
         // TODO: Pouzit z configu nie iba /40.0
-        this.draggingMessage.messageModel.sendEvent.time = Math.round((event.offsetY - 80) / 40.0);
-        this.draggingMessage.messageModel.receiveEvent.time = Math.round((event.offsetY - 80) / 40.0);
+        this.draggingMessage.messageModel.sendEvent.time = Math.round((event.offsetY - 110) / 40.0);
+        this.draggingMessage.messageModel.receiveEvent.time = Math.round((event.offsetY - 110) / 40.0);
         this.draggingMessage.messageModel.sendEvent.save().subscribe(() => { });
         this.draggingMessage.messageModel.receiveEvent.save().subscribe(() => { });
         this.calculateTimeOnMessageUpdate(this.draggingMessage.messageModel.sendEvent.covered.interaction,
