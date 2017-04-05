@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         // $this->call(MinimalSequenceDiagramSeeder::class);
         // $this->call(ComplexSequenceDiagramSeeder::class);
         // $this->call(FragmentsSequenceDiagramSeeder::class);
-        // $this->call(ATMSystemSequenceDiagramSeeder::class);
-         $this->call(MinimalLayerSeeder::class);
+         $this->call(ATMSystemSequenceDiagramSeeder::class);
+        // $this->call(MinimalLayerSeeder::class);
     }
 }

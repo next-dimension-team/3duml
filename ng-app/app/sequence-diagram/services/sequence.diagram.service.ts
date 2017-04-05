@@ -4,6 +4,7 @@ import { JsonApiModel, ModelType } from 'angular2-jsonapi';
 import { Observable } from 'rxjs';
 import { InputService } from './input.service';
 import { InputDialogComponent } from './input-dialog.component';
+import { Headers, RequestOptions, Http } from '@angular/http';
 import * as _ from 'lodash';
 import * as M from '../models';
 
@@ -12,7 +13,7 @@ export class SequenceDiagramService {
 
   protected static initialized = false;
 
-  constructor(protected datastore: Datastore, protected inputService: InputService) {
+  constructor(protected datastore: Datastore, protected inputService: InputService, protected http: Http) {
     // Initialize the service
     if (!SequenceDiagramService.initialized) {
       this.initialize();
@@ -399,13 +400,41 @@ export class SequenceDiagramService {
         if (messageMove) {
 
           lifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.lifelineID);
-          console.log(occurrenceSpecification.time);
-          console.log(event.model.time);
-          occurrenceSpecification.time = event.model.time;
+          //console.log(occurrenceSpecification.time);
+          //console.log(event.model.time);
+
+          console.log(occurrenceSpecification.id);
+
+          // TODO: Toto enfnguje lebo to nie je podporovane JSON API kniznicou na frontende
+          /*occurrenceSpecification.time = event.model.time;
           occurrenceSpecification.covered = lifelineModel;
           occurrenceSpecification.save().subscribe(() => {
             location.reload();
+          });*/
+
+
+          // Manualna uprava JSON
+          let headers = new Headers({
+            'Content-Type': 'application/vnd.api+json',
+            'Accept': 'application/vnd.api+json'
           });
+          
+          let options = new RequestOptions({ headers: headers });
+          let url = "http://127.0.0.1:8000/api/v1/occurrence-specifications/" + occurrenceSpecification.id;
+          this.http.patch(url, {
+            "data": {
+              "type": "occurrence-specifications",
+              "id": occurrenceSpecification.id.toString(),
+              "relationships": {
+                "covered": {
+                  "data": { "type": "lifelines", "id": lifelineModel.id.toString() }
+                }
+              }
+            }
+          }, options).subscribe(() => {
+            console.log("HOTOVO");
+          });
+
           messageMove = false;
         }
         else {
