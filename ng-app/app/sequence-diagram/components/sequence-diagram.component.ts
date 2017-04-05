@@ -95,6 +95,9 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
 
     if (changes.editMode) {
       console.log("this.editMode =", this.editMode);
+      if (this.controls) {
+        this.controls.enabled = !this.editMode;  
+      }
     }
   }
 
@@ -126,6 +129,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   // Change edit layer
   @HostListener('window:mousewheel', ['$event'])
   public onMouseScroll($event) {
+    console.log("onMouseScroll");
     let layers = this.rootInteractionFragment.children;
     this.currentIndex = layers.indexOf(this.editingLayer);
     let maxIndex = layers.length - 1;
