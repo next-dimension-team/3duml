@@ -164,11 +164,11 @@ export class SequenceDiagramService {
     });
     this.inputService.onMouseMove((event) => {
       if (this.draggingLifeline && this.editMode.valueOf() == true)
-        this.draggingLifeline.left = event.offsetX - 436;
+        this.draggingLifeline.left = event.offsetX - 436 - 75;
     });
     this.inputService.onMouseUp((event) => {
       if (moveBool && this.selectedLifeline != null) {
-        if (this.editMode == false) {
+        if (!this.editMode) {
           this.selectedLifeline = null;
           return;
         }
@@ -178,11 +178,11 @@ export class SequenceDiagramService {
         let lifelineOrder = this.selectedLifeline.order;
         let position = 0, count = 1;
         let orderBot = 0, orderTop = 518;
-        let offsetX = 0;
+        let diagramX = 0;
         while (position == 0) {
-          if (event.offsetX < orderTop && event.offsetX > orderBot) {
+          if (event.diagramX < orderTop && event.diagramX > orderBot) {
             position = count;
-            offsetX = orderTop;
+            diagramX = orderTop;
             break;
           } else {
             count++;
@@ -232,11 +232,11 @@ export class SequenceDiagramService {
     // let lifelineOrder = this.selectedLifeline.order;
     let position = 0, count = 1;
     let orderBot = 0, orderTop = 518;
-    let offsetX = 0;
+    let diagramX = 0;
     while (position == 0) {
-      if (this.savedEvent.offsetX < orderTop && this.savedEvent.offsetX > orderBot) {
+      if (this.savedEvent.diagramX < orderTop && this.savedEvent.diagramX > orderBot) {
         position = count;
-        offsetX = orderTop;
+        diagramX = orderTop;
         break;
       } else {
         count++;

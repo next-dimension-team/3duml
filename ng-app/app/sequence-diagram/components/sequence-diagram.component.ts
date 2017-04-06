@@ -22,6 +22,9 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   @Input()
   public rootInteractionFragment: M.InteractionFragment;
 
+  @Input()
+  public editMode: boolean;
+
   protected scene: THREE.Scene;
   protected camera: THREE.PerspectiveCamera;
   protected controls: SequenceDiagramControls;
@@ -89,6 +92,13 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
       this.controls.reset();
       this.initializeEditMode();
     }
+
+    if (changes.editMode) {
+      console.log("this.editMode =", this.editMode);
+      if (this.controls) {
+        this.controls.enabled = !this.editMode;  
+      }
+    }
   }
 
   public ngAfterViewInit() {
@@ -119,6 +129,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   // Change edit layer
   @HostListener('window:mousewheel', ['$event'])
   public onMouseScroll($event) {
+    console.log("onMouseScroll");
     let layers = this.rootInteractionFragment.children;
     this.currentIndex = layers.indexOf(this.editingLayer);
     let maxIndex = layers.length - 1;
