@@ -1,7 +1,7 @@
 <!-- Render message -->
 <div
   class="message"
-  [selectable]="{type: 'Message', id: messageModel.id}"
+  [selectable]="{type: 'Message', id: messageModel.id, component: this}"
   [class.left-to-right]="direction=='left-to-right'"
   [class.right-to-left]="direction=='right-to-left'"
   [class.sync]="type=='sync'"

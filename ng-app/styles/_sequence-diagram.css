@@ -8,6 +8,12 @@
   user-select: none;
 }
 
+.disable3D,
+.disable3D * {
+  transform-style: initial!important;
+  transform: none!important;
+}
+
 [hidden] {
   display: none!important;
 }
@@ -23,33 +29,6 @@ body.loading {
 input {
   z-index: 999!important;
   border: 0;
-}
-
-/* 3D mode */
-app-sequence-diagram > app-layer {
-  display: none;
-}
-
-app-sequence-diagram > div {
-  display: block;
-}
-
-/* 2D mode */
-app-sequence-diagram.editMode > app-layer {
-  display: block;
-}
-
-app-sequence-diagram.editMode .sequence-diagram {
-  height: auto;
-}
-
-/* Centrovanie Layeru dosere offset pri move lifeline
-app-sequence-diagram.editMode .layer-wrapper {
-  margin: auto; 
-} */
-
-app-sequence-diagram.editMode > div {
-  display: none;
 }
 
 /* Layer */

@@ -19,9 +19,6 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
   @Input()
   public interactionFragmentModel: M.InteractionFragment;
 
-  @Input()
-  public is3D: boolean;
-
   protected fragments = [];
 
   public lifelineGap: number;
@@ -31,19 +28,17 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   public ngOnInit() {
-    if (this.is3D) {
-      this.object = new CSS3DObject(this.element.nativeElement);
-    }
+    this.object = new CSS3DObject(this.element.nativeElement);
     this.lifelineGap = this.config.get('lifeline.gap');
   }
 
   public ngOnDestroy() {
-    if (this.is3D && this.object.parent) {
+    if (this.object.parent) {
       this.object.parent.remove(this.object);
     }
   }
 
-  public ngOnChanges() {
+  public ngOnChanges(changes: SimpleChanges) {
     this.fragments = this.r(this.interactionFragmentModel).children;
   }
 

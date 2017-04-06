@@ -168,7 +168,7 @@ export class SequenceDiagramService {
     });
     this.inputService.onMouseUp((event) => {
       if (moveBool && this.selectedLifeline != null) {
-        if (this.editMode == false) {
+        if (!this.editMode) {
           this.selectedLifeline = null;
           return;
         }
@@ -178,11 +178,11 @@ export class SequenceDiagramService {
         let lifelineOrder = this.selectedLifeline.order;
         let position = 0, count = 1;
         let orderBot = 0, orderTop = 518;
-        let offsetX = 0;
+        let diagramX = 0;
         while (position == 0) {
-          if (event.offsetX < orderTop && event.offsetX > orderBot) {
+          if (event.diagramX < orderTop && event.diagramX > orderBot) {
             position = count;
-            offsetX = orderTop;
+            diagramX = orderTop;
             break;
           } else {
             count++;
@@ -232,11 +232,11 @@ export class SequenceDiagramService {
     // let lifelineOrder = this.selectedLifeline.order;
     let position = 0, count = 1;
     let orderBot = 0, orderTop = 518;
-    let offsetX = 0;
+    let diagramX = 0;
     while (position == 0) {
-      if (this.savedEvent.offsetX < orderTop && this.savedEvent.offsetX > orderBot) {
+      if (this.savedEvent.diagramX < orderTop && this.savedEvent.diagramX > orderBot) {
         position = count;
-        offsetX = orderTop;
+        diagramX = orderTop;
         break;
       } else {
         count++;
@@ -645,15 +645,17 @@ export class SequenceDiagramService {
 
     this.inputService.onMouseMove((event) => {
       if (this.draggingMessage) {
-        this.draggingMessage.top = event.offsetY - 50;
+        this.draggingMessage.top = event.offsetY - 80;
+        console.log(this.draggingMessage);
       }
     });
 
     this.inputService.onMouseUp((event) => {
-      if (this.draggingMessage && event.model.type == "Message") {
+      console.log(event.model.type);
+      if (this.draggingMessage) {
         // TODO: Pouzit z configu nie iba /40.0
-        this.draggingMessage.messageModel.sendEvent.time = Math.round((event.offsetY - 80) / 40.0);
-        this.draggingMessage.messageModel.receiveEvent.time = Math.round((event.offsetY - 80) / 40.0);
+        this.draggingMessage.messageModel.sendEvent.time = Math.round((event.offsetY - 110) / 40.0);
+        this.draggingMessage.messageModel.receiveEvent.time = Math.round((event.offsetY - 110) / 40.0);
         this.draggingMessage.messageModel.sendEvent.save().subscribe(() => { });
         this.draggingMessage.messageModel.receiveEvent.save().subscribe(() => { });
         this.calculateTimeOnMessageUpdate(this.draggingMessage.messageModel.sendEvent.covered.interaction,
