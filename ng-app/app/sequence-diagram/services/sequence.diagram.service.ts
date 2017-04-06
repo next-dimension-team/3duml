@@ -163,8 +163,8 @@ export class SequenceDiagramService {
       }
     });
     this.inputService.onMouseMove((event) => {
-      if (this.draggingLifeline && this.editMode)
-        this.draggingLifeline.left = event.diagramX - 126;
+      if (this.draggingLifeline && this.editMode.valueOf() == true)
+        this.draggingLifeline.left = event.offsetX - 436 - 75;
     });
     this.inputService.onMouseUp((event) => {
       if (moveBool && this.selectedLifeline != null) {
