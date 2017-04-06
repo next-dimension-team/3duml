@@ -13,17 +13,26 @@ export class MessageComponent {
   protected VYSKA_HLAVICKY_LAJFLAJNY = 50;
   protected VZDIALENOST_OD_VRCHU_MESSAGE_PO_VRCH_CIARY_MESSAGE = 15;
   protected VYSKA_ZUBKU = 40;
+  protected staticTop: number = null;
 
   @Input()
   public messageModel: M.Message;
 
-  protected get top() {
-    let globalOffset = this.VYSKA_HLAVICKY_LAJFLAJNY - this.VZDIALENOST_OD_VRCHU_MESSAGE_PO_VRCH_CIARY_MESSAGE;
-    let sendTime = this.messageModel.sendEvent.time;
-    let receiveTime = this.messageModel.receiveEvent.time;
-    let time = (sendTime < receiveTime) ? sendTime : receiveTime;
-    let messageOffset = time * this.VYSKA_ZUBKU;
-    return globalOffset + messageOffset;
+  public get top() {
+    if (this.staticTop) {
+      return this.staticTop;
+    } else {
+      let globalOffset = this.VYSKA_HLAVICKY_LAJFLAJNY - this.VZDIALENOST_OD_VRCHU_MESSAGE_PO_VRCH_CIARY_MESSAGE;
+      let sendTime = this.messageModel.sendEvent.time;
+      let receiveTime = this.messageModel.receiveEvent.time;
+      let time = (sendTime < receiveTime) ? sendTime : receiveTime;
+      let messageOffset = time * this.VYSKA_ZUBKU;
+      return globalOffset + messageOffset;
+    }
+  }
+
+  public set top(currentTop: number) {
+    this.staticTop = currentTop;
   }
 
   // TODO: implementovat logiku
