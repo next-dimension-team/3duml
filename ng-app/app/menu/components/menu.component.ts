@@ -20,6 +20,7 @@ export class MenuComponent implements OnInit {
   private sequenceDiagrams: M.Interaction[];
   private openedSequenceDiagramId: string;
   protected editMode: Boolean = false;
+  private clickedOnLayer: Boolean = false;
 
   constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService) {
     //
@@ -46,6 +47,7 @@ export class MenuComponent implements OnInit {
 
   private openSequenceDiagramHandler(sequenceDiagram: M.Interaction) {
     //this.sequenceDiagramService.setEditMode(false);
+    this.clickedOnLayer = false;
     this.openedSequenceDiagramId = sequenceDiagram.id;
     this.openSequenceDiagram.emit(sequenceDiagram);
   }
@@ -63,9 +65,16 @@ export class MenuComponent implements OnInit {
   }
 
   createLifeline(): void {
-    this.inputService.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
-      this.sequenceDiagramService.createLifeline(result);
+     this.inputService.onMouseDown((event) => {
+      if (event.model.type == 'Layer') {
+        this.clickedOnLayer = true;
+      }
     });
+    if (this.clickedOnLayer) {
+      this.inputService.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
+        this.sequenceDiagramService.createLifeline(result);
+      });
+    }
   }
 
   // DELETE

@@ -227,7 +227,7 @@ export class SequenceDiagramService {
     this.draggingLifeline = null;
   }
 
-  public createLifeline(name: string, callback: any) {
+  public createLifeline(name: string) {
     let lifelinesInInteraction = this.layer.lifelines;
     // let lifelineOrder = this.selectedLifeline.order;
     let position = 0, count = 1;
