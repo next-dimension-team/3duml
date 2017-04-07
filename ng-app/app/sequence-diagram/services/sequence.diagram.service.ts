@@ -336,9 +336,9 @@ export class SequenceDiagramService {
   public renameDiagram(sequenceDiagram: M.Interaction){
 
     let editDialog;
-    editDialog = this.inputService.createEditDialog("Edit Diagram", sequenceDiagram.name, "Enter Diagram name");
+    editDialog = this.inputService.createEditDialog("Edit Diagram", sequenceDiagram, "Enter Diagram name","diagram");
     editDialog.componentInstance.onOk.subscribe(result => {
-      sequenceDiagram.name = result;
+      sequenceDiagram.name = result.name;
       sequenceDiagram.save().subscribe();
     });  
   }
@@ -348,9 +348,9 @@ export class SequenceDiagramService {
     let editDialog;
     
     let layer = this.datastore.peekRecord(M.Interaction, interactionFragment.fragmentable.id);
-    editDialog = this.inputService.createEditDialog("Edit layer", layer.name, "Enter Layer name");
+    editDialog = this.inputService.createEditDialog("Edit layer", layer, "Enter Layer name","layer");
     editDialog.componentInstance.onOk.subscribe(result => {
-      layer.name = result;
+      layer.name = result.name;
       layer.save().subscribe();
     });  
   }
@@ -363,17 +363,18 @@ export class SequenceDiagramService {
       switch (event.model.type) {
         case 'Message':
           let message = this.datastore.peekRecord(M.Message, event.model.id);
-          editDialog = this.inputService.createEditDialog("Edit message", message.name, "Enter message name");
+          editDialog = this.inputService.createEditDialog("Edit message", message, "Enter message name","message");
           editDialog.componentInstance.onOk.subscribe(result => {
-            message.name = result;
+            message.name = result.name;
+            message.sort = result.messageSort;
             message.save().subscribe();
           });  
         break;
         case 'Lifeline':
           let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
-          editDialog = this.inputService.createEditDialog("Edit lifeline", lifeline.name, "Enter lifeline name");
+          editDialog = this.inputService.createEditDialog("Edit lifeline", lifeline, "Enter lifeline name","lifeline");
           editDialog.componentInstance.onOk.subscribe(result => {
-            lifeline.name = result;
+            lifeline.name = result.name;
             lifeline.save().subscribe();
           });  
         break;
