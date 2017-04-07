@@ -104,11 +104,12 @@ export class InputService {
     dialogRef.componentInstance.message = message;
     return dialogRef;
   }
-  public createEditDialog(title?: string, placeholder?: string, message?: string,): MdDialogRef<any> {
+  public createEditDialog(title?: string, element?: any, message?: string, elementType?: string): MdDialogRef<any> {
     let dialogRef: MdDialogRef<any> = this.dialog.open(EditDialogComponent);
+    dialogRef.componentInstance.elementType = elementType;
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.message = message;
-    dialogRef.componentInstance.placeholder = placeholder;
+    dialogRef.componentInstance.element = element;
     return dialogRef;
   }
 }
