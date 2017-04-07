@@ -132,7 +132,6 @@ export class SequenceDiagramService {
 
   public initializeAddLifeline() {
     this.inputService.onLeftClick((event) => {
-      console.log(event);
       if (event.model.type == "Layer") {
         this.layer = this.datastore.peekRecord(M.Interaction, event.model.id);
         this.savedEvent = event;
@@ -142,8 +141,6 @@ export class SequenceDiagramService {
         this.layer = null;
         //event.stopPropagation();
       } */
-      //console.log(this.lifelineBefore);
-      //console.log(this.layer);
     });
   }
 
@@ -157,7 +154,6 @@ export class SequenceDiagramService {
     this.inputService.onMouseDown((event) => {
       if (event.model.type == 'Lifeline') {
         this.draggingLifeline = event.model.component;
-        //     console.log(this.draggingLifeline);
         this.selectedLifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
         moveBool = true;
       }
@@ -248,7 +244,6 @@ export class SequenceDiagramService {
     if (position > numOfLifelines) {
       position = numOfLifelines + 1;
     }
-    console.log(position);
     for (let lifeline of lifelinesInInteraction) {
       if (lifeline.order >= position) {
         lifeline.order++;
@@ -266,7 +261,6 @@ export class SequenceDiagramService {
       this.refresh();
     });
 
-    // console.log(this.layer);
     /*    if (this.lifelineBefore) {
           let interaction = this.lifelineBefore.interaction;
           let lifelinesInInteraction = interaction.lifelines;
@@ -333,29 +327,29 @@ export class SequenceDiagramService {
    */
   protected renamingLayer = false;
 
-  public renameDiagram(sequenceDiagram: M.Interaction){
+  public renameDiagram(sequenceDiagram: M.Interaction) {
 
     let editDialog;
     editDialog = this.inputService.createEditDialog("Edit Diagram", sequenceDiagram.name, "Enter Diagram name");
     editDialog.componentInstance.onOk.subscribe(result => {
       sequenceDiagram.name = result;
       sequenceDiagram.save().subscribe();
-    });  
+    });
   }
 
-  public renameLayer(interactionFragment: M.InteractionFragment){
+  public renameLayer(interactionFragment: M.InteractionFragment) {
 
     let editDialog;
-    
+
     let layer = this.datastore.peekRecord(M.Interaction, interactionFragment.fragmentable.id);
     editDialog = this.inputService.createEditDialog("Edit layer", layer.name, "Enter Layer name");
     editDialog.componentInstance.onOk.subscribe(result => {
       layer.name = result;
       layer.save().subscribe();
-    });  
+    });
   }
 
-  protected initializeRenameElement(){
+  protected initializeRenameElement() {
 
     let editDialog;
 
@@ -367,16 +361,16 @@ export class SequenceDiagramService {
           editDialog.componentInstance.onOk.subscribe(result => {
             message.name = result;
             message.save().subscribe();
-          });  
-        break;
+          });
+          break;
         case 'Lifeline':
           let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
           editDialog = this.inputService.createEditDialog("Edit lifeline", lifeline.name, "Enter lifeline name");
           editDialog.componentInstance.onOk.subscribe(result => {
             lifeline.name = result;
             lifeline.save().subscribe();
-          });  
-        break;
+          });
+          break;
       }
     });
   }
@@ -646,12 +640,10 @@ export class SequenceDiagramService {
     this.inputService.onMouseMove((event) => {
       if (this.draggingMessage) {
         this.draggingMessage.top = event.offsetY - 80;
-        console.log(this.draggingMessage);
       }
     });
 
     this.inputService.onMouseUp((event) => {
-      console.log(event.model.type);
       if (this.draggingMessage) {
         // TODO: Pouzit z configu nie iba /40.0
         this.draggingMessage.messageModel.sendEvent.time = Math.round((event.offsetY - 110) / 40.0);
