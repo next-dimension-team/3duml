@@ -164,7 +164,7 @@ export class SequenceDiagramService {
     });
     this.inputService.onMouseMove((event) => {
       if (this.draggingLifeline && this.editMode.valueOf() == true)
-        this.draggingLifeline.left = event.offsetX - 436 - 75;
+        this.draggingLifeline.left = event.diagramX - 125;
     });
     this.inputService.onMouseUp((event) => {
       if (moveBool && this.selectedLifeline != null) {
@@ -177,7 +177,7 @@ export class SequenceDiagramService {
         let lifelinesInInteraction = interaction.lifelines;
         let lifelineOrder = this.selectedLifeline.order;
         let position = 0, count = 1;
-        let orderBot = 0, orderTop = 518;
+        let orderBot = 0, orderTop = 125;
         let diagramX = 0;
         while (position == 0) {
           if (event.diagramX < orderTop && event.diagramX > orderBot) {
@@ -202,6 +202,7 @@ export class SequenceDiagramService {
           this.draggingLifeline = null;
           return;
         }
+        this.draggingLifeline = null;
         let originalOrder = this.selectedLifeline.order;
         for (let lifeline of lifelinesInInteraction) {
           if (lifeline.id == this.selectedLifeline.id) {
@@ -231,7 +232,7 @@ export class SequenceDiagramService {
     let lifelinesInInteraction = this.layer.lifelines;
     // let lifelineOrder = this.selectedLifeline.order;
     let position = 0, count = 1;
-    let orderBot = 0, orderTop = 518;
+    let orderBot = 0, orderTop = 125;
     let diagramX = 0;
     while (position == 0) {
       if (this.savedEvent.diagramX < orderTop && this.savedEvent.diagramX > orderBot) {
