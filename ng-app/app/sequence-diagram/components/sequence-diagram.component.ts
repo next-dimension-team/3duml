@@ -24,6 +24,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
 
   @Input()
   public editMode: boolean;
+  protected editingLayerIndex: number = 0;
 
   protected scene: THREE.Scene;
   protected camera: THREE.PerspectiveCamera;
@@ -31,8 +32,6 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   protected renderer: THREE.CSS3DRenderer;
 
   protected renderQueued = false;
-  protected editingLayer: M.InteractionFragment = null;
-  protected currentIndex: number;
 
   constructor(protected ngZone: NgZone, protected element: ElementRef, protected config: ConfigService, protected sequenceDiagramService: SequenceDiagramService) {
     this.sequenceDiagramService.sequenceDiagramComponent = this;
@@ -71,32 +70,16 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     );
 
     this.controls.addEventListener('change', () => this.queueRender());
-
-    // Initialize edit mode
-    this.initializeEditMode();
-  }
-
-  protected initializeEditMode() {
-    if (this.rootInteractionFragment && this.rootInteractionFragment.children.length > 0) {
-      this.editingLayer = this.rootInteractionFragment.children[0];
-      this.sequenceDiagramService.editingLayer = this.rootInteractionFragment.children[0];
-    }
-  }
-
-  public editLayer(editingLayer: M.InteractionFragment) {
-    this.editingLayer = editingLayer;
   }
 
   public ngOnChanges(changes: SimpleChanges) {
     if (changes.rootInteractionFragment && !changes.rootInteractionFragment.isFirstChange()) {
       this.controls.reset();
-      this.initializeEditMode();
     }
 
     if (changes.editMode) {
-      console.log("this.editMode =", this.editMode);
       if (this.controls) {
-        this.controls.enabled = !this.editMode;  
+        this.controls.enabled = !this.editMode;
       }
     }
   }
@@ -129,32 +112,35 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   // Change edit layer
   @HostListener('window:mousewheel', ['$event'])
   public onMouseScroll($event) {
-    console.log("onMouseScroll");
-    let layers = this.rootInteractionFragment.children;
-    this.currentIndex = layers.indexOf(this.editingLayer);
-    let maxIndex = layers.length - 1;
-
-    if (this.currentIndex == -1) {
-      this.currentIndex = 0;
-      this.editingLayer = layers[0];
-    }
-
     if ($event.deltaY > 0) {
-      this.currentIndex--;
+      this.editingLayerIndex--;
     } else {
-      this.currentIndex++;
+      this.editingLayerIndex++;
     }
 
-    if (this.currentIndex < 0) {
-      this.currentIndex = 0;
+    this.processEditingLayer();
+  }
+
+  public get editingLayer(): M.InteractionFragment {
+    return this.rootInteractionFragment.children[this.editingLayerIndex];
+  }
+
+  public set editingLayer(layer: M.InteractionFragment) {
+    this.editingLayerIndex = this.rootInteractionFragment.children.indexOf(layer);
+
+    this.processEditingLayer();
+  }
+
+  protected processEditingLayer() {
+    let maxIndex = this.rootInteractionFragment.children.length - 1;
+
+    if (this.editingLayerIndex < 0) {
+      this.editingLayerIndex = 0;
     }
 
-    if (this.currentIndex > maxIndex) {
-      this.currentIndex = maxIndex;
+    if (this.editingLayerIndex > maxIndex) {
+      this.editingLayerIndex = maxIndex;
     }
-
-    this.sequenceDiagramService.editingLayer = layers[this.currentIndex];
-    this.editingLayer = layers[this.currentIndex];
   }
 
   public queueRender() {

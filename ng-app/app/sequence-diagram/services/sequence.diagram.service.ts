@@ -16,7 +16,6 @@ export class SequenceDiagramService {
 
   protected static initialized = false;
 
-  public editingLayer: M.InteractionFragment = null;
   private menuReloadSource = new BehaviorSubject<any>(null);
   public menuReload$ = this.menuReloadSource.asObservable();
   private layerForDelete;
@@ -44,7 +43,7 @@ export class SequenceDiagramService {
     this.waitingCursor(true);
     this.loadSequenceDiagramTree(this.sequenceDiagramComponent.rootInteractionFragment.fragmentable)
       .subscribe((interactionFragment: M.InteractionFragment) => {
-        this.sequenceDiagramComponent.rootInteractionFragment = interactionFragment
+        this.sequenceDiagramComponent.rootInteractionFragment = interactionFragment;
         this.waitingCursor(false);
       });
   }
@@ -126,24 +125,14 @@ export class SequenceDiagramService {
   }
 
   protected lifelineBefore: M.Lifeline;
-  protected selectedLifeline: M.Lifeline;
-  protected layer: M.Interaction;
-  protected savedEvent: Event;
+  protected movingLifeline: M.Lifeline;
+  protected addingLifelineEvent: Event;
 
   public initializeAddLifeline() {
     this.inputService.onLeftClick((event) => {
-      console.log(event);
       if (event.model.type == "Layer") {
-        this.layer = this.datastore.peekRecord(M.Interaction, event.model.id);
-        this.savedEvent = event;
-      } /*else
-      if (event.model.type == "Lifeline") {
-        this.lifelineBefore = this.datastore.peekRecord(M.Lifeline, event.model.id);
-        this.layer = null;
-        //event.stopPropagation();
-      } */
-      //console.log(this.lifelineBefore);
-      //console.log(this.layer);
+        this.addingLifelineEvent = event;
+      }
     });
   }
 
@@ -157,8 +146,7 @@ export class SequenceDiagramService {
     this.inputService.onMouseDown((event) => {
       if (event.model.type == 'Lifeline') {
         this.draggingLifeline = event.model.component;
-        //     console.log(this.draggingLifeline);
-        this.selectedLifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
+        this.movingLifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
         moveBool = true;
       }
     });
@@ -167,15 +155,15 @@ export class SequenceDiagramService {
         this.draggingLifeline.left = event.diagramX - 125;
     });
     this.inputService.onMouseUp((event) => {
-      if (moveBool && this.selectedLifeline != null) {
+      if (moveBool && this.movingLifeline != null) {
         if (!this.editMode) {
-          this.selectedLifeline = null;
+          this.movingLifeline = null;
           return;
         }
         moveBool = false;
-        let interaction = this.selectedLifeline.interaction;
+        let interaction = this.movingLifeline.interaction;
         let lifelinesInInteraction = interaction.lifelines;
-        let lifelineOrder = this.selectedLifeline.order;
+        let lifelineOrder = this.movingLifeline.order;
         let position = 0, count = 1;
         let orderBot = 0, orderTop = 125;
         let diagramX = 0;
@@ -194,18 +182,22 @@ export class SequenceDiagramService {
         if (position > numOfLifelines) {
           position = numOfLifelines + 1;
         }
-        if (position > this.selectedLifeline.order && numOfLifelines > 2) {
+        if (position > this.movingLifeline.order && numOfLifelines > 2) {
           position--;
         }
-        if (position == this.selectedLifeline.order) {
+        if (position == this.movingLifeline.order) {
           this.draggingLifeline.left = (position - 1) * 400;
           this.draggingLifeline = null;
           return;
         }
+<<<<<<< HEAD
         this.draggingLifeline = null;
         let originalOrder = this.selectedLifeline.order;
+=======
+        let originalOrder = this.movingLifeline.order;
+>>>>>>> 5b954b09848c480b4fb0958a1a276e97d3fc934c
         for (let lifeline of lifelinesInInteraction) {
-          if (lifeline.id == this.selectedLifeline.id) {
+          if (lifeline.id == this.movingLifeline.id) {
             lifeline.order = position;
             lifeline.save().subscribe();
             continue;
@@ -224,18 +216,18 @@ export class SequenceDiagramService {
         this.refresh();
       }
     });
-    this.selectedLifeline = null;
+    this.movingLifeline = null;
     this.draggingLifeline = null;
   }
 
   public createLifeline(name: string) {
-    let lifelinesInInteraction = this.layer.lifelines;
-    // let lifelineOrder = this.selectedLifeline.order;
+    let lifelinesInInteraction = this.sequenceDiagramComponent.editingLayer.fragmentable.lifelines;
+    // let lifelineOrder = this.movingLifeline.order;
     let position = 0, count = 1;
     let orderBot = 0, orderTop = 125;
     let diagramX = 0;
     while (position == 0) {
-      if (this.savedEvent.diagramX < orderTop && this.savedEvent.diagramX > orderBot) {
+      if (this.addingLifelineEvent.diagramX < orderTop && this.addingLifelineEvent.diagramX > orderBot) {
         position = count;
         diagramX = orderTop;
         break;
@@ -249,7 +241,6 @@ export class SequenceDiagramService {
     if (position > numOfLifelines) {
       position = numOfLifelines + 1;
     }
-    console.log(position);
     for (let lifeline of lifelinesInInteraction) {
       if (lifeline.order >= position) {
         lifeline.order++;
@@ -259,15 +250,13 @@ export class SequenceDiagramService {
     let lifelineNew = this.datastore.createRecord(M.Lifeline, {
       name: name,
       order: position,
-      interaction: this.layer
+      interaction: this.sequenceDiagramComponent.editingLayer.fragmentable
     });
     lifelineNew.save().subscribe(() => {
       this.lifelineBefore = null;
-      this.layer = null;
       this.refresh();
     });
 
-    // console.log(this.layer);
     /*    if (this.lifelineBefore) {
           let interaction = this.lifelineBefore.interaction;
           let lifelinesInInteraction = interaction.lifelines;
@@ -334,29 +323,29 @@ export class SequenceDiagramService {
    */
   protected renamingLayer = false;
 
-  public renameDiagram(sequenceDiagram: M.Interaction){
+  public renameDiagram(sequenceDiagram: M.Interaction) {
 
     let editDialog;
     editDialog = this.inputService.createEditDialog("Edit Diagram", sequenceDiagram.name, "Enter Diagram name");
     editDialog.componentInstance.onOk.subscribe(result => {
       sequenceDiagram.name = result;
       sequenceDiagram.save().subscribe();
-    });  
+    });
   }
 
-  public renameLayer(interactionFragment: M.InteractionFragment){
+  public renameLayer(interactionFragment: M.InteractionFragment) {
 
     let editDialog;
-    
+
     let layer = this.datastore.peekRecord(M.Interaction, interactionFragment.fragmentable.id);
     editDialog = this.inputService.createEditDialog("Edit layer", layer.name, "Enter Layer name");
     editDialog.componentInstance.onOk.subscribe(result => {
       layer.name = result;
       layer.save().subscribe();
-    });  
+    });
   }
 
-  protected initializeRenameElement(){
+  protected initializeRenameElement() {
 
     let editDialog;
 
@@ -368,16 +357,16 @@ export class SequenceDiagramService {
           editDialog.componentInstance.onOk.subscribe(result => {
             message.name = result;
             message.save().subscribe();
-          });  
-        break;
+          });
+          break;
         case 'Lifeline':
           let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
           editDialog = this.inputService.createEditDialog("Edit lifeline", lifeline.name, "Enter lifeline name");
           editDialog.componentInstance.onOk.subscribe(result => {
             lifeline.name = result;
             lifeline.save().subscribe();
-          });  
-        break;
+          });
+          break;
       }
     });
   }
@@ -398,9 +387,9 @@ export class SequenceDiagramService {
   }
 
   public deleteLayer() {
-    let confirmDialog = this.inputService.createConfirmDialog("Delete layer", "Do you really want to delete layer \"" + this.editingLayer.fragmentable.name + "\" ?");
+    let confirmDialog = this.inputService.createConfirmDialog("Delete layer", "Do you really want to delete layer \"" + this.sequenceDiagramComponent.editingLayer.fragmentable.name + "\" ?");
     confirmDialog.componentInstance.onYes.subscribe(result => {
-      this.datastore.deleteRecord(M.InteractionFragment, this.editingLayer.id).subscribe(() => {
+      this.datastore.deleteRecord(M.InteractionFragment, this.sequenceDiagramComponent.editingLayer.id).subscribe(() => {
         this.refresh();
       });
     });
@@ -647,12 +636,10 @@ export class SequenceDiagramService {
     this.inputService.onMouseMove((event) => {
       if (this.draggingMessage) {
         this.draggingMessage.top = event.offsetY - 80;
-        console.log(this.draggingMessage);
       }
     });
 
     this.inputService.onMouseUp((event) => {
-      console.log(event.model.type);
       if (this.draggingMessage) {
         // TODO: Pouzit z configu nie iba /40.0
         this.draggingMessage.messageModel.sendEvent.time = Math.round((event.offsetY - 110) / 40.0);
@@ -705,7 +692,7 @@ export class SequenceDiagramService {
   protected initializeEditLayerAfterDoubleClick() {
     this.inputService.onDoubleClick((event) => {
       if (event.model.type == 'Layer') {
-        this.sequenceDiagramComponent.editLayer(event.model.component.interactionFragmentModel);
+        this.sequenceDiagramComponent.editingLayer = event.model.component.interactionFragmentModel;
         // Open edit mode
         var e = document.createEvent('MouseEvents');
         e.initEvent('click', true, true); // All events created as bubbling and cancelable.

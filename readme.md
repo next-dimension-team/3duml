@@ -76,3 +76,16 @@ $ npm run clean
 $ php artisan migrate:refresh
 $ php artisan db:seed --class MinimalSequenceDiagramSeeder
 ```
+
+### Dialogove okno
+```
+let confirmDialog = this.inputService.createConfirmDialog("Test confirm", "Confirm it");
+
+confirmDialog.componentInstance.onYes.subscribe(result => {
+  console.log("Confirm dialog - YES");
+});
+
+confirmDialog.componentInstance.onNo.subscribe(result => {
+  console.log("Confirm dialog - NO");
+});
+```
