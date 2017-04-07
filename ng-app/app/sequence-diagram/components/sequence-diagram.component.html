@@ -1,6 +1,6 @@
 <app-layer
-    #layerComponents
-    *ngFor="let interactionFragmentModel of rootInteractionFragment.children"
-    [interactionFragmentModel]="interactionFragmentModel"
-    [hidden]="editMode && (interactionFragmentModel != editingLayer)">
+  #layerComponents
+  *ngFor="let interactionFragmentModel of rootInteractionFragment.children"
+  [interactionFragmentModel]="interactionFragmentModel"
+  [hidden]="editMode && (interactionFragmentModel != editingLayer)">
 </app-layer>

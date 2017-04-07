@@ -64,17 +64,10 @@ export class MenuComponent implements OnInit {
     })
   }
 
-  createLifeline(): void {
-    this.inputService.onMouseDown((event) => {
-      if (event.model.type == 'Layer') {
-        this.clickedOnLayer = true;
-      }
+  protected createLifeline(): void {
+    this.inputService.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
+      this.sequenceDiagramService.createLifeline(result);
     });
-    if (this.clickedOnLayer) {
-      this.inputService.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
-        this.sequenceDiagramService.createLifeline(result);
-      });
-    }
   }
 
   // DELETE
@@ -96,18 +89,5 @@ export class MenuComponent implements OnInit {
   // RENAME
   protected renameDiagram(sequenceDiagram: M.Interaction) {
     this.sequenceDiagramService.renameDiagram(sequenceDiagram);
-  }
-
-  // TEST
-  protected confirmTest() {
-    let confirmDialog = this.inputService.createConfirmDialog("Test confirm", "Confirm it");
-
-    confirmDialog.componentInstance.onYes.subscribe(result => {
-      //console.log("Confirm dialog - YES");
-    });
-
-    confirmDialog.componentInstance.onNo.subscribe(result => {
-      //console.log("Confirm dialog - NO");
-    });
   }
 }
