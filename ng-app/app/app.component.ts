@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
 import * as M from './sequence-diagram/models';
-import { SequenceDiagramService } from './sequence-diagram/services';
+
+import { Component } from '@angular/core';
 import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
+import { SequenceDiagramService } from './sequence-diagram/services';
 
 @Component({
   selector: 'app-root',

@@ -1,3 +1,4 @@
+import { DialogService } from '../../dialog/services';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
 import { InputService } from '../../sequence-diagram/services/input.service';
@@ -22,7 +23,7 @@ export class MenuComponent implements OnInit {
   protected editMode: Boolean = false;
   private clickedOnLayer: Boolean = false;
 
-  constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService) {
+  constructor(private sequenceDiagramService: SequenceDiagramService, protected inputService: InputService, protected dialogService: DialogService) {
     //
   }
 
@@ -53,19 +54,19 @@ export class MenuComponent implements OnInit {
   }
 
   createDiagram(): void {
-    this.inputService.createInputDialog("Creating diagram", "", "Enter name of new digram.").componentInstance.onOk.subscribe(result => {
+    this.dialogService.createInputDialog("Creating diagram", "", "Enter name of new digram.").componentInstance.onOk.subscribe(result => {
       this.sequenceDiagramService.createDiagram(result);
     })
   }
 
   private createLayerHandler(): void {
-    this.inputService.createInputDialog("Creating layer", "", "Enter name of new layer.").componentInstance.onOk.subscribe(result => {
+    this.dialogService.createInputDialog("Creating layer", "", "Enter name of new layer.").componentInstance.onOk.subscribe(result => {
       this.createLayer.emit(result);
     })
   }
 
   protected createLifeline(): void {
-    this.inputService.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
+    this.dialogService.createInputDialog("Create lifeline", "", "Enter name of new lifeline").componentInstance.onOk.subscribe(result => {
       this.sequenceDiagramService.createLifeline(result);
     });
   }
@@ -79,7 +80,7 @@ export class MenuComponent implements OnInit {
   }
 
   protected deleteDiagram(sequenceDiagram: M.Interaction) {
-    let confirmDialog = this.inputService.createConfirmDialog("Delete diagram", "Do you really want to delete diagram \"" +
+    let confirmDialog = this.dialogService.createConfirmDialog("Delete diagram", "Do you really want to delete diagram \"" +
       sequenceDiagram.name + "\" ?");
     confirmDialog.componentInstance.onYes.subscribe(result => {
       this.sequenceDiagramService.deleteDiagram(sequenceDiagram);

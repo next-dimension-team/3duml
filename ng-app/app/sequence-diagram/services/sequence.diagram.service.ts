@@ -1,15 +1,14 @@
-import { Injectable } from '@angular/core';
+import { DialogService } from '../../dialog/services';
 import { Datastore } from '../../datastore';
-import { JsonApiModel, ModelType } from 'angular2-jsonapi';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { InputService } from './input.service';
-import { InputDialogComponent } from './input-dialog.component';
 import { LifelineComponent } from '../components/lifeline.component';
 import { MessageComponent } from '../components/message.component';
 import { SequenceDiagramComponent } from '../components/sequence-diagram.component';
-import { Headers, RequestOptions, Http } from '@angular/http';
-import * as _ from 'lodash';
 import * as M from '../models';
+import { InputService } from './input.service';
+import { Injectable } from '@angular/core';
+import { Headers, Http, RequestOptions } from '@angular/http';
+import * as _ from 'lodash';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable()
 export class SequenceDiagramService {
@@ -48,7 +47,7 @@ export class SequenceDiagramService {
       });
   }
 
-  constructor(protected datastore: Datastore, protected inputService: InputService, protected http: Http) {
+  constructor(protected datastore: Datastore, protected inputService: InputService, protected dialogService: DialogService, protected http: Http) {
     // Initialize the service
     if (!SequenceDiagramService.initialized) {
       this.initialize();
@@ -190,12 +189,8 @@ export class SequenceDiagramService {
           this.draggingLifeline = null;
           return;
         }
-<<<<<<< HEAD
         this.draggingLifeline = null;
-        let originalOrder = this.selectedLifeline.order;
-=======
         let originalOrder = this.movingLifeline.order;
->>>>>>> 5b954b09848c480b4fb0958a1a276e97d3fc934c
         for (let lifeline of lifelinesInInteraction) {
           if (lifeline.id == this.movingLifeline.id) {
             lifeline.order = position;
@@ -326,7 +321,7 @@ export class SequenceDiagramService {
   public renameDiagram(sequenceDiagram: M.Interaction) {
 
     let editDialog;
-    editDialog = this.inputService.createEditDialog("Edit Diagram", sequenceDiagram, "Enter Diagram name","diagram");
+    editDialog = this.dialogService.createEditDialog("Edit Diagram", sequenceDiagram, "Enter Diagram name","diagram");
     editDialog.componentInstance.onOk.subscribe(result => {
       sequenceDiagram.name = result.name;
       sequenceDiagram.save().subscribe();
@@ -338,7 +333,7 @@ export class SequenceDiagramService {
     let editDialog;
 
     let layer = this.datastore.peekRecord(M.Interaction, interactionFragment.fragmentable.id);
-    editDialog = this.inputService.createEditDialog("Edit layer", layer, "Enter Layer name","layer");
+    editDialog = this.dialogService.createEditDialog("Edit layer", layer, "Enter Layer name","layer");
     editDialog.componentInstance.onOk.subscribe(result => {
       layer.name = result.name;
       layer.save().subscribe();
@@ -353,7 +348,7 @@ export class SequenceDiagramService {
       switch (event.model.type) {
         case 'Message':
           let message = this.datastore.peekRecord(M.Message, event.model.id);
-          editDialog = this.inputService.createEditDialog("Edit message", message, "Enter message name","message");
+          editDialog = this.dialogService.createEditDialog("Edit message", message, "Enter message name","message");
           editDialog.componentInstance.onOk.subscribe(result => {
             message.name = result.name;
             message.sort = result.messageSort;
@@ -362,7 +357,7 @@ export class SequenceDiagramService {
           break;
         case 'Lifeline':
           let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
-          editDialog = this.inputService.createEditDialog("Edit lifeline", lifeline, "Enter lifeline name","lifeline");
+          editDialog = this.dialogService.createEditDialog("Edit lifeline", lifeline, "Enter lifeline name","lifeline");
           editDialog.componentInstance.onOk.subscribe(result => {
             lifeline.name = result.name;
             lifeline.save().subscribe();
@@ -388,7 +383,7 @@ export class SequenceDiagramService {
   }
 
   public deleteLayer() {
-    let confirmDialog = this.inputService.createConfirmDialog("Delete layer", "Do you really want to delete layer \"" + this.sequenceDiagramComponent.editingLayer.fragmentable.name + "\" ?");
+    let confirmDialog = this.dialogService.createConfirmDialog("Delete layer", "Do you really want to delete layer \"" + this.sequenceDiagramComponent.editingLayer.fragmentable.name + "\" ?");
     confirmDialog.componentInstance.onYes.subscribe(result => {
       this.datastore.deleteRecord(M.InteractionFragment, this.sequenceDiagramComponent.editingLayer.id).subscribe(() => {
         this.refresh();
@@ -405,7 +400,7 @@ export class SequenceDiagramService {
 
           case 'Message':
             let message = this.datastore.peekRecord(M.Message, event.model.id);
-            confirmDialog = this.inputService.createConfirmDialog("Delete message", "Do you really want to delete message \"" + message.name + "\" ?");
+            confirmDialog = this.dialogService.createConfirmDialog("Delete message", "Do you really want to delete message \"" + message.name + "\" ?");
 
             confirmDialog.componentInstance.onYes.subscribe(result => {
               this.calculateTimeOnMessageDelete(message);
@@ -422,7 +417,7 @@ export class SequenceDiagramService {
 
           case 'Lifeline':
             let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
-            confirmDialog = this.inputService.createConfirmDialog("Delete lifeline", "Do you really want to delete lifeline \"" + lifeline.name + "\" ?");
+            confirmDialog = this.dialogService.createConfirmDialog("Delete lifeline", "Do you really want to delete lifeline \"" + lifeline.name + "\" ?");
 
             confirmDialog.componentInstance.onYes.subscribe(result => {
               this.calculateLifelinesOrder(lifeline);
@@ -543,7 +538,7 @@ export class SequenceDiagramService {
       time = maxTimeValue + 1;
     }*/
 
-    this.inputService.createInputDialog("Creating message", "", "Enter message name").componentInstance.onOk.subscribe(result => {
+    this.dialogService.createInputDialog("Creating message", "", "Enter message name").componentInstance.onOk.subscribe(result => {
       messageName = result;
 
       let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {

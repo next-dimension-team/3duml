@@ -1,20 +1,22 @@
-import { Injectable } from '@angular/core';
+import * as M from './sequence-diagram/models';
+
+import { JsonApiDatastore, JsonApiDatastoreConfig } from 'angular2-jsonapi';
+
 import { Http } from '@angular/http';
-import { JsonApiDatastoreConfig, JsonApiDatastore } from 'angular2-jsonapi';
-import * as sd from './sequence-diagram/models';
+import { Injectable } from '@angular/core';
 
 @Injectable()
 @JsonApiDatastoreConfig({
   baseUrl: process.env.API_URL + 'api/v1/',
   models: {
-    'combined-fragments': sd.CombinedFragment,
-    'execution-specifications': sd.ExecutionSpecification,
-    'interactions': sd.Interaction,
-    'interaction-fragments': sd.InteractionFragment,
-    'interaction-operands': sd.InteractionOperand,
-    'lifelines': sd.Lifeline,
-    'messages': sd.Message,
-    'occurrence-specifications': sd.OccurrenceSpecification
+    'combined-fragments': M.CombinedFragment,
+    'execution-specifications': M.ExecutionSpecification,
+    'interactions': M.Interaction,
+    'interaction-fragments': M.InteractionFragment,
+    'interaction-operands': M.InteractionOperand,
+    'lifelines': M.Lifeline,
+    'messages': M.Message,
+    'occurrence-specifications': M.OccurrenceSpecification
   }
 })
 export class Datastore extends JsonApiDatastore {
