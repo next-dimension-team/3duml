@@ -86,10 +86,6 @@ export class MenuComponent implements OnInit {
     this.sequenceDiagramService.performDelete();
   }
 
-  protected deleteLayer() {
-    this.sequenceDiagramService.deleteLayer();
-  }
-
   // Rename operaions
   protected renameDiagram(sequenceDiagram: M.Interaction) {
     this.sequenceDiagramService.renameDiagram(sequenceDiagram);
