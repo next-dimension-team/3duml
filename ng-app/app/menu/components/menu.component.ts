@@ -12,14 +12,9 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 export class MenuComponent implements OnInit {
 
-  @Output()
-  public onOpenSequenceDiagram = new EventEmitter;
-
-  @Output()
-  public onCreateLayer = new EventEmitter;
-
-  protected sequenceDiagrams: M.Interaction[];
-  protected editMode: Boolean = false;
+  // Events
+  @Output() public onOpenSequenceDiagram = new EventEmitter;
+  @Output() public onCreateLayer = new EventEmitter;
 
   constructor(
     protected inputService: InputService,
@@ -28,15 +23,13 @@ export class MenuComponent implements OnInit {
     //
   }
 
+  // Load sequence diagrams
+  protected sequenceDiagrams: M.Interaction[];
+
   public ngOnInit() {
     this.sequenceDiagramService.menuReload$.subscribe(
       () => this.loadSequenceDiagrams()
     );
-  }
-
-  protected changeTab(event) {
-    this.editMode = (event.tab.textLabel == 'Edit');
-    this.sequenceDiagramService.setEditMode(this.editMode);
   }
 
   protected loadSequenceDiagrams() {
@@ -47,11 +40,20 @@ export class MenuComponent implements OnInit {
     );
   }
 
-  // Actions
+  //  Change "View" and "Edit" mode
+  protected editMode: Boolean = false;
+
+  protected changeTab(event) {
+    this.editMode = (event.tab.textLabel == 'Edit');
+    this.sequenceDiagramService.setEditMode(this.editMode);
+  }
+
+  // Open operations
   protected openSequenceDiagram(sequenceDiagram: M.Interaction) {
     this.onOpenSequenceDiagram.emit(sequenceDiagram);
   }
 
+  // Create operations
   protected createDiagram(): void {
     this.dialogService.createInputDialog("Creating diagram", "", "Enter name of new digram.")
       .componentInstance.onOk.subscribe(diagramName => {
@@ -89,7 +91,7 @@ export class MenuComponent implements OnInit {
       });
   }
 
-  // Rename operaion
+  // Rename operaions
   protected renameDiagram(sequenceDiagram: M.Interaction) {
     this.sequenceDiagramService.renameDiagram(sequenceDiagram);
   }
