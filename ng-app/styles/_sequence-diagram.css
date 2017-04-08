@@ -22,7 +22,8 @@ body {
   overflow-y: hidden;
 }
 
-body.loading {
+body.loading,
+body.loading * {
   cursor: wait!important;
 }
 
@@ -292,4 +293,10 @@ input {
 
 .sequence-diagram .message .title {
   z-index: 71;
+}
+
+.middle-error {
+  text-align: center;
+  margin-top: 50vh;
+  font-family: 'Raleway';
 }

@@ -89,3 +89,37 @@ confirmDialog.componentInstance.onNo.subscribe(result => {
   console.log("Confirm dialog - NO");
 });
 ```
+
+### Vzor kontroléra
+```
+import { Injectable } from '@angular/core';
+import { DialogService } from '../../dialog/services';
+import { Datastore } from '../../datastore';
+import * as M from '../../sequence-diagram/models';
+
+@Injectable()
+export class SomeController {
+
+  constructor(
+    protected dialogService: DialogService,
+    protected datastore: Datastore
+  ) {
+    //
+  }
+
+  /*
+   * Create operation
+   */
+  public someOperaion(callback?: any): void {
+    this.dialogService.createInputDialog("Creating diagram", "", "Enter name of new digram.")
+      .componentInstance.onOk.subscribe(name => {
+        
+        let interaction = this.datastore.createRecord(M.Interaction, {
+          name: name
+        });
+
+      })
+  }
+
+}
+```

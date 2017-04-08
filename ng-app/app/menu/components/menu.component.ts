@@ -1,8 +1,11 @@
 import { DialogService } from '../../dialog/services';
+import { LayersController, LifelinesController, SequenceDiagramController } from '../../sequence-diagram/controllers';
 import * as M from '../../sequence-diagram/models';
+import { JobsService } from '../../sequence-diagram/services';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
 import { InputService } from '../../sequence-diagram/services/input.service';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -17,17 +20,24 @@ export class MenuComponent implements OnInit {
   @Output() public onCreateLayer = new EventEmitter;
 
   constructor(
+    protected jobsService: JobsService,
     protected inputService: InputService,
     protected dialogService: DialogService,
-    protected sequenceDiagramService: SequenceDiagramService) {
-    //
+    protected sequenceDiagramService: SequenceDiagramService,
+    protected sequenceDiagramController: SequenceDiagramController,
+    protected lifelinesController: LifelinesController,
+    protected layersController: LayersController
+  ) {
+    // Set self to services and controllers
+    this.sequenceDiagramService.menuComponent = this;
+    this.sequenceDiagramController.menuComponent = this;
   }
 
   // Load sequence diagrams
   protected sequenceDiagrams: M.Interaction[];
 
   public ngOnInit() {
-    this.sequenceDiagramService.menuReload$.subscribe(
+    this.menuReload$.subscribe(
       () => this.loadSequenceDiagrams()
     );
   }
@@ -40,7 +50,7 @@ export class MenuComponent implements OnInit {
     );
   }
 
-  //  Change "View" and "Edit" mode
+  // Change "View" and "Edit" mode
   protected editMode: Boolean = false;
 
   protected changeTab(event) {
@@ -49,31 +59,27 @@ export class MenuComponent implements OnInit {
   }
 
   // Open operations
-  protected openSequenceDiagram(sequenceDiagram: M.Interaction) {
+  protected openedSequenceDiagram: M.Interaction;
+
+  public openSequenceDiagram(sequenceDiagram: M.Interaction) {
+    this.openedSequenceDiagram = sequenceDiagram;
     this.onOpenSequenceDiagram.emit(sequenceDiagram);
   }
 
-  // Create operations
-  protected createDiagram(): void {
-    this.dialogService.createInputDialog("Creating diagram", "", "Enter name of new digram.")
-      .componentInstance.onOk.subscribe(diagramName => {
-        this.sequenceDiagramService.createDiagram(diagramName);
-      })
+  // Refresh
+  protected menuReloadSource = new BehaviorSubject<any>(null);
+  protected menuReload$ = this.menuReloadSource.asObservable();
+
+  public refresh(callback?: any): void {
+    this.jobsService.start('menu.component.refresh');
+    this.menuReloadSource.next(null);
+    if (callback) callback();
+    this.jobsService.finish('menu.component.refresh');
   }
 
-  protected createLayer(): void {
-    this.dialogService.createInputDialog("Creating layer", "", "Enter name of new layer.")
-      .componentInstance.onOk.subscribe(layerName => {
-        this.onCreateLayer.emit(layerName);
-      })
-  }
 
-  protected createLifeline(): void {
-    this.dialogService.createInputDialog("Create lifeline", "", "Enter name of new lifeline")
-      .componentInstance.onOk.subscribe(lifelineName => {
-        this.sequenceDiagramService.createLifeline(lifelineName);
-      });
-  }
+
+
 
   // Delete operations
   protected deleteComponent() {
@@ -82,13 +88,6 @@ export class MenuComponent implements OnInit {
 
   protected deleteLayer() {
     this.sequenceDiagramService.deleteLayer();
-  }
-
-  protected deleteDiagram(sequenceDiagram: M.Interaction) {
-    this.dialogService.createConfirmDialog(
-      "Delete diagram", "Do you really want to delete diagram \"" + sequenceDiagram.name + "\" ?").componentInstance.onYes.subscribe((result) => {
-        this.sequenceDiagramService.deleteDiagram(sequenceDiagram);
-      });
   }
 
   // Rename operaions

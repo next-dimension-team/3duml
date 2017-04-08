@@ -30,6 +30,24 @@
     
     <md-tab label="View" class="menu-tab">
         <ul class="sidebar-nav">
+
+            <!-- Create Diagram -->
+            <li>
+                <md-card>
+                    <md-card-actions>
+                        <button md-button class="list-item-button" (click)="sequenceDiagramController.createDiagram()">
+                            <md-icon>add_to_queue</md-icon> Create Diagram
+                        </button>
+                    </md-card-actions>
+                </md-card>
+            </li>
+
+            <!-- List of Sequence Diagrams -->
+            <li
+                *ngIf="sequenceDiagrams && sequenceDiagrams.length > 0"
+                class="section-heading">
+                List of Diagrams
+            </li>
             <li
               *ngFor="let sequenceDiagram of sequenceDiagrams"
               [class.active]="sequenceDiagram == openedSequenceDiagram">
@@ -49,7 +67,7 @@
                         </button>
 
                         <!-- Delete Diagram -->
-                        <button md-button (click)="deleteDiagram(sequenceDiagram)">
+                        <button md-button (click)="sequenceDiagramController.deleteDiagram(sequenceDiagram)">
                             <md-icon>delete</md-icon> Delete
                         </button>
 
@@ -61,47 +79,40 @@
         </ul>
     </md-tab>
 
-    <md-tab label="Edit" class="menu-tab">
+    <md-tab [disabled]="openedSequenceDiagram == null" label="Edit" class="menu-tab">
         
         <md-list>
             
              <!-- Create Operations -->
             <h3 md-subheader>CREATE</h3>
-            
-            <!-- Create Diagram -->
-            <md-list-item>
-                <button md-button class="list-item-button" (click)="createDiagram()">
-                    <md-icon>add_to_queue</md-icon> Create Diagram
-                </button>
-            </md-list-item>
 
              <!-- Create Layer -->
-            <md-list-item *ngIf="openedSequenceDiagramId">
-                <button md-button class="list-item-button" (click)="createLayer()">
+            <md-list-item>
+                <button md-button class="list-item-button" (click)="layersController.createLayer()">
                     <md-icon>library_add</md-icon> Create Layer
                 </button>
             </md-list-item>
 
              <!-- Create Lifeline -->
-            <md-list-item *ngIf="openedSequenceDiagramId">
-                <button md-button class="list-item-button" (click)="createLifeline()">
+            <md-list-item>
+                <button md-button class="list-item-button" (click)="lifelinesController.createLifeline()">
                     <md-icon>add</md-icon> Create Lifeline
                 </button>
             </md-list-item>
 
              <!-- Delete Operation -->
-            <h3 md-subheader *ngIf="openedSequenceDiagramId">DELETE</h3>
+            <h3 md-subheader>DELETE</h3>
 
              <!-- Delete Component -->
-            <md-list-item *ngIf="openedSequenceDiagramId">
+            <md-list-item>
                 <button md-button class="list-item-button" (click)="deleteComponent()">
                     <md-icon>delete</md-icon> Delete Component
                 </button>
             </md-list-item>
 
              <!-- Delete Layer -->
-            <md-list-item *ngIf="openedSequenceDiagramId">
-                <button md-button class="list-item-button" (click)="deleteLayer()">
+            <md-list-item>
+                <button md-button class="list-item-button" (click)="layersController.deleteLayer()">
                     <md-icon>remove_from_queue</md-icon> Delete Layer
                 </button>
             </md-list-item>

@@ -1,14 +1,25 @@
-import * as THREE from 'three';
-import {
-  Component, SimpleChanges, Input, ViewChildren, HostListener,
-  QueryList, AfterViewInit, OnInit, OnChanges, NgZone, ElementRef
-} from '@angular/core';
+import { ConfigService } from '../../config';
+import { LayersController, SequenceDiagramController, LifelinesController } from '../controllers';
+import * as M from '../models';
+import { SequenceDiagramService } from '../services';
+import { JobsService } from '../services/jobs.service';
 import { LayerComponent } from './layer.component';
 import { SequenceDiagramControls } from './sequence-diagram.controls';
-import * as M from '../models';
-import { ConfigService } from '../../config';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  NgZone,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
+import * as THREE from 'three';
 let { Renderer: CSS3DRenderer }: { Renderer: typeof THREE.CSS3DRenderer } = require('three.css')(THREE);
-import { SequenceDiagramService } from '../services';
 
 @Component({
   selector: 'app-sequence-diagram',
@@ -33,8 +44,21 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
 
   protected renderQueued = false;
 
-  constructor(protected ngZone: NgZone, protected element: ElementRef, protected config: ConfigService, protected sequenceDiagramService: SequenceDiagramService) {
+  constructor(
+    protected ngZone: NgZone,
+    protected element: ElementRef,
+    protected config: ConfigService,
+    protected sequenceDiagramService: SequenceDiagramService,
+    protected sequenceDiagramController: SequenceDiagramController,
+    protected layersController: LayersController,
+    protected lifelinesController: LifelinesController,
+    protected jobsService: JobsService
+  ) {
+    // Set self to services and controllers
     this.sequenceDiagramService.sequenceDiagramComponent = this;
+    this.sequenceDiagramController.sequenceDiagramComponent = this;
+    this.layersController.sequenceDiagramComponent = this;
+    this.lifelinesController.sequenceDiagramComponent = this;
   }
 
   public ngOnInit() {
@@ -118,7 +142,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
       this.editingLayerIndex++;
     }
 
-    this.processEditingLayer();
+    this.refreshEditingLayer();
   }
 
   public get editingLayer(): M.InteractionFragment {
@@ -128,10 +152,10 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   public set editingLayer(layer: M.InteractionFragment) {
     this.editingLayerIndex = this.rootInteractionFragment.children.indexOf(layer);
 
-    this.processEditingLayer();
+    this.refreshEditingLayer();
   }
 
-  protected processEditingLayer() {
+  protected refreshEditingLayer() {
     let maxIndex = this.rootInteractionFragment.children.length - 1;
 
     if (this.editingLayerIndex < 0) {
@@ -171,6 +195,23 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     this.controls.update();
 
     this.renderer.render(this.scene, this.camera);
+  }
+
+  /*
+   * Refresh Diagram
+   * 
+   * Znova načíta strom modelov z databázy, čím refreshne celý diagram.
+   * 
+   */
+  public refresh(callback?: any): void {
+    this.jobsService.start('sequence.diagram.component.refresh');
+    this.sequenceDiagramService.loadSequenceDiagramTree(this.rootInteractionFragment.fragmentable)
+      .subscribe((interactionFragment: M.InteractionFragment) => {
+        this.rootInteractionFragment = interactionFragment;
+        this.refreshEditingLayer();
+        if (callback) callback();
+        this.jobsService.finish('sequence.diagram.component.refresh');
+      });
   }
 
 }

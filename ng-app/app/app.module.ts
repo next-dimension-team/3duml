@@ -7,11 +7,11 @@ import { AppState, InternalStateType } from './app.service';
 import { ConfigPipe } from './config';
 import { ConfigService } from './config';
 import { Datastore } from './datastore';
-import { DialogService } from './dialog/services';
-import { ENV_PROVIDERS } from './environment';
 import { ConfirmDialogComponent } from './dialog/components/confirm-dialog.component';
 import { EditDialogComponent } from './dialog/components/edit-dialog.component';
 import { InputDialogComponent } from './dialog/components/input-dialog.component';
+import { DialogService } from './dialog/services';
+import { ENV_PROVIDERS } from './environment';
 import { MenuComponent } from './menu/components/menu.component';
 import { CombinedFragmentComponent } from './sequence-diagram/components/combined-fragment.component';
 import { ExecutionComponent } from './sequence-diagram/components/execution.component';
@@ -21,8 +21,9 @@ import { LayerComponent } from './sequence-diagram/components/layer.component';
 import { LifelineComponent } from './sequence-diagram/components/lifeline.component';
 import { MessageComponent } from './sequence-diagram/components/message.component';
 import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
+import { LayersController, LifelinesController, SequenceDiagramController } from './sequence-diagram/controllers';
 import { SelectableDirective } from './sequence-diagram/directives/selectable.directive';
-import { InputService, SequenceDiagramService } from './sequence-diagram/services';
+import { InputService, JobsService, SequenceDiagramService } from './sequence-diagram/services';
 import { ApplicationRef, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -38,9 +39,17 @@ const APP_PROVIDERS = [
   InputService,
   DialogService,
   SequenceDiagramService,
+  JobsService,
   { provide: APP_CONFIG, useValue: AppConfig },
   ConfigService
 ];
+
+// Application controllers
+const APP_CONTROLLERS = [
+  SequenceDiagramController,
+  LayersController,
+  LifelinesController
+]
 
 type StoreType = {
   state: InternalStateType,
@@ -88,6 +97,7 @@ type StoreType = {
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
     APP_PROVIDERS,
+    APP_CONTROLLERS
   ]
 })
 export class AppModule {
