@@ -3,8 +3,8 @@
     <div id="sidebar-wrapper">
         <app-sidebar-menu
             #sidebarMenuComponent
-            (openSequenceDiagram)="openSequenceDiagram($event)"
-            (createLayer)="createLayer($event, sequenceDiagramComponent)">
+            (onOpenSequenceDiagram)="openSequenceDiagram($event)"
+            (onCreateLayer)="createLayer($event, sequenceDiagramComponent)">
         </app-sidebar-menu>
     </div>
 
