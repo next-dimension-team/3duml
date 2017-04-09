@@ -217,7 +217,7 @@ class ComplicatedSequenceDiagramSeeder extends Seeder
 
         factory(Message::class)->make([
             'name' => 'b()',
-            'sort' => 'synchCall'
+            'sort' => 'asynchCall'
         ])
             ->interaction()->associate($interactionA)
             ->sendEvent()->associate($occurrenceSpecificationB2)
@@ -226,7 +226,7 @@ class ComplicatedSequenceDiagramSeeder extends Seeder
 
         factory(Message::class)->make([
             'name' => 'c()',
-            'sort' => 'synchCall'
+            'sort' => 'asynchCall'
         ])
             ->interaction()->associate($interactionA)
             ->sendEvent()->associate($occurrenceSpecificationC3)
@@ -244,7 +244,7 @@ class ComplicatedSequenceDiagramSeeder extends Seeder
 
          factory(Message::class)->make([
             'name' => 'e()',
-            'sort' => 'synchCall'
+            'sort' => 'asynchCall'
         ])
             ->interaction()->associate($interactionA)
             ->sendEvent()->associate($occurrenceSpecificationC2)
