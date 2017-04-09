@@ -10,9 +10,11 @@ import { Datastore } from './datastore';
 import { ConfirmDialogComponent } from './dialog/components/confirm-dialog.component';
 import { EditDialogComponent } from './dialog/components/edit-dialog.component';
 import { InputDialogComponent } from './dialog/components/input-dialog.component';
+import { HelpDialogComponent } from './dialog/components/help-dialog.component';
 import { DialogService } from './dialog/services';
 import { ENV_PROVIDERS } from './environment';
 import { MenuComponent } from './menu/components/menu.component';
+import { HelpComponent } from './menu/components/help.component';
 import { CombinedFragmentComponent } from './sequence-diagram/components/combined-fragment.component';
 import { ExecutionComponent } from './sequence-diagram/components/execution.component';
 import { InteractionFragmentComponent } from './sequence-diagram/components/interaction-fragment.component';
@@ -68,6 +70,7 @@ type StoreType = {
     // Components
     AppComponent,
     MenuComponent,
+    HelpComponent,
     SequenceDiagramComponent,
     LifelineComponent,
     ExecutionComponent,
@@ -79,6 +82,7 @@ type StoreType = {
     InputDialogComponent,
     EditDialogComponent,
     ConfirmDialogComponent,
+    HelpDialogComponent,
     ConfigPipe,
 
     // Directives
@@ -94,7 +98,8 @@ type StoreType = {
   entryComponents: [
     EditDialogComponent,
     InputDialogComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    HelpDialogComponent
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
