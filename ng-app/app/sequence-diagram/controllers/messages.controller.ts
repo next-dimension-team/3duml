@@ -26,7 +26,139 @@ export class MessagesController {
   ) {
     // Initialize operations
     this.editMessage();
+    this.createMessageOnLifelinePointClick();
     this.changeSendAndReceiveMessageEvents();
+  }
+
+  /*
+   * Create Message
+   */
+  protected createMessageOnLifelinePointClick() {
+    let sourceLifelineEvent = null;
+    let destinationLifelineEvent = null;
+
+    this.inputService.onLeftClick((event) => {
+      if (event.model.type == 'LifelinePoint') {
+        if (sourceLifelineEvent) {
+          destinationLifelineEvent = event;
+          if (sourceLifelineEvent.model.lifelineID == destinationLifelineEvent.model.lifelineID) {
+            sourceLifelineEvent = destinationLifelineEvent;
+          } else {
+            this._createMessage(sourceLifelineEvent, destinationLifelineEvent);
+            sourceLifelineEvent = null;
+            destinationLifelineEvent = null;
+          }
+        }
+        else {
+          sourceLifelineEvent = event;
+        }
+      }
+    });
+  }
+
+  protected _createMessage(sourceLifeline, destinationLifeline) {
+    let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
+    let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
+    let currentInteraction = this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id);
+    let time = Math.round(sourceLifeline.model.time);
+    let maxTimeValue = 0;
+    let messageName;
+
+    // Najprv vypocitam ci su za nasou ktoru chcem pridat nejake message, ak ano, zmenim occurenci
+    // Takto to funguje spravne
+    // Najprv odskocia message a potom sa prida
+    maxTimeValue = this._calculateTimeOnMessageCreate(currentInteraction, time, sourceLifelineModel, destinationLifelineModel);
+
+    // Napad: Pridavat message vzdy najviac na vrch ako sa da, podla mna to sa tak ma aj v EAcku
+    // Problem: Treba brat do uvahy comibed fragments a to je nejako vyriesit, keby vieme kolko occurence zabera
+    // alebo podobne.
+    /* if (maxTimeValue > 0){
+      time = maxTimeValue + 1;
+    }*/
+
+    this.dialogService.createInputDialog(
+      "Creating message", "", "Enter message name").componentInstance.onOk.subscribe((result) => {
+        messageName = result;
+
+        let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+          time: time,
+          covered: sourceLifelineModel
+        });
+
+        // Start job
+        this.jobsService.start('_createMessage');
+
+        sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
+          let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+            time: time,
+            covered: destinationLifelineModel
+          });
+
+          destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
+            this.datastore.createRecord(M.Message, {
+              // TODO nazvat message ako chcem
+              name: result,
+              sort: "synchCall",
+              // TODO zmenit dynamicky na interaction / fragment v ktorom som
+              interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
+              sendEvent: sourceOccurence,
+              receiveEvent: destinationOccurence
+            }).save().subscribe((message: M.Message) => {
+              this.sequenceDiagramComponent.refresh(() => {
+                // Finish job
+                this.jobsService.finish('_createMessage');
+              });
+            });
+          });
+        });
+      });
+  }
+
+  protected _calculateTimeOnMessageCreate(currentInteraction: M.Interaction, time: number,
+    sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline) {
+
+    let move = false;
+    let maxTimeValue = 0;
+    let lifelinesInCurrentLayer = currentInteraction.lifelines;
+
+    // Prechadzam vsetky lifeliny v aktualnom platne
+    for (let lifeline of lifelinesInCurrentLayer) {
+      for (let occurrence of lifeline.occurrenceSpecifications) {
+        if (occurrence.time == time) {
+          move = true;
+          break;
+        }
+        if (move) {
+          break;
+        }
+      }
+    }
+
+    // Napad: ak sme nenasli taku messageu ze musime pod nou daco posuvat, tak nastavim maxTimeValue a dame ju navrch
+    if (!move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time > maxTimeValue) {
+            maxTimeValue = occurrence.time;
+          }
+        }
+      }
+    }
+
+    // Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej
+    if (move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time >= time) {
+            let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+            occurenceForChange.time = occurenceForChange.time + 1;
+            occurenceForChange.save().subscribe();
+          }
+        }
+      }
+    }
+
+    return maxTimeValue;
   }
 
   /*
