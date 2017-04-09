@@ -242,7 +242,9 @@ export class LifelinesController {
         }
         // Zmaz vsetky occurence specification, ktore su ovplyvnenie zmazanim lifeline
         for (let occurence of occurencesToDelete) {
+          this.jobsService.start('deleteOccurrenceSpecification.occurrenceSpecification.' + occurence.id);
           this.datastore.deleteRecord(M.OccurrenceSpecification, occurence.id).subscribe();
+          this.jobsService.finish('deleteOccurrenceSpecification.occurrenceSpecification.' + occurence.id);
         }
         this.sequenceDiagramComponent.refresh();
         // Start job
