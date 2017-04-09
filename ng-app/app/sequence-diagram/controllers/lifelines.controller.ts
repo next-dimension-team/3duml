@@ -218,7 +218,7 @@ export class LifelinesController {
         this.datastore.deleteRecord(M.Lifeline, lifeline.id).subscribe(() => {
           this.sequenceDiagramComponent.refresh(() => {
             // Finish job
-            this.jobsService.start('deleteLifeline');
+            this.jobsService.finish('deleteLifeline');
           });
         });
       });
