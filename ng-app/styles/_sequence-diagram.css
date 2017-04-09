@@ -219,6 +219,49 @@ input {
 .sequence-diagram .message .title {
   width: 100%;
   text-align: center;
+  overflow: hidden;
+}
+
+.sequence-diagram .message .title .label {
+  display: inline-block;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 1px 10px;
+  color: #fff;
+  position: relative;
+}
+
+.sequence-diagram .message .title .label:before {
+  content: '';
+  border: 20px solid transparent;
+  border-right-color: rgba(0, 0, 0, 0.6);
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  left: -40px;
+  top: -1px;
+}
+
+.sequence-diagram .message .title .label:after {
+  content: '';
+  border: 20px solid transparent;
+  border-left-color: rgba(0, 0, 0, 0.6);
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  right: -40px;
+  top: -1px;
+}
+
+.sequence-diagram .message:hover .title .label {
+  background-color: rgba(0, 0, 0, 1);
+}
+
+.sequence-diagram .message:hover .title .label:before {
+  border-right-color: rgba(0, 0, 0, 1);
+}
+
+.sequence-diagram .message:hover .title .label:after {
+  border-left-color: rgba(0, 0, 0, 1);
 }
 
 /* Fragments */

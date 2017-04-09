@@ -1,4 +1,4 @@
-.sequence-diagram :not(.point):hover {
+.sequence-diagram :not(.point):hover:not(.label) {
   color: blue!important;
   background-color: rgba(0, 255, 0, 0.1)!important;
 }
