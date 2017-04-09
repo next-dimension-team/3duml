@@ -31,6 +31,8 @@ export class MenuComponent implements OnInit {
     // Set self to services and controllers
     this.sequenceDiagramService.menuComponent = this;
     this.sequenceDiagramController.menuComponent = this;
+    this.lifelinesController.menuComponent = this;
+    this.layersController.menuComponent = this;
   }
 
   // Load sequence diagrams

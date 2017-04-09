@@ -179,20 +179,6 @@ export class SequenceDiagramService {
    */
   protected renamingLayer = false;
 
-  
-
-  public renameLayer(interactionFragment: M.InteractionFragment) {
-
-    let editDialog;
-
-    let layer = this.datastore.peekRecord(M.Interaction, interactionFragment.fragmentable.id);
-    editDialog = this.dialogService.createEditDialog("Edit layer", layer, "Enter Layer name","layer");
-    editDialog.componentInstance.onOk.subscribe(result => {
-      layer.name = result.name;
-      layer.save().subscribe();
-    });
-  }
-
   protected initializeRenameElement() {
 
     let editDialog;

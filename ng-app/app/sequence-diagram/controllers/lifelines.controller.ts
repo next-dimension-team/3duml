@@ -1,5 +1,6 @@
 import { Datastore } from '../../datastore';
 import { DialogService } from '../../dialog/services';
+import { MenuComponent } from '../../menu/components/menu.component';
 import * as M from '../../sequence-diagram/models';
 import { SequenceDiagramComponent } from '../components/sequence-diagram.component';
 import { JobsService, SequenceDiagramService } from '../services';
@@ -10,6 +11,9 @@ export class LifelinesController {
 
   /* Sequence Diagram Component Instance */
   public sequenceDiagramComponent: SequenceDiagramComponent = null;
+
+  /* Menu Component Instance */
+  public menuComponent: MenuComponent = null;
 
   constructor(
     protected sequenceDiagramService: SequenceDiagramService,
