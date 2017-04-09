@@ -57,7 +57,6 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     protected messagesController: MessagesController
   ) {
     // Set self to services and controllers
-    this.sequenceDiagramService.sequenceDiagramComponent = this;
     this.sequenceDiagramController.sequenceDiagramComponent = this;
     this.layersController.sequenceDiagramComponent = this;
     this.lifelinesController.sequenceDiagramComponent = this;
