@@ -8,11 +8,11 @@
 	</button>
 		<md-menu #menu="mdMenu">
 			<!-- Diagram Help -->
-			<button md-menu-item [mdMenuTriggerFor]="DiagramMenu">
+			<button md-menu-item [mdMenuTriggerFor]="DiagramHelpMenu">
 				<md-icon>help_outline</md-icon>
 				<span>Diagram</span>
 			</button>
-				<md-menu #DiagramMenu="mdMenu">
+				<md-menu #DiagramHelpMenu="mdMenu">
 					<button md-menu-item>
 						<md-icon>help</md-icon>
 						<span>Create diagram</span>
@@ -32,11 +32,11 @@
 				</md-menu>
 
 			<!-- Layer Help -->
-			<button md-menu-item [mdMenuTriggerFor]="DiagramMenu">
+			<button md-menu-item [mdMenuTriggerFor]="LayerHelpMenu">
 				<md-icon>help_outline</md-icon>
 				<span>Layer</span>
 			</button>
-				<md-menu #DiagramMenu="mdMenu">
+				<md-menu #LayerHelpMenu="mdMenu">
 					<button md-menu-item>
 						<md-icon>help</md-icon>
 						<span>Create layer</span>
@@ -52,11 +52,11 @@
 				</md-menu>
 
 			<!-- Lifeline Help -->
-			<button md-menu-item [mdMenuTriggerFor]="DiagramMenu">
+			<button md-menu-item [mdMenuTriggerFor]="LifelineHelpMenu">
 				<md-icon>help_outline</md-icon>
 				<span>Lifeline</span>
 			</button>
-				<md-menu #DiagramMenu="mdMenu">
+				<md-menu #LifelineHelpMenu="mdMenu">
 					<button md-menu-item>
 						<md-icon>help</md-icon>
 						<span>Create lifeline</span>
@@ -72,11 +72,11 @@
 				</md-menu>
 
 			<!-- Message Help -->
-			<button md-menu-item [mdMenuTriggerFor]="DiagramMenu">
+			<button md-menu-item [mdMenuTriggerFor]="MessageHelpMenu">
 				<md-icon>help_outline</md-icon>
 				<span>Message</span>
 			</button>
-				<md-menu #DiagramMenu="mdMenu">
+				<md-menu #MessageHelpMenu="mdMenu">
 					<button md-menu-item>
 						<md-icon>help</md-icon>
 						<span>Create message</span>
