@@ -3,30 +3,30 @@ import { OccurrenceSpecification } from './OccurrenceSpecification';
 import * as M from './';
 
 @JsonApiModelConfig({
-    type: 'lifelines'
+  type: 'lifelines'
 })
 export class Lifeline extends JsonApiModel {
 
   @Attribute()
-  name: string;
+  public name: string;
 
   @Attribute()
-  order: number;  
+  public order: number;
 
   @Attribute()
-  created_at: Date;
+  public created_at: Date;
 
   @Attribute()
-  updated_at: Date;
+  public updated_at: Date;
 
   @BelongsTo()
-  interaction: M.Interaction;
+  public interaction: M.Interaction;
 
   @HasMany()
-  occurrenceSpecifications: M.OccurrenceSpecification[] = [];
+  public occurrenceSpecifications: M.OccurrenceSpecification[] = [];
 
   // TODO: neodskúšaná metóda
-  get interactions(): M.Interaction[] {
+  get interactions(): M.Interaction[] {
     let interactions = [];
 
     let addInteraction = (interaction: M.Interaction) => {

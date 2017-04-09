@@ -12,6 +12,8 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class SequenceDiagramController {
 
+  public deleteInProgress: boolean = false;
+
   /* Sequence Diagram Component Instance */
   public sequenceDiagramComponent: SequenceDiagramComponent = null;
 
@@ -43,7 +45,7 @@ export class SequenceDiagramController {
    */
   public createDiagram(): void {
     this.dialogService.createInputDialog("Creating diagram", "", "Enter name of new digram.")
-      .componentInstance.onOk.subscribe(name => {
+      .componentInstance.onOk.subscribe((name) => {
 
         // Start job
         this.jobsService.start('createDiagram');
@@ -123,8 +125,6 @@ export class SequenceDiagramController {
   /*
    * Start delete operation
    */
-  public deleteInProgress: boolean = false;
-
   protected deleteElement(): void {
 
     let menuComponentCallbackInitialized: boolean = false;

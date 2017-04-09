@@ -13,15 +13,19 @@ import { InputDialogComponent } from './dialog/components/input-dialog.component
 import { DialogService } from './dialog/services';
 import { ENV_PROVIDERS } from './environment';
 import { MenuComponent } from './menu/components/menu.component';
-import { CombinedFragmentComponent } from './sequence-diagram/components/combined-fragment.component';
+import { CombinedFragmentComponent } from
+  './sequence-diagram/components/combined-fragment.component';
 import { ExecutionComponent } from './sequence-diagram/components/execution.component';
-import { InteractionFragmentComponent } from './sequence-diagram/components/interaction-fragment.component';
-import { InteractionOperandComponent } from './sequence-diagram/components/interaction-operand.component';
+import { InteractionFragmentComponent } from
+  './sequence-diagram/components/interaction-fragment.component';
+import { InteractionOperandComponent } from
+  './sequence-diagram/components/interaction-operand.component';
 import { LayerComponent } from './sequence-diagram/components/layer.component';
 import { LifelineComponent } from './sequence-diagram/components/lifeline.component';
 import { MessageComponent } from './sequence-diagram/components/message.component';
 import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
-import { LayersController, LifelinesController, SequenceDiagramController } from './sequence-diagram/controllers';
+import { LayersController, LifelinesController, SequenceDiagramController } from
+  './sequence-diagram/controllers';
 import { MessagesController } from './sequence-diagram/controllers/messages.controller';
 import { SelectableDirective } from './sequence-diagram/directives/selectable.directive';
 import { InputService, JobsService, SequenceDiagramService } from './sequence-diagram/services';
@@ -51,7 +55,7 @@ const APP_CONTROLLERS = [
   LayersController,
   LifelinesController,
   MessagesController
-]
+];
 
 type StoreType = {
   state: InternalStateType,
@@ -113,7 +117,7 @@ export class AppModule {
     if (!store || !store.state) {
       return;
     }
-    //console.log('HMR store', JSON.stringify(store, null, 2));
+    // console.log('HMR store', JSON.stringify(store, null, 2));
     // set state
     this.appState._state = store.state;
     // set input values

@@ -2,32 +2,32 @@ import { JsonApiModel, JsonApiModelConfig, Attribute, HasMany, BelongsTo } from 
 import * as M from './';
 
 @JsonApiModelConfig({
-    type: 'occurrence-specifications'
+  type: 'occurrence-specifications'
 })
 export class OccurrenceSpecification extends JsonApiModel {
 
   @Attribute()
-  time: number;
+  public time: number;
 
   @Attribute()
-  created_at: Date;
+  public created_at: Date;
 
   @Attribute()
-  updated_at: Date;
+  public updated_at: Date;
 
   @HasMany()
-  sendingEventMessages: M.Message[] = [];
+  public sendingEventMessages: M.Message[] = [];
 
   @HasMany()
-  receivingEventMessages: M.Message[] = [];
+  public receivingEventMessages: M.Message[] = [];
 
   @HasMany()
-  startingExecutionSpecifications: M.ExecutionSpecification[] = [];
+  public startingExecutionSpecifications: M.ExecutionSpecification[] = [];
 
   @HasMany()
-  finishingExecutionSpecifications: M.ExecutionSpecification[] = [];
+  public finishingExecutionSpecifications: M.ExecutionSpecification[] = [];
 
   @BelongsTo()
-  covered: M.Lifeline;
+  public covered: M.Lifeline;
 
 }

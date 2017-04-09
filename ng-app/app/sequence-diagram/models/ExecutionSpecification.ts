@@ -3,23 +3,23 @@ import { InteractionFragment } from './InteractionFragment';
 import { OccurrenceSpecification } from './OccurrenceSpecification';
 
 @JsonApiModelConfig({
-    type: 'execution-specifications'
+  type: 'execution-specifications'
 })
 export class ExecutionSpecification extends JsonApiModel {
 
   @Attribute()
-  created_at: Date;
+  public created_at: Date;
 
   @Attribute()
-  updated_at: Date;
+  public updated_at: Date;
 
   @BelongsTo()
-  fragment: InteractionFragment;
+  public fragment: InteractionFragment;
 
   @BelongsTo()
-  start: OccurrenceSpecification;
+  public start: OccurrenceSpecification;
 
   @BelongsTo()
-  finish: OccurrenceSpecification;
+  public finish: OccurrenceSpecification;
 
 }

@@ -3,32 +3,32 @@ import { OccurrenceSpecification } from './OccurrenceSpecification';
 import { Interaction } from './Interaction';
 
 @JsonApiModelConfig({
-    type: 'messages'
+  type: 'messages'
 })
 export class Message extends JsonApiModel {
 
   @Attribute()
-  name: string;
+  public name: string;
 
   @Attribute()
-  kind: string;
+  public kind: string;
 
   @Attribute()
-  sort: string;
+  public sort: string;
 
   @Attribute()
-  created_at: Date;
+  public created_at: Date;
 
   @Attribute()
-  updated_at: Date;
+  public updated_at: Date;
 
   @BelongsTo()
-  interaction: Interaction;
+  public interaction: Interaction;
 
   @BelongsTo()
-  sendEvent: OccurrenceSpecification;
+  public sendEvent: OccurrenceSpecification;
 
   @BelongsTo()
-  receiveEvent: OccurrenceSpecification;
+  public receiveEvent: OccurrenceSpecification;
 
 }

@@ -20,7 +20,8 @@ export class AppComponent {
 
   public openSequenceDiagram(diagram: M.Interaction) {
     this.sequenceDiagramService.loadSequenceDiagramTree(diagram).subscribe(
-      (interactionFragment: M.InteractionFragment) => this.openedSequenceDiagram = interactionFragment
+      (interactionFragment: M.InteractionFragment) =>
+        this.openedSequenceDiagram = interactionFragment
     );
   }
 }

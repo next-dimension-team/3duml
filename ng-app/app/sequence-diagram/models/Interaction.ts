@@ -2,39 +2,39 @@ import { JsonApiModel, JsonApiModelConfig, Attribute, HasMany, BelongsTo } from 
 import * as M from './';
 
 @JsonApiModelConfig({
-    type: 'interactions'
+  type: 'interactions'
 })
 export class Interaction extends JsonApiModel {
 
   @Attribute()
-  name: string;
+  public name: string;
 
   @Attribute()
-  created_at: Date;
+  public created_at: Date;
 
   @Attribute()
-  updated_at: Date;
+  public updated_at: Date;
 
   @BelongsTo()
-  fragment: M.InteractionFragment;
+  public fragment: M.InteractionFragment;
 
   @HasMany()
-  messages: M.Message[] = [];
+  public messages: M.Message[] = [];
 
   @HasMany()
-  lifelines: M.Lifeline[] = [];
+  public lifelines: M.Lifeline[] = [];
 
   get isRootInteraction() {
-    return (! this.fragment.parent);
+    return (!this.fragment.parent);
   }
-  
+
   get isLayerInteraction() {
     let parent = this.fragment.parent.fragmentable;
     return (parent && parent.isRootInteraction);
   }
 
   get isBasicInteraction() {
-    return (! this.isRootInteraction && ! this.isLayerInteraction);
+    return (!this.isRootInteraction && !this.isLayerInteraction);
   }
 
   get recursiveMessages(): M.Message[] {

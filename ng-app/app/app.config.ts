@@ -6,7 +6,7 @@ export interface IAppConfig {
   layer: {
     gap: number,
     padding: number
-  },
+  };
   lifeline: {
     width: number,
     gap: number

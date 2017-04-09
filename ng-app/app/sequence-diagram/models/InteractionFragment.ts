@@ -1,31 +1,32 @@
-import { JsonApiModel, JsonApiModelConfig, JsonApiDatastore, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
+import { JsonApiModel, JsonApiModelConfig, JsonApiDatastore, Attribute, HasMany, BelongsTo }
+  from 'angular2-jsonapi';
 import * as M from './';
 import * as _ from 'lodash';
 
 @JsonApiModelConfig({
-    type: 'interaction-fragments'
+  type: 'interaction-fragments'
 })
 export class InteractionFragment extends JsonApiModel {
 
   @Attribute()
-  name: string;
+  public name: string;
 
   @Attribute()
-  created_at: Date;
+  public created_at: Date;
 
   @Attribute()
-  updated_at: Date;
+  public updated_at: Date;
 
   @BelongsTo()
-  fragmentable: any;
+  public fragmentable: any;
 
   @BelongsTo()
-  parent: InteractionFragment;
+  public parent: InteractionFragment;
 
   @HasMany({
     key: 'children'
   })
-  _children: InteractionFragment[];
+  public _children: InteractionFragment[];
 
   private _childrenKeys: string[];
 
@@ -60,7 +61,7 @@ export class InteractionFragment extends JsonApiModel {
   /*
    * Vráti všetky podfragmenty daného typu.
    */
-  getRecursiveFragments(fragmentType: string, fragment?: InteractionFragment,
+  public getRecursiveFragments(fragmentType: string, fragment?: InteractionFragment,
     addCurrent?: boolean): InteractionFragment[] {
 
     // Začiatok rekurzie súčasným frgmentom
@@ -117,7 +118,7 @@ export class InteractionFragment extends JsonApiModel {
         }
         return messages;
 
-   }
+    }
   }
 
   get recursiveMessages(): M.Message[] {
