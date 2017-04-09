@@ -15,6 +15,7 @@
             (onChangeEditingLayer)="menuComponent.editingLayer = $event"
             [rootInteractionFragment]="openedSequenceDiagram"
             [editMode]="menuComponent.editMode"
+            [class.editMode]="menuComponent.editMode"
             [class.disable3D]="menuComponent.editMode">
         </app-sequence-diagram>
     </div>

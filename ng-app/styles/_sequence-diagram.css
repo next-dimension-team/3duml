@@ -118,6 +118,14 @@ input {
   overflow: hidden;
 }
 
+.editMode .sequence-diagram .lifeline .title {
+  cursor: ew-resize;
+}
+
+.editMode .sequence-diagram .lifeline .title span {
+  cursor: text;
+}
+
 /* Lifeline - Line */
 .sequence-diagram .lifeline .line {
   border-left: 1px dashed #000;
@@ -172,6 +180,15 @@ input {
 }
 
 /* Message - Lines */
+.editMode .sequence-diagram .message .title,
+.editMode .sequence-diagram .message .title * {
+  cursor: ns-resize;
+}
+
+.editMode .renameable {
+  cursor: text!important;
+}
+
 .sequence-diagram .message .line {
   width: 100%;
   height: 15px;
