@@ -10,6 +10,10 @@ import { MdDialogRef } from '@angular/material';
       <p>{{message2}}</p>
       <h3>{{messageHeader3}}</h3>
       <p>{{message3}}</p>
+      <h3>{{messageHeader4}}</h3>
+      <p>{{message4}}</p>
+      <h3>{{messageHeader5}}</h3>
+      <p>{{message5}}</p>
       <button md-button (keyup.enter)="onOk.emit(); dialog.close()" (click)="onOk.emit(); dialog.close()"><md-icon>done</md-icon> Ok</button>`
 })
 export class HelpDialogComponent {
@@ -21,6 +25,10 @@ export class HelpDialogComponent {
   public message2: string;
   public messageHeader3: string;
   public message3: string;
+  public messageHeader4: string;
+  public message4: string;
+  public messageHeader5: string;
+  public message5: string;
   onOk = new EventEmitter();
 
   constructor(public dialog: MdDialogRef<any>) { }

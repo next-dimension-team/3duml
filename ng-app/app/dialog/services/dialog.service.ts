@@ -39,7 +39,7 @@ export class DialogService {
   }
 
   public createHelpDialog(title?: string, messageHeader1?: string, message1?: string, messageHeader2?: string, message2?: string, 
-      messageHeader3?: string, message3?: string): MdDialogRef<any> {
+      messageHeader3?: string, message3?: string,  messageHeader4?: string, message4?: string,  messageHeader5?: string, message5?: string): MdDialogRef<any> {
     let dialogRef: MdDialogRef<any> = this.dialog.open(HelpDialogComponent);
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.messageHeader1 = messageHeader1;
@@ -48,6 +48,10 @@ export class DialogService {
     dialogRef.componentInstance.message2 = message2;
     dialogRef.componentInstance.messageHeader3 = messageHeader3;
     dialogRef.componentInstance.message3 = message3;
+    dialogRef.componentInstance.messageHeader4 = messageHeader4;
+    dialogRef.componentInstance.message4 = message4;
+    dialogRef.componentInstance.messageHeader5 = messageHeader5;
+    dialogRef.componentInstance.message5 = message5;
     return dialogRef;
   }
 
