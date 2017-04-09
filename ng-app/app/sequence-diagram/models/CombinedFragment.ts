@@ -2,23 +2,23 @@ import { JsonApiModel, JsonApiModelConfig, Attribute, BelongsTo } from 'angular2
 import { InteractionFragment } from './InteractionFragment';
 
 @JsonApiModelConfig({
-    type: 'combined-fragments'
+  type: 'combined-fragments'
 })
 export class CombinedFragment extends JsonApiModel {
 
   @Attribute()
-  name: string;
+  public name: string;
 
   @Attribute()
-  operator: string;
+  public operator: string;
 
   @Attribute()
-  created_at: Date;
+  public created_at: Date;
 
   @Attribute()
-  updated_at: Date;
+  public updated_at: Date;
 
   @BelongsTo()
-  fragment: InteractionFragment;
+  public fragment: InteractionFragment;
 
 }
