@@ -1,29 +1,97 @@
 <md-toolbar color="primary">
-    <span>3D UML</span>
-    <span class="spacer"></span>
-    <!--
-  <button md-icon-button [mdMenuTriggerFor]="menu">
-      <md-icon>more_vert</md-icon>
-    </button>
-    <md-menu #menu="mdMenu">
-        <button md-menu-item>
-        <md-icon>autorenew</md-icon>
-        <span>Refresh</span>
-      </button>
-        <button md-menu-item>
-        <md-icon>save</md-icon>
-        <span>Save all diagrams</span>
-      </button>
-        <button md-menu-item disabled>
-        <md-icon>announcement</md-icon>
-        <span>Issues</span>
-      </button>
-        <button md-menu-item>
-        <md-icon>info</md-icon>
-        <span>Informations</span>
-      </button>
-    </md-menu>
-    -->
+	<span>3D UML</span>
+	<span class="spacer"></span>
+
+	<!-- Help -->
+	<button md-icon-button [mdMenuTriggerFor]="menu">
+		<md-icon>help_outline</md-icon>
+	</button>
+		<md-menu #menu="mdMenu">
+			<!-- Diagram Help -->
+			<button md-menu-item [mdMenuTriggerFor]="DiagramMenu">
+				<md-icon>help_outline</md-icon>
+				<span>Diagram</span>
+			</button>
+				<md-menu #DiagramMenu="mdMenu">
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>Create diagram</span>
+					</button>
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>View diagram</span>
+					</button>
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>Edit diagram</span>
+					</button>
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>Delete diagram</span>
+					</button>
+				</md-menu>
+
+			<!-- Layer Help -->
+			<button md-menu-item [mdMenuTriggerFor]="DiagramMenu">
+				<md-icon>help_outline</md-icon>
+				<span>Layer</span>
+			</button>
+				<md-menu #DiagramMenu="mdMenu">
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>Create layer</span>
+					</button>
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>Edit layer</span>
+					</button>
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>Delete layer</span>
+					</button>
+				</md-menu>
+
+			<!-- Lifeline Help -->
+			<button md-menu-item [mdMenuTriggerFor]="DiagramMenu">
+				<md-icon>help_outline</md-icon>
+				<span>Lifeline</span>
+			</button>
+				<md-menu #DiagramMenu="mdMenu">
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>Create lifeline</span>
+					</button>
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>Edit lifeline</span>
+					</button>
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>Delete lifeline</span>
+					</button>
+				</md-menu>
+
+			<!-- Message Help -->
+			<button md-menu-item [mdMenuTriggerFor]="DiagramMenu">
+				<md-icon>help_outline</md-icon>
+				<span>Message</span>
+			</button>
+				<md-menu #DiagramMenu="mdMenu">
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>Create message</span>
+					</button>
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>Edit message</span>
+					</button>
+					<button md-menu-item>
+						<md-icon>help</md-icon>
+						<span>Delete message</span>
+					</button>
+				</md-menu>		
+	</md-menu>
+
 </md-toolbar>
 
 <md-tab-group (selectChange)="changeTab($event)" [selectedIndex]="selectedTabIndex">
