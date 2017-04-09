@@ -35,7 +35,7 @@ export class SequenceDiagramController {
 
         // Start job
         this.jobsService.start('createDiagram');
-        
+
         // Create interaction
         this.datastore.createRecord(M.Interaction, {
           name: name
@@ -56,6 +56,21 @@ export class SequenceDiagramController {
         });
 
       })
+  }
+
+  /*
+   * Rename Diagram
+   */
+  public renameDiagram(sequenceDiagram: M.Interaction): void {
+    this.dialogService.createEditDialog(
+      "Edit Diagram", sequenceDiagram, "Enter Diagram name", "diagram")
+      .componentInstance.onOk.subscribe((result) => {
+        this.jobsService.start('renameDiagram');
+        sequenceDiagram.name = result.name;
+        sequenceDiagram.save().subscribe(() => {
+          this.jobsService.finish('renameDiagram');
+        });
+      });
   }
 
   /*

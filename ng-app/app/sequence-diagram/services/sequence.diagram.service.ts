@@ -21,47 +21,6 @@ export class SequenceDiagramService {
   /* Menu Component Instance */
   public menuComponent: MenuComponent = null;
 
-  /////////////////////////////////////////
-  /////////////////////////////////////////
-  /////////////////////////////////////////
-
-  protected static initialized = false;
-
-  private layerForDelete;
-
-  constructor(
-    protected datastore: Datastore,
-    protected inputService: InputService,
-    protected dialogService: DialogService,
-    protected http: Http,
-    protected jobsService: JobsService
-  ) {
-    // Initialize the service
-    if (!SequenceDiagramService.initialized) {
-      this.initialize();
-      SequenceDiagramService.initialized = true;
-    }
-  }
-
-  /**
-   * Select Operation
-   */
-  protected selectedElement = null;
-  private editMode: Boolean = false;
-
-  public initialize() {
-    this.initializeDeleteOperation();
-    this.initializeAddMessageOperation();
-    this.initializeAddLifeline();
-    this.initializeRenameElement();
-    this.initializeMoveLifeline();
-    this.initializeVerticalMessageMove();
-    this.initializeMoveMessageOperation();
-  }
-
-  /**
-   * Retrieve Operation
-   */
   public getSequenceDiagrams(): Observable<M.Interaction[]> {
     return this.datastore.query(M.InteractionFragment, {
       include: 'fragmentable',
@@ -92,6 +51,43 @@ export class SequenceDiagramService {
       );
   }
 
+  /////////////////////////////////////////
+  /////////////////////////////////////////
+  /////////////////////////////////////////
+
+  protected static initialized = false;
+
+  private layerForDelete;
+
+  constructor(
+    protected datastore: Datastore,
+    protected inputService: InputService,
+    protected dialogService: DialogService,
+    protected http: Http,
+    protected jobsService: JobsService
+  ) {
+    // Initialize the service
+    if (!SequenceDiagramService.initialized) {
+      this.initialize();
+      SequenceDiagramService.initialized = true;
+    }
+  }
+
+  /**
+   * Select Operation
+   */
+  protected selectedElement = null;
+
+  public initialize() {
+    this.initializeDeleteOperation();
+    this.initializeAddMessageOperation();
+    this.initializeRenameElement();
+    this.initializeMoveLifeline();
+    this.initializeVerticalMessageMove();
+    this.initializeMoveMessageOperation();
+  }
+  
+
   /**
    * Create Operation
    */
@@ -99,17 +95,7 @@ export class SequenceDiagramService {
   protected movingLifeline: M.Lifeline;
   protected addingLifelineEvent: Event;
 
-  public initializeAddLifeline() {
-    this.inputService.onLeftClick((event) => {
-      if (event.model.type == "Layer") {
-        this.addingLifelineEvent = event;
-      }
-    });
-  }
-
-  public setEditMode(type: Boolean) {
-    this.editMode = type;
-  }
+ 
 
   protected draggingLifeline: LifelineComponent = null;
   
@@ -123,12 +109,12 @@ export class SequenceDiagramService {
       }
     });
     this.inputService.onMouseMove((event) => {
-      if (this.draggingLifeline && this.editMode.valueOf() == true)
+      if (this.draggingLifeline && this.menuComponent.editMode.valueOf() == true)
         this.draggingLifeline.left = event.diagramX - 125;
     });
     this.inputService.onMouseUp((event) => {
       if (moveBool && this.movingLifeline != null) {
-        if (!this.editMode) {
+        if (!this.menuComponent.editMode) {
           this.movingLifeline = null;
           return;
         }
@@ -193,15 +179,7 @@ export class SequenceDiagramService {
    */
   protected renamingLayer = false;
 
-  public renameDiagram(sequenceDiagram: M.Interaction) {
-
-    let editDialog;
-    editDialog = this.dialogService.createEditDialog("Edit Diagram", sequenceDiagram, "Enter Diagram name","diagram");
-    editDialog.componentInstance.onOk.subscribe(result => {
-      sequenceDiagram.name = result.name;
-      sequenceDiagram.save().subscribe();
-    });
-  }
+  
 
   public renameLayer(interactionFragment: M.InteractionFragment) {
 
@@ -379,7 +357,7 @@ export class SequenceDiagramService {
     });
   }
 
-  protected createMessage(sourceLifeline: MouseEvent, destinationLifeline: MouseEvent, callback: any) {
+  protected createMessage(sourceLifeline, destinationLifeline, callback: any) {
     let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
     let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
     let currentInteraction = this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id);
