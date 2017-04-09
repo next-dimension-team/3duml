@@ -79,7 +79,6 @@ export class SequenceDiagramService {
 
   public initialize() {
     this.initializeDeleteOperation();
-    this.initializeMoveLifeline();
   }
 
 
@@ -87,87 +86,11 @@ export class SequenceDiagramService {
    * Create Operation
    */
   protected lifelineBefore: M.Lifeline;
-  protected movingLifeline: M.Lifeline;
   protected addingLifelineEvent: Event;
 
 
 
-  protected draggingLifeline: LifelineComponent = null;
 
-  public initializeMoveLifeline() {
-    let moveBool = false;
-    this.inputService.onMouseDown((event) => {
-      if (event.model.type == 'Lifeline') {
-        this.draggingLifeline = event.model.component;
-        this.movingLifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
-        moveBool = true;
-      }
-    });
-    this.inputService.onMouseMove((event) => {
-      if (this.draggingLifeline && this.menuComponent.editMode.valueOf() == true)
-        this.draggingLifeline.left = event.diagramX - 125;
-    });
-    this.inputService.onMouseUp((event) => {
-      if (moveBool && this.movingLifeline != null) {
-        if (!this.menuComponent.editMode) {
-          this.movingLifeline = null;
-          return;
-        }
-        moveBool = false;
-        let interaction = this.movingLifeline.interaction;
-        let lifelinesInInteraction = interaction.lifelines;
-        let lifelineOrder = this.movingLifeline.order;
-        let position = 0, count = 1;
-        let orderBot = 0, orderTop = 125;
-        let diagramX = 0;
-        while (position == 0) {
-          if (event.diagramX < orderTop && event.diagramX > orderBot) {
-            position = count;
-            diagramX = orderTop;
-            break;
-          } else {
-            count++;
-            orderBot = orderTop;
-            orderTop += 400;
-          }
-        }
-        let numOfLifelines = lifelinesInInteraction.length;
-        if (position > numOfLifelines) {
-          position = numOfLifelines + 1;
-        }
-        if (position > this.movingLifeline.order && numOfLifelines > 2) {
-          position--;
-        }
-        if (position == this.movingLifeline.order) {
-          this.draggingLifeline.left = (position - 1) * 400;
-          this.draggingLifeline = null;
-          return;
-        }
-        this.draggingLifeline = null;
-        let originalOrder = this.movingLifeline.order;
-        for (let lifeline of lifelinesInInteraction) {
-          if (lifeline.id == this.movingLifeline.id) {
-            lifeline.order = position;
-            lifeline.save().subscribe();
-            continue;
-          }
-          else if (lifeline.order >= originalOrder && lifeline.order <= position) {
-            lifeline.order--;
-            lifeline.save().subscribe();
-            continue;
-          }
-          else if (lifeline.order < originalOrder && lifeline.order >= position) {
-            lifeline.order++;
-            lifeline.save().subscribe();
-            continue;
-          }
-        }
-        this.sequenceDiagramComponent.refresh();
-      }
-    });
-    this.movingLifeline = null;
-    this.draggingLifeline = null;
-  }
 
   /**
    * Delete Operation
@@ -276,19 +199,5 @@ export class SequenceDiagramService {
       }
     }
   }
-
-  /**
-   * Insert Operation
-   */
-
-
-
-
-
-  /**
-   * Update Operation
-   */
-
-
 
 }

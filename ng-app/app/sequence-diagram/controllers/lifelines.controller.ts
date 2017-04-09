@@ -2,6 +2,7 @@ import { Datastore } from '../../datastore';
 import { DialogService } from '../../dialog/services';
 import { MenuComponent } from '../../menu/components/menu.component';
 import * as M from '../../sequence-diagram/models';
+import { LifelineComponent } from '../components/lifeline.component';
 import { SequenceDiagramComponent } from '../components/sequence-diagram.component';
 import { JobsService, SequenceDiagramService } from '../services';
 import { InputService } from '../services/input.service';
@@ -25,6 +26,7 @@ export class LifelinesController {
   ) {
     // Initialize operations
     this.renameLifeline();
+    this.reorderLifeline();
   }
 
   /*
@@ -84,6 +86,120 @@ export class LifelinesController {
               this.jobsService.finish('renameLifeline');
             });
           });
+      }
+    });
+  }
+
+  /*
+   * Reorder Lifeline
+   */
+  protected reorderLifeline() {
+    let dragging: boolean = false;
+    let draggingLifelineModel: M.Lifeline;
+    let draggingLifelineComponent: LifelineComponent = null;
+
+    // Chytili sme lifelinu
+    this.inputService.onMouseDown((event) => {
+      if (this.menuComponent.editMode && event.model.type == 'Lifeline') {
+        draggingLifelineComponent = event.model.component;
+        draggingLifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.id);
+        dragging = true;
+      }
+    });
+
+    // Keď hýbem myšou, lifelina sa hýbe spolu s myšou
+    this.inputService.onMouseMove((event) => {
+      if (this.menuComponent.editMode && dragging) {
+        draggingLifelineComponent.left = event.diagramX - 125;
+      }
+    });
+
+    // Lifelinu som pustil na jej nové miesto
+    this.inputService.onMouseUp((event) => {
+      if (this.menuComponent.editMode && dragging) {
+        dragging = false;
+
+        // Start job
+        this.jobsService.start('reorderLifeline');
+
+        let interaction = draggingLifelineModel.interaction;
+        let lifelinesInInteraction = interaction.lifelines;
+        let lifelineOrder = draggingLifelineModel.order;
+
+        let position = 0, count = 1;
+        let orderBot = 0, orderTop = 125;
+        let diagramX = 0;
+
+        // TODO: komentár k tomuto
+        while (position == 0) {
+          if (event.diagramX < orderTop && event.diagramX > orderBot) {
+            position = count;
+            diagramX = orderTop;
+            break;
+          } else {
+            count++;
+            orderBot = orderTop;
+            orderTop += 400;
+          }
+        }
+
+        // TODO: komentár k tomuto
+        if (position > lifelinesInInteraction.length) {
+          position = lifelinesInInteraction.length + 1;
+        }
+
+        // TODO: komentár k tomuto
+        if (position > draggingLifelineModel.order && lifelinesInInteraction.length > 2) {
+          position--;
+        }
+
+        // TODO: komentár k tomuto
+        if (position == draggingLifelineModel.order) {
+          draggingLifelineComponent.left = (position - 1) * 400;
+          draggingLifelineComponent = null;
+          return;
+
+        }
+
+
+        let originalOrder = draggingLifelineModel.order;
+
+        // TODO: komentár k tomuto
+        for (let lifeline of lifelinesInInteraction) {
+          if (lifeline.id == draggingLifelineModel.id) {
+            lifeline.order = position;
+            this.jobsService.start('reorderLifeline.lifeline.' + lifeline.id);
+            lifeline.save().subscribe(() => {
+              this.jobsService.finish('reorderLifeline.lifeline.' + lifeline.id);
+            });
+            continue;
+          }
+          else if (lifeline.order >= originalOrder && lifeline.order <= position) {
+            lifeline.order--;
+            this.jobsService.start('reorderLifeline.lifeline.' + lifeline.id);
+            lifeline.save().subscribe(() => {
+              this.jobsService.finish('reorderLifeline.lifeline.' + lifeline.id);
+            });
+            continue;
+          }
+          else if (lifeline.order < originalOrder && lifeline.order >= position) {
+            lifeline.order++;
+            this.jobsService.start('reorderLifeline.lifeline.' + lifeline.id);
+            lifeline.save().subscribe(() => {
+              this.jobsService.finish('reorderLifeline.lifeline.' + lifeline.id);
+            });
+            continue;
+          }
+        }
+
+        this.sequenceDiagramComponent.refresh(() => {
+          // Finish job
+          this.jobsService.finish('reorderLifeline');
+        });
+
+        draggingLifelineComponent = null;
+        draggingLifelineModel = null;
+
       }
     });
   }
