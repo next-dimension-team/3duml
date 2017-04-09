@@ -24,7 +24,7 @@ import { MdDialogRef } from '@angular/material';
       </md-select>
     </div>
     <br>
-    <button md-button [disabled]="inputEmpty(input.value)" (click)="submitInput(input.value, selectedItem)">OK</button>
+    <button md-button [disabled]="inputEmpty(input.value)" (click)="submitInput(input.value, selectedItem)"><md-icon>done</md-icon> OK</button>
     <button md-button (click)="onNo.emit(); dialog.close()"><md-icon>close</md-icon> Cancel</button>`
 })
 
@@ -41,9 +41,9 @@ export class EditDialogComponent {
   public items = ["synchCall", "asynchCall"];
   public selectedItem: string;
 
-  inputEmpty(input : string): boolean {
+  inputEmpty(input: string): boolean {
 
-    if (input.length == 0){
+    if (input.length == 0) {
       return true;
     } else {
       return false;
@@ -56,16 +56,16 @@ export class EditDialogComponent {
       return;
     }
 
-    this.onOk.emit({name, messageSort}); 
+    this.onOk.emit({ name, messageSort });
     this.dialog.close();
   }
 
-  constructor( public dialog: MdDialogRef<any>, private cdr: ChangeDetectorRef) { }
+  constructor(public dialog: MdDialogRef<any>, private cdr: ChangeDetectorRef) { }
 
   ngAfterViewInit() {
 
-    if (this.elementType == "message"){
-      this.selectedItem = this.element.sort ; 
+    if (this.elementType == "message") {
+      this.selectedItem = this.element.sort;
     }
     this.cdr.detectChanges();
   }
