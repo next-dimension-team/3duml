@@ -2,6 +2,7 @@ import { Datastore } from '../../datastore';
 import { DialogService } from '../../dialog/services';
 import { MenuComponent } from '../../menu/components/menu.component';
 import * as M from '../../sequence-diagram/models';
+import { MessageComponent } from '../components/message.component';
 import { SequenceDiagramComponent } from '../components/sequence-diagram.component';
 import { JobsService } from '../services';
 import { InputService } from '../services/input.service';
@@ -28,6 +29,7 @@ export class MessagesController {
     this.editMessage();
     this.createMessageOnLifelinePointClick();
     this.changeSendAndReceiveMessageEvents();
+    this.verticalMessageMove();
   }
 
   /*
@@ -56,6 +58,9 @@ export class MessagesController {
     });
   }
 
+  /*
+   * Pomocná metóda
+   */
   protected _createMessage(sourceLifeline, destinationLifeline) {
     let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
     let destinationLifelineModel = this.datastore.peekRecord(M.Lifeline, destinationLifeline.model.lifelineID);
@@ -114,6 +119,9 @@ export class MessagesController {
       });
   }
 
+  /*
+   * Pomocná metóda
+   */
   protected _calculateTimeOnMessageCreate(currentInteraction: M.Interaction, time: number,
     sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline) {
 
@@ -261,6 +269,97 @@ export class MessagesController {
         }
       }
     });
+  }
+
+  /*
+   * Vertical Message Move
+   */
+  public verticalMessageMove() {
+    let draggingMessage: MessageComponent = null;
+
+    this.inputService.onMouseDown((event) => {
+      if (this.menuComponent.editMode && event.model.type == 'Message') {
+        draggingMessage = event.model.component;
+      }
+    });
+
+    this.inputService.onMouseMove((event) => {
+      if (this.menuComponent.editMode && draggingMessage) {
+        draggingMessage.top = event.diagramY - 80;
+      }
+    });
+
+    this.inputService.onMouseUp((event) => {
+      if (this.menuComponent.editMode && draggingMessage) {
+        // TODO: Pouzit z configu nie iba /40.0
+        draggingMessage.messageModel.sendEvent.time = Math.round((event.diagramY - 110) / 40.0);
+        draggingMessage.messageModel.receiveEvent.time = Math.round((event.diagramY - 110) / 40.0);
+
+        // Move send event
+        this.jobsService.start('verticalMessageMove.sendEvent');
+        draggingMessage.messageModel.sendEvent.save().subscribe(() => {
+          this.jobsService.finish('verticalMessageMove.sendEvent');
+        });
+
+        // Move receive event
+        this.jobsService.start('verticalMessageMove.receiveEvent');
+        draggingMessage.messageModel.receiveEvent.save().subscribe(() => {
+          this.jobsService.finish('verticalMessageMove.receiveEvent');
+        });
+
+        this._calculateTimeOnMessageUpdate(draggingMessage.messageModel.sendEvent.covered.interaction,
+          draggingMessage.messageModel.sendEvent, draggingMessage.messageModel.receiveEvent);
+
+        draggingMessage.top = null;
+        draggingMessage = null;
+      }
+    });
+  }
+
+  /*
+   * Pomocná metóda
+   */
+  protected _calculateTimeOnMessageUpdate(currentInteraction: M.Interaction,
+    sourceOccurence: M.OccurrenceSpecification, destinationOccurence: M.OccurrenceSpecification) {
+
+    let move = false;
+    let maxTimeValue = 0;
+    let lifelinesInCurrentLayer = currentInteraction.lifelines;
+    let time = sourceOccurence.time;
+
+    //  Prechadzam vsetky lifeliny v aktualnom platne
+    for (let lifeline of lifelinesInCurrentLayer) {
+      for (let occurrence of lifeline.occurrenceSpecifications) {
+        if (occurrence.time == time &&
+          ((sourceOccurence.id != occurrence.id) && (destinationOccurence.id != occurrence.id))) {
+          move = true;
+          break;
+        }
+        if (move) {
+          break;
+        }
+      }
+    }
+
+    // Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej
+    if (move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time >= time &&
+            ((sourceOccurence.id != occurrence.id) && (destinationOccurence.id != occurrence.id))) {
+            let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+            occurenceForChange.time = occurenceForChange.time + 1;
+
+            // Start job
+            this.jobsService.start('verticalMessageMove.calculateTimeOnMessageUpdate.' + occurenceForChange.id);
+            occurenceForChange.save().subscribe(() => {
+              // Finish job
+              this.jobsService.finish('verticalMessageMove.calculateTimeOnMessageUpdate.' + occurenceForChange.id);
+            });
+          }
+        }
+      }
+    }
   }
 
 }

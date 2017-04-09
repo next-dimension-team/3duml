@@ -80,7 +80,6 @@ export class SequenceDiagramService {
   public initialize() {
     this.initializeDeleteOperation();
     this.initializeMoveLifeline();
-    this.initializeVerticalMessageMove();
   }
 
 
@@ -289,69 +288,7 @@ export class SequenceDiagramService {
   /**
    * Update Operation
    */
-  protected draggingMessage: MessageComponent = null;
-  public initializeVerticalMessageMove() {
-    this.inputService.onMouseDown((event) => {
-      if (event.model.type == "Message") {
-        this.draggingMessage = event.model.component;
-      }
-    });
 
-    this.inputService.onMouseMove((event) => {
-      if (this.draggingMessage) {
-        this.draggingMessage.top = event.offsetY - 80;
-      }
-    });
-
-    this.inputService.onMouseUp((event) => {
-      if (this.draggingMessage) {
-        // TODO: Pouzit z configu nie iba /40.0
-        this.draggingMessage.messageModel.sendEvent.time = Math.round((event.offsetY - 110) / 40.0);
-        this.draggingMessage.messageModel.receiveEvent.time = Math.round((event.offsetY - 110) / 40.0);
-        this.draggingMessage.messageModel.sendEvent.save().subscribe(() => { });
-        this.draggingMessage.messageModel.receiveEvent.save().subscribe(() => { });
-        this.calculateTimeOnMessageUpdate(this.draggingMessage.messageModel.sendEvent.covered.interaction,
-          this.draggingMessage.messageModel.sendEvent, this.draggingMessage.messageModel.receiveEvent);
-        this.draggingMessage.top = null;
-        this.draggingMessage = null;
-      }
-    });
-  }
-  protected calculateTimeOnMessageUpdate(currentInteraction: M.Interaction,
-    sourceOccurence: M.OccurrenceSpecification, destinationOccurence: M.OccurrenceSpecification) {
-
-    let move = false;
-    let maxTimeValue = 0;
-    let lifelinesInCurrentLayer = currentInteraction.lifelines;
-    let time = sourceOccurence.time;
-
-    //Prechadzam vsetky lifeliny v aktualnom platne
-    for (let lifeline of lifelinesInCurrentLayer) {
-      for (let occurrence of lifeline.occurrenceSpecifications) {
-        if (occurrence.time == time &&
-          ((sourceOccurence.id != occurrence.id) && (destinationOccurence.id != occurrence.id))) {
-          move = true;
-          break;
-        }
-        if (move) {
-          break;
-        }
-      }
-    }
-    // Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej
-    if (move) {
-      for (let lifeline of lifelinesInCurrentLayer) {
-        for (let occurrence of lifeline.occurrenceSpecifications) {
-          if (occurrence.time >= time &&
-            ((sourceOccurence.id != occurrence.id) && (destinationOccurence.id != occurrence.id))) {
-            let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
-            occurenceForChange.time = occurenceForChange.time + 1;
-            occurenceForChange.save().subscribe();
-          }
-        }
-      }
-    }
-  }
 
 
 }
