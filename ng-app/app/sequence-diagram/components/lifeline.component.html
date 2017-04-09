@@ -5,7 +5,8 @@
   [style.left]="left + 'px'">
 
   <div
-    class="title">
+    class="title"
+    [selectable]="{type: 'LifelineTitle', id: lifelineModel.id, component: this}">
     <span>{{lifelineModel.name}}</span>
   </div>
 

@@ -17,8 +17,8 @@ import { BehaviorSubject } from 'rxjs';
 export class MenuComponent implements OnInit {
 
   // Events
-  @Output() public onOpenSequenceDiagram = new EventEmitter;
-  @Output() public onCreateLayer = new EventEmitter;
+  @Output() public onOpenSequenceDiagram = new EventEmitter();
+  @Output() public onModeChange = new EventEmitter();
 
   constructor(
     protected jobsService: JobsService,
@@ -67,6 +67,7 @@ export class MenuComponent implements OnInit {
 
   protected changeTab(event) {
     this.selectedTabIndex = (event.tab.textLabel == 'Edit') ? 1 : 0;
+    this.onModeChange.emit(this.editMode);
   }
 
   // Open operations

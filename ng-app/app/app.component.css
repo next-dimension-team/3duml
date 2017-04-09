@@ -1,14 +1,26 @@
+#page-content-wrapper {
+  overflow-x: auto;
+}
+
 #sidebar-wrapper {
-    display: block;
-    float: left;
-    width: calc(20% - 5px);
-    height: 100vh;
-    border-right: 5px solid #3f51b5;
+  display: block;
+  float: left;
+  width: calc(20% - 5px);
+  height: 100vh;
+  border-right: 5px solid #3f51b5;
+  position: fixed;
+  z-index: 99999999999;
+  background-color: #fff;
 }
 
 #page-content-wrapper {
-    display: block;
-    float: right;
-    width: 80%;
-    height: 100vh;
+  display: block;
+  float: right;
+  width: 80%;
+  height: 100vh;
+}
+
+.input-item {
+  padding-bottom: 10px;
+  padding-top: 10px;
 }

@@ -4,6 +4,7 @@ import { MenuComponent } from '../../menu/components/menu.component';
 import * as M from '../../sequence-diagram/models';
 import { SequenceDiagramComponent } from '../components/sequence-diagram.component';
 import { JobsService } from '../services';
+import { SequenceDiagramController } from './sequence-diagram.controller';
 import { Injectable } from '@angular/core';
 
 @Injectable()
@@ -11,6 +12,9 @@ export class LayersController {
 
   /* Sequence Diagram Component Instance */
   public sequenceDiagramComponent: SequenceDiagramComponent = null;
+
+  /* Sequence Diagram Controller Instance */
+  public sequenceDiagramController: SequenceDiagramController = null;
 
   /* Menu Component Instance */
   public menuComponent: MenuComponent = null;

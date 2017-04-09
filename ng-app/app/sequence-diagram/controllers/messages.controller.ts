@@ -6,6 +6,7 @@ import { MessageComponent } from '../components/message.component';
 import { SequenceDiagramComponent } from '../components/sequence-diagram.component';
 import { JobsService } from '../services';
 import { InputService } from '../services/input.service';
+import { SequenceDiagramController } from './sequence-diagram.controller';
 import { Injectable } from '@angular/core';
 import { Headers, Http, RequestOptions } from '@angular/http';
 
@@ -14,6 +15,9 @@ export class MessagesController {
 
   /* Sequence Diagram Component Instance */
   public sequenceDiagramComponent: SequenceDiagramComponent = null;
+
+  /* Sequence Diagram Controller Instance */
+  public sequenceDiagramController: SequenceDiagramController = null;
 
   /* Menu Component Instance */
   public menuComponent: MenuComponent = null;
@@ -60,6 +64,8 @@ export class MessagesController {
 
   /*
    * Pomocná metóda
+   * 
+   * TODO: napisat komentar co tato metoda robi
    */
   protected _createMessage(sourceLifeline, destinationLifeline) {
     let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
@@ -121,6 +127,8 @@ export class MessagesController {
 
   /*
    * Pomocná metóda
+   * 
+   * TODO: napisat komentar co tato metoda robi
    */
   protected _calculateTimeOnMessageCreate(currentInteraction: M.Interaction, time: number,
     sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline) {
@@ -175,7 +183,7 @@ export class MessagesController {
   protected editMessage() {
     this.inputService.onDoubleClick((event) => {
       // Did we double-clicked on lifeline in edit mode ?
-      if (this.menuComponent.editMode && event.model.type == 'Message') {
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type == 'Message') {
         // Get lifeline model
         let message = this.datastore.peekRecord(M.Message, event.model.id);
         // Open dialog
@@ -184,6 +192,7 @@ export class MessagesController {
           this.jobsService.start('renameMessage');
           // Rename lifeline
           message.name = result.name;
+          message.sort = result.messageSort;
           message.save().subscribe(() => {
             // Finish job
             this.jobsService.finish('renameMessage');
@@ -278,34 +287,48 @@ export class MessagesController {
     let draggingMessage: MessageComponent = null;
 
     this.inputService.onMouseDown((event) => {
-      if (this.menuComponent.editMode && event.model.type == 'Message') {
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type == 'Message') {
         draggingMessage = event.model.component;
       }
     });
 
     this.inputService.onMouseMove((event) => {
-      if (this.menuComponent.editMode && draggingMessage) {
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && draggingMessage) {
         draggingMessage.top = event.diagramY - 80;
       }
     });
 
     this.inputService.onMouseUp((event) => {
-      if (this.menuComponent.editMode && draggingMessage) {
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && draggingMessage) {
+
+        let originalSendEventTime = draggingMessage.messageModel.sendEvent.time;
+        let originalReceiveEventTime = draggingMessage.messageModel.receiveEvent.time;
+
         // TODO: Pouzit z configu nie iba /40.0
         draggingMessage.messageModel.sendEvent.time = Math.round((event.diagramY - 110) / 40.0);
         draggingMessage.messageModel.receiveEvent.time = Math.round((event.diagramY - 110) / 40.0);
 
+        // Zmenili sme niečo ?
+        let changed = (
+          draggingMessage.messageModel.sendEvent.time != originalSendEventTime ||
+          draggingMessage.messageModel.receiveEvent.time != originalReceiveEventTime
+        );
+
         // Move send event
-        this.jobsService.start('verticalMessageMove.sendEvent');
-        draggingMessage.messageModel.sendEvent.save().subscribe(() => {
-          this.jobsService.finish('verticalMessageMove.sendEvent');
-        });
+        if (changed) {
+          this.jobsService.start('verticalMessageMove.sendEvent');
+          draggingMessage.messageModel.sendEvent.save().subscribe(() => {
+            this.jobsService.finish('verticalMessageMove.sendEvent');
+          });
+        }
 
         // Move receive event
-        this.jobsService.start('verticalMessageMove.receiveEvent');
-        draggingMessage.messageModel.receiveEvent.save().subscribe(() => {
-          this.jobsService.finish('verticalMessageMove.receiveEvent');
-        });
+        if (changed) {
+          this.jobsService.start('verticalMessageMove.receiveEvent');
+          draggingMessage.messageModel.receiveEvent.save().subscribe(() => {
+            this.jobsService.finish('verticalMessageMove.receiveEvent');
+          });
+        }
 
         this._calculateTimeOnMessageUpdate(draggingMessage.messageModel.sendEvent.covered.interaction,
           draggingMessage.messageModel.sendEvent, draggingMessage.messageModel.receiveEvent);
@@ -318,6 +341,8 @@ export class MessagesController {
 
   /*
    * Pomocná metóda
+   * 
+   * TODO: napisat komentar co tato metoda robi
    */
   protected _calculateTimeOnMessageUpdate(currentInteraction: M.Interaction,
     sourceOccurence: M.OccurrenceSpecification, destinationOccurence: M.OccurrenceSpecification) {
@@ -357,6 +382,63 @@ export class MessagesController {
               this.jobsService.finish('verticalMessageMove.calculateTimeOnMessageUpdate.' + occurenceForChange.id);
             });
           }
+        }
+      }
+    }
+  }
+
+  /*
+   * Delete message
+   */
+  public deleteMessage(message: M.Message): void {
+    this.dialogService.createConfirmDialog(
+      "Delete message", "Do you really want to delete message \"" + message.name + "\" ?").componentInstance.onYes.subscribe(result => {
+        this._calculateTimeOnMessageDelete(message);
+        this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
+          this.sequenceDiagramComponent.refresh();
+        });
+      });
+  }
+
+  /*
+   * Pomocná metóda
+   * 
+   * TODO: napisat komentar co tato metoda robi
+   */
+  protected getRecursivelyLayerInteraction(inputInteractionFragment: M.InteractionFragment) {
+    let interactionFragment = inputInteractionFragment;
+
+    if (interactionFragment.fragmentable.isLayerInteraction == null) {
+      return this.getRecursivelyLayerInteraction(interactionFragment.parent);
+    } else if (interactionFragment.fragmentable.isLayerInteraction) {
+      return interactionFragment.fragmentable;
+    } else {
+      return this.getRecursivelyLayerInteraction(interactionFragment.parent);
+    }
+  }
+
+  /*
+   * Pomocná metóda
+   * 
+   * TODO: napisat komentar co tato metoda robi
+   */
+  protected _calculateTimeOnMessageDelete(message: M.Message) {
+
+    let deletedMessageTime = message.sendEvent.time;
+    let layer = this.getRecursivelyLayerInteraction(message.interaction.fragment);
+    let lifelinesInLayer = layer.lifelines;
+
+    // Prechadzam Occurence Spec. receive lifeliny a znizujem time o 1
+    for (let lifeline of lifelinesInLayer) {
+      for (let occurrence of lifeline.occurrenceSpecifications) {
+        if (occurrence.time > deletedMessageTime) {
+          // Teraz to znizit o 1 treba, zober id occurence spec a znizit
+          this.datastore.findRecord(M.OccurrenceSpecification, occurrence.id).subscribe(
+            (occurrenceSpecification: M.OccurrenceSpecification) => {
+              occurrenceSpecification.time = occurrenceSpecification.time - 1;
+              occurrenceSpecification.save().subscribe();
+            }
+          );
         }
       }
     }

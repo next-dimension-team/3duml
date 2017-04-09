@@ -1,0 +1,12 @@
+body,
+#sidebar-wrapper,
+.mat-card,
+.mat-button-wrapper,
+.mat-subheader{
+  background-color: #333!important;
+  color: #ccc!important;
+}
+
+.section-heading {
+  color: #ccc!important;
+}

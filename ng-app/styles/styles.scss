@@ -11,26 +11,8 @@
 // Bootstrap
 //@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
-#sidebar-wrapper {
-  position: fixed;
-  z-index: 99999999999;
-  background-color: #fff;
-}
-.input-item {
-  padding-bottom: 10px;
-  padding-top: 10px;
-}
-
 /* Night Mode */
-body,
-#sidebar-wrapper,
-.mat-card,
-.mat-button-wrapper,
-.mat-subheader{
-  background-color: #333!important;
-  color: #ccc!important;
-}
+@import "night-mode";
 
-.section-heading {
-  color: #ccc!important;
-}
+/* Debug (hoverable elements) */
+@import "debug";

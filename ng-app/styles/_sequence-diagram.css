@@ -100,11 +100,6 @@ input {
   position: absolute;
 }
 
-.sequence-diagram :not(.point):hover {
-  color: blue!important;
-  background-color: rgba(0, 255, 0, 0.1)!important;
-}
-
 /* Lifeline */
 .sequence-diagram .lifeline {
   top: 0;

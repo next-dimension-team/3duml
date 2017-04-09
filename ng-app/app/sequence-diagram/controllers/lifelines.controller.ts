@@ -1,3 +1,4 @@
+import { SequenceDiagramController } from './sequence-diagram.controller';
 import { Datastore } from '../../datastore';
 import { DialogService } from '../../dialog/services';
 import { MenuComponent } from '../../menu/components/menu.component';
@@ -13,6 +14,9 @@ export class LifelinesController {
 
   /* Sequence Diagram Component Instance */
   public sequenceDiagramComponent: SequenceDiagramComponent = null;
+
+  /* Sequence Diagram Controller Instance */
+  public sequenceDiagramController: SequenceDiagramController = null;
 
   /* Menu Component Instance */
   public menuComponent: MenuComponent = null;
@@ -71,7 +75,7 @@ export class LifelinesController {
   protected renameLifeline() {
     this.inputService.onDoubleClick((event) => {
       // Did we double-clicked on lifeline in edit mode ?
-      if (this.menuComponent.editMode && event.model.type == 'Lifeline') {
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type == 'Lifeline') {
         // Get lifeline model
         let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
         // Open dialog
@@ -100,7 +104,7 @@ export class LifelinesController {
 
     // Chytili sme lifelinu
     this.inputService.onMouseDown((event) => {
-      if (this.menuComponent.editMode && event.model.type == 'Lifeline') {
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type == 'LifelineTitle') {
         draggingLifelineComponent = event.model.component;
         draggingLifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.id);
         dragging = true;
@@ -109,18 +113,15 @@ export class LifelinesController {
 
     // Keď hýbem myšou, lifelina sa hýbe spolu s myšou
     this.inputService.onMouseMove((event) => {
-      if (this.menuComponent.editMode && dragging) {
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && dragging) {
         draggingLifelineComponent.left = event.diagramX - 125;
       }
     });
 
     // Lifelinu som pustil na jej nové miesto
     this.inputService.onMouseUp((event) => {
-      if (this.menuComponent.editMode && dragging) {
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && dragging) {
         dragging = false;
-
-        // Start job
-        this.jobsService.start('reorderLifeline');
 
         let interaction = draggingLifelineModel.interaction;
         let lifelinesInInteraction = interaction.lifelines;
@@ -158,9 +159,10 @@ export class LifelinesController {
           draggingLifelineComponent.left = (position - 1) * 400;
           draggingLifelineComponent = null;
           return;
-
         }
 
+        // Start job
+        this.jobsService.start('reorderLifeline');
 
         let originalOrder = draggingLifelineModel.order;
 

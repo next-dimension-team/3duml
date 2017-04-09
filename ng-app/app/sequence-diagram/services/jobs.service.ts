@@ -20,6 +20,15 @@ export class JobsService {
   protected jobs: Array<String> = [];
 
   /*
+   * Pridanie globálnej (debugovacej) funkcie na výpis úloh.
+   */
+  public constructor() {
+    window['getJobs'] = () => {
+      return this.jobs;
+    }
+  }
+
+  /*
    * Waiting Cursor
    * 
    * Táto funkcia zmení kurzor myši. Ak jej pošleme "true"
@@ -69,5 +78,5 @@ export class JobsService {
     }
     this.updateCursor();
   }
-  
+
 }
