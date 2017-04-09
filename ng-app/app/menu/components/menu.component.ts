@@ -51,11 +51,18 @@ export class MenuComponent implements OnInit {
   }
 
   // Change "View" and "Edit" mode
-  protected editMode: Boolean = false;
+  protected selectedTabIndex: number = 0;
+
+  public get editMode(): boolean {
+    return this.selectedTabIndex == 1;
+  }
+
+  public set editMode(editMode: boolean) {
+    this.selectedTabIndex = editMode ? 1 : 0;
+  }
 
   protected changeTab(event) {
-    this.editMode = (event.tab.textLabel == 'Edit');
-    this.sequenceDiagramService.setEditMode(this.editMode);
+    this.selectedTabIndex = (event.tab.textLabel == 'Edit') ? 1 : 0;
   }
 
   // Open operations
