@@ -247,7 +247,6 @@ export class LifelinesController {
             this.jobsService.finish('deleteOccurrenceSpecification.occurrenceSpecification.' + occurence.id);
           });
         }
-        this.sequenceDiagramComponent.refresh();
         // Start job
         this.jobsService.start('deleteLifeline');
         this.datastore.deleteRecord(M.Lifeline, lifeline.id).subscribe(() => {
