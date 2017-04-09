@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
 import * as M from './sequence-diagram/models';
-import { SequenceDiagramService } from './sequence-diagram/services';
+
+import { Component } from '@angular/core';
 import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
+import { SequenceDiagramService } from './sequence-diagram/services';
 
 @Component({
   selector: 'app-root',
@@ -12,17 +13,14 @@ export class AppComponent {
 
   public openedSequenceDiagram: M.InteractionFragment;
 
-  constructor(private service: SequenceDiagramService) {
+  constructor(
+    protected sequenceDiagramService: SequenceDiagramService) {
     //
   }
 
   public openSequenceDiagram(diagram: M.Interaction) {
-    this.service.loadSequenceDiagramTree(diagram).subscribe(
+    this.sequenceDiagramService.loadSequenceDiagramTree(diagram).subscribe(
       (interactionFragment: M.InteractionFragment) => this.openedSequenceDiagram = interactionFragment
     );
-  }
-
-  public createLayer(layerName: string, sequenceDiagramComponent: SequenceDiagramComponent) {
-    this.service.createLayer(layerName, this.openedSequenceDiagram);
   }
 }

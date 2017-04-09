@@ -1,6 +1,12 @@
 <app-layer
-    #layerComponents
-    *ngFor="let interactionFragmentModel of rootInteractionFragment.children"
-    [interactionFragmentModel]="interactionFragmentModel"
-    [hidden]="editMode && (interactionFragmentModel != editingLayer)">
+  #layerComponents
+  *ngFor="let interactionFragmentModel of rootInteractionFragment.children"
+  [interactionFragmentModel]="interactionFragmentModel"
+  [hidden]="editMode && (interactionFragmentModel != editingLayer)">
 </app-layer>
+
+<h1
+  *ngIf="!rootInteractionFragment || !rootInteractionFragment.children || rootInteractionFragment.children.length == 0"
+  class="middle-error">
+  Diagram "{{rootInteractionFragment.fragmentable.name}}" has no layers :(
+</h1>

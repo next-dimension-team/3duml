@@ -11,8 +11,8 @@
 // Bootstrap
 //@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
-#sidebar-wrapper {
-  position: fixed;
-  z-index: 99999999999;
-  background-color: #fff;
-}
+/* Night Mode */
+//@import "night-mode";
+
+/* Debug (hoverable elements) */
+@import "debug";

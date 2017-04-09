@@ -22,7 +22,8 @@ body {
   overflow-y: hidden;
 }
 
-body.loading {
+body.loading,
+body.loading * {
   cursor: wait!important;
 }
 
@@ -97,11 +98,6 @@ input {
 .sequence-diagram svg {
   display: block;
   position: absolute;
-}
-
-.sequence-diagram :not(.point):hover {
-  color: blue!important;
-  background-color: rgba(0, 255, 0, 0.1)!important;
 }
 
 /* Lifeline */
@@ -292,4 +288,10 @@ input {
 
 .sequence-diagram .message .title {
   z-index: 71;
+}
+
+.middle-error {
+  text-align: center;
+  margin-top: 50vh;
+  font-family: 'Raleway';
 }

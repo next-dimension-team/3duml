@@ -1,9 +1,10 @@
-import { Component, Input, ElementRef, OnChanges, OnInit, OnDestroy } from '@angular/core';
-import * as M from '../models';
-import { SequenceDiagramService } from '../../sequence-diagram/services';
-import * as THREE from 'three';
 import { ConfigService } from '../../config';
-let { Object: CSS3DObject } : { Object: typeof THREE.CSS3DObject } = require('three.css')(THREE);
+import { SequenceDiagramService } from '../../sequence-diagram/services';
+import { LayersController } from '../controllers';
+import * as M from '../models';
+import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import * as THREE from 'three';
+let { Object: CSS3DObject }: { Object: typeof THREE.CSS3DObject } = require('three.css')(THREE);
 
 @Component({
   selector: 'app-layer',
@@ -23,7 +24,12 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
 
   public lifelineGap: number;
 
-  constructor(private sequenceDiagramService: SequenceDiagramService, protected element: ElementRef, protected config: ConfigService) {
+  constructor(
+    protected sequenceDiagramService: SequenceDiagramService,
+    protected element: ElementRef,
+    protected config: ConfigService,
+    protected layersController: LayersController
+  ) {
     //
   }
 
@@ -52,6 +58,9 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   // TODO: nevykreslovat fragmenty ktore su mimo layeru (top = MAX_INT)
+
+  // TODO: tuto metodu nazvat normalne a presunut ju do nejakeho "render controllera" alebp "render servicu"
+  // alebo do "fragments.renderer.ts" alebo tak neico
 
   r(interactionFragmentModel: M.InteractionFragment) {
     // Child
@@ -144,7 +153,7 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       e = null;
       for (let childFragment of interactionFragment.children) {
         let childEnvelope = this.envelopeFragment(childFragment);
-        if (! e) {
+        if (!e) {
           e = childEnvelope;
         } else {
           e = this.squeezeEnvelopes(e, childEnvelope);
@@ -156,7 +165,7 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       e = null;
       for (let childFragment of interactionFragment.children) {
         let childEnvelope = this.envelopeFragment(childFragment);
-        if (! e) {
+        if (!e) {
           e = childEnvelope;
         } else {
           e = this.squeezeEnvelopes(e, childEnvelope);
@@ -174,9 +183,6 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       min: Math.min(a.min, b.min),
       max: Math.max(a.max, b.max)
     };
-  }
-  protected renameLayer(interactionFragmentModel : M.InteractionFragment) {
-    this.sequenceDiagramService.renameLayer(interactionFragmentModel);
   }
 
 }

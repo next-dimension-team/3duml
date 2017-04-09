@@ -1,20 +1,37 @@
-import * as THREE from 'three';
-import {
-  Component, SimpleChanges, Input, ViewChildren, HostListener,
-  QueryList, AfterViewInit, OnInit, OnChanges, NgZone, ElementRef
-} from '@angular/core';
+import { ConfigService } from '../../config';
+import { LayersController, LifelinesController, SequenceDiagramController } from '../controllers';
+import { MessagesController } from '../controllers/messages.controller';
+import * as M from '../models';
+import { SequenceDiagramService } from '../services';
+import { JobsService } from '../services/jobs.service';
 import { LayerComponent } from './layer.component';
 import { SequenceDiagramControls } from './sequence-diagram.controls';
-import * as M from '../models';
-import { ConfigService } from '../../config';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  NgZone,
+  OnChanges,
+  OnInit,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
+import { EventEmitter } from '@angular/forms/src/facade/async';
+import * as THREE from 'three';
 let { Renderer: CSS3DRenderer }: { Renderer: typeof THREE.CSS3DRenderer } = require('three.css')(THREE);
-import { SequenceDiagramService } from '../services';
 
 @Component({
   selector: 'app-sequence-diagram',
   templateUrl: './sequence-diagram.component.html'
 })
 export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewInit {
+
+  @Output()
+  public onChangeEditingLayer = new EventEmitter();
 
   @ViewChildren('layerComponents')
   protected layerComponents: QueryList<LayerComponent>;
@@ -24,6 +41,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
 
   @Input()
   public editMode: boolean;
+  protected editingLayerIndex: number = 0;
 
   protected scene: THREE.Scene;
   protected camera: THREE.PerspectiveCamera;
@@ -31,11 +49,23 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   protected renderer: THREE.CSS3DRenderer;
 
   protected renderQueued = false;
-  protected editingLayer: M.InteractionFragment = null;
-  protected currentIndex: number;
 
-  constructor(protected ngZone: NgZone, protected element: ElementRef, protected config: ConfigService, protected sequenceDiagramService: SequenceDiagramService) {
-    this.sequenceDiagramService.sequenceDiagramComponent = this;
+  constructor(
+    protected ngZone: NgZone,
+    protected element: ElementRef,
+    protected config: ConfigService,
+    protected jobsService: JobsService,
+    protected sequenceDiagramService: SequenceDiagramService,
+    protected sequenceDiagramController: SequenceDiagramController,
+    protected layersController: LayersController,
+    protected lifelinesController: LifelinesController,
+    protected messagesController: MessagesController
+  ) {
+    // Set self to services and controllers
+    this.sequenceDiagramController.sequenceDiagramComponent = this;
+    this.layersController.sequenceDiagramComponent = this;
+    this.lifelinesController.sequenceDiagramComponent = this;
+    this.messagesController.sequenceDiagramComponent = this;
   }
 
   public ngOnInit() {
@@ -71,32 +101,22 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     );
 
     this.controls.addEventListener('change', () => this.queueRender());
-
-    // Initialize edit mode
-    this.initializeEditMode();
-  }
-
-  protected initializeEditMode() {
-    if (this.rootInteractionFragment && this.rootInteractionFragment.children.length > 0) {
-      this.editingLayer = this.rootInteractionFragment.children[0];
-      this.sequenceDiagramService.editingLayer = this.rootInteractionFragment.children[0];
-    }
-  }
-
-  public editLayer(editingLayer: M.InteractionFragment) {
-    this.editingLayer = editingLayer;
   }
 
   public ngOnChanges(changes: SimpleChanges) {
-    if (changes.rootInteractionFragment && !changes.rootInteractionFragment.isFirstChange()) {
-      this.controls.reset();
-      this.initializeEditMode();
+    if (changes.rootInteractionFragment) {
+      // Refresh editing layer
+      this.refreshEditingLayer();
+
+      // Reset controls
+      if (!changes.rootInteractionFragment.isFirstChange()) {
+        this.controls.reset();
+      }
     }
 
     if (changes.editMode) {
-      console.log("this.editMode =", this.editMode);
       if (this.controls) {
-        this.controls.enabled = !this.editMode;  
+        this.controls.enabled = !this.editMode;
       }
     }
   }
@@ -129,32 +149,37 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   // Change edit layer
   @HostListener('window:mousewheel', ['$event'])
   public onMouseScroll($event) {
-    console.log("onMouseScroll");
-    let layers = this.rootInteractionFragment.children;
-    this.currentIndex = layers.indexOf(this.editingLayer);
-    let maxIndex = layers.length - 1;
-
-    if (this.currentIndex == -1) {
-      this.currentIndex = 0;
-      this.editingLayer = layers[0];
-    }
-
     if ($event.deltaY > 0) {
-      this.currentIndex--;
+      this.editingLayerIndex--;
     } else {
-      this.currentIndex++;
+      this.editingLayerIndex++;
     }
 
-    if (this.currentIndex < 0) {
-      this.currentIndex = 0;
+    this.refreshEditingLayer();
+  }
+
+  public get editingLayer(): M.InteractionFragment {
+    return this.rootInteractionFragment.children[this.editingLayerIndex];
+  }
+
+  public set editingLayer(layer: M.InteractionFragment) {
+    this.editingLayerIndex = this.rootInteractionFragment.children.indexOf(layer);
+
+    this.refreshEditingLayer();
+  }
+
+  protected refreshEditingLayer() {
+    let maxIndex = this.rootInteractionFragment.children.length - 1;
+
+    if (this.editingLayerIndex < 0) {
+      this.editingLayerIndex = 0;
     }
 
-    if (this.currentIndex > maxIndex) {
-      this.currentIndex = maxIndex;
+    if (this.editingLayerIndex > maxIndex) {
+      this.editingLayerIndex = maxIndex;
     }
 
-    this.sequenceDiagramService.editingLayer = layers[this.currentIndex];
-    this.editingLayer = layers[this.currentIndex];
+    this.onChangeEditingLayer.emit(this.editingLayer);
   }
 
   public queueRender() {
@@ -185,6 +210,23 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     this.controls.update();
 
     this.renderer.render(this.scene, this.camera);
+  }
+
+  /*
+   * Refresh Diagram
+   * 
+   * Znova načíta strom modelov z databázy, čím refreshne celý diagram.
+   * 
+   */
+  public refresh(callback?: any): void {
+    this.jobsService.start('sequence.diagram.component.refresh');
+    this.sequenceDiagramService.loadSequenceDiagramTree(this.rootInteractionFragment.fragmentable)
+      .subscribe((interactionFragment: M.InteractionFragment) => {
+        this.rootInteractionFragment = interactionFragment;
+        this.refreshEditingLayer();
+        if (callback) callback();
+        this.jobsService.finish('sequence.diagram.component.refresh');
+      });
   }
 
 }
