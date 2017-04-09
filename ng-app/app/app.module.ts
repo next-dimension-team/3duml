@@ -22,6 +22,7 @@ import { LifelineComponent } from './sequence-diagram/components/lifeline.compon
 import { MessageComponent } from './sequence-diagram/components/message.component';
 import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
 import { LayersController, LifelinesController, SequenceDiagramController } from './sequence-diagram/controllers';
+import { MessagesController } from './sequence-diagram/controllers/messages.controller';
 import { SelectableDirective } from './sequence-diagram/directives/selectable.directive';
 import { InputService, JobsService, SequenceDiagramService } from './sequence-diagram/services';
 import { ApplicationRef, NgModule } from '@angular/core';
@@ -48,7 +49,8 @@ const APP_PROVIDERS = [
 const APP_CONTROLLERS = [
   SequenceDiagramController,
   LayersController,
-  LifelinesController
+  LifelinesController,
+  MessagesController
 ]
 
 type StoreType = {

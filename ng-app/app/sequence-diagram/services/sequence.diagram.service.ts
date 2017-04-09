@@ -173,33 +173,6 @@ export class SequenceDiagramService {
     this.draggingLifeline = null;
   }
 
-  /*protected initializeRenameElement() {
-
-    let editDialog;
-
-    this.inputService.onDoubleClick((event) => {
-      switch (event.model.type) {
-        case 'Message':
-          let message = this.datastore.peekRecord(M.Message, event.model.id);
-          editDialog = this.dialogService.createEditDialog("Edit message", message, "Enter message name", "message");
-          editDialog.componentInstance.onOk.subscribe(result => {
-            message.name = result.name;
-            message.sort = result.messageSort;
-            message.save().subscribe();
-          });
-          break;
-        case 'Lifeline':
-          let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
-          editDialog = this.dialogService.createEditDialog("Edit lifeline", lifeline, "Enter lifeline name", "lifeline");
-          editDialog.componentInstance.onOk.subscribe(result => {
-            lifeline.name = result.name;
-            lifeline.save().subscribe();
-          });
-          break;
-      }
-    });
-  }*/
-
   /**
    * Delete Operation
    */

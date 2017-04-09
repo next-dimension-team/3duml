@@ -1,5 +1,6 @@
 import { ConfigService } from '../../config';
-import { LayersController, SequenceDiagramController, LifelinesController } from '../controllers';
+import { LayersController, LifelinesController, SequenceDiagramController } from '../controllers';
+import { MessagesController } from '../controllers/messages.controller';
 import * as M from '../models';
 import { SequenceDiagramService } from '../services';
 import { JobsService } from '../services/jobs.service';
@@ -48,17 +49,19 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     protected ngZone: NgZone,
     protected element: ElementRef,
     protected config: ConfigService,
+    protected jobsService: JobsService,
     protected sequenceDiagramService: SequenceDiagramService,
     protected sequenceDiagramController: SequenceDiagramController,
     protected layersController: LayersController,
     protected lifelinesController: LifelinesController,
-    protected jobsService: JobsService
+    protected messagesController: MessagesController
   ) {
     // Set self to services and controllers
     this.sequenceDiagramService.sequenceDiagramComponent = this;
     this.sequenceDiagramController.sequenceDiagramComponent = this;
     this.layersController.sequenceDiagramComponent = this;
     this.lifelinesController.sequenceDiagramComponent = this;
+    this.messagesController.menuComponent = this;
   }
 
   public ngOnInit() {

@@ -74,7 +74,7 @@ export class LifelinesController {
         let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
         // Open dialog
         this.dialogService.createEditDialog("Edit lifeline", lifeline, "Enter lifeline name", "lifeline")
-          .componentInstance.onOk.subscribe(result => {
+          .componentInstance.onOk.subscribe((result) => {
             // Start job
             this.jobsService.start('renameLifeline');
             // Rename lifeline
