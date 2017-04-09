@@ -7,7 +7,15 @@ import { MdDialogRef } from '@angular/material';
     <h2>{{title}}</h2>
     <div class="input-item">
     <md-input-container>
-      <input mdInput placeholder="{{message}}" value="{{element.name}}" (keyup.enter)="submitInput(input.value, selectedItem)" #input>
+      <input
+        #input
+        mdInput
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        placeholder="{{message}}"
+        value="{{element.name}}"
+        (keyup.enter)="submitInput(input.value, selectedItem)">
     </md-input-container>
     </div>
     <div *ngIf="elementType=='message'" class="input-item">

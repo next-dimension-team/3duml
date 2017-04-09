@@ -1,0 +1,7 @@
+input {
+  min-width: 300px;
+}
+
+.input-item:not(:first-child) {
+  margin-top: 2em;
+}
