@@ -63,7 +63,6 @@ export class SequenceDiagramService {
     protected datastore: Datastore,
     protected inputService: InputService,
     protected dialogService: DialogService,
-    protected http: Http,
     protected jobsService: JobsService
   ) {
     // Initialize the service
@@ -83,7 +82,6 @@ export class SequenceDiagramService {
     this.initializeAddMessageOperation();
     this.initializeMoveLifeline();
     this.initializeVerticalMessageMove();
-    this.initializeMoveMessageOperation();
   }
 
 
@@ -477,58 +475,5 @@ export class SequenceDiagramService {
     }
   }
 
-  protected initializeMoveMessageOperation() {
-    let messageMove = false;
-    let lifelineModel;
-    let occurrenceSpecification;
 
-    this.inputService.onRightClick((event) => {
-      if (event.model.type == "LifelinePoint") {
-        if (messageMove) {
-          lifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.lifelineID);
-
-          // Manualna uprava JSON
-          let headers = new Headers({
-            'Content-Type': 'application/vnd.api+json',
-            'Accept': 'application/vnd.api+json'
-          });
-
-          let options = new RequestOptions({ headers: headers });
-          let url = "/api/v1/occurrence-specifications/" + occurrenceSpecification.id;
-          occurrenceSpecification.time = event.model.time;
-          occurrenceSpecification.covered = lifelineModel;
-          this.http.patch(url, {
-            "data": {
-              "type": "occurrence-specifications",
-              "id": occurrenceSpecification.id.toString(),
-              "relationships": {
-                "covered": {
-                  "data": {
-                    "type": "lifelines",
-                    "id": lifelineModel.id.toString()
-                  }
-                }
-              }
-            }
-          }, options).subscribe(() => {
-            this.sequenceDiagramComponent.refresh();
-          });
-
-          messageMove = false;
-        }
-        else {
-          lifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.lifelineID);
-          //prejdem occurrence specifications a zistim ci taky uz je t.j., ci uz na tom time je message
-          for (let occurrence of lifelineModel.occurrenceSpecifications) {
-            if (occurrence.time == event.model.time) {
-              messageMove = true;
-              //tu mam occurrence z DB na ktorom je message
-              occurrenceSpecification = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
-              break;
-            }
-          }
-        }
-      }
-    });
-  }
 }

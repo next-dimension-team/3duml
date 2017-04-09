@@ -61,7 +61,7 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     this.sequenceDiagramController.sequenceDiagramComponent = this;
     this.layersController.sequenceDiagramComponent = this;
     this.lifelinesController.sequenceDiagramComponent = this;
-    this.messagesController.menuComponent = this;
+    this.messagesController.sequenceDiagramComponent = this;
   }
 
   public ngOnInit() {
