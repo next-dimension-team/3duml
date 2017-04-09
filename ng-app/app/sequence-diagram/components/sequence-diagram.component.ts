@@ -15,10 +15,12 @@ import {
   NgZone,
   OnChanges,
   OnInit,
+  Output,
   QueryList,
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
+import { EventEmitter } from '@angular/forms/src/facade/async';
 import * as THREE from 'three';
 let { Renderer: CSS3DRenderer }: { Renderer: typeof THREE.CSS3DRenderer } = require('three.css')(THREE);
 
@@ -27,6 +29,9 @@ let { Renderer: CSS3DRenderer }: { Renderer: typeof THREE.CSS3DRenderer } = requ
   templateUrl: './sequence-diagram.component.html'
 })
 export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewInit {
+
+  @Output()
+  public onChangeEditingLayer = new EventEmitter();
 
   @ViewChildren('layerComponents')
   protected layerComponents: QueryList<LayerComponent>;
@@ -99,8 +104,14 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   public ngOnChanges(changes: SimpleChanges) {
-    if (changes.rootInteractionFragment && !changes.rootInteractionFragment.isFirstChange()) {
-      this.controls.reset();
+    if (changes.rootInteractionFragment) {
+      // Refresh editing layer
+      this.refreshEditingLayer();
+
+      // Reset controls
+      if (!changes.rootInteractionFragment.isFirstChange()) {
+        this.controls.reset();
+      }
     }
 
     if (changes.editMode) {
@@ -167,6 +178,8 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     if (this.editingLayerIndex > maxIndex) {
       this.editingLayerIndex = maxIndex;
     }
+
+    this.onChangeEditingLayer.emit(this.editingLayer);
   }
 
   public queueRender() {

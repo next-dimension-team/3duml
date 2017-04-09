@@ -20,6 +20,9 @@ export class MenuComponent implements OnInit {
   @Output() public onOpenSequenceDiagram = new EventEmitter();
   @Output() public onModeChange = new EventEmitter();
 
+  // Editing layer
+  public editingLayer: M.InteractionFragment = null;
+
   constructor(
     protected jobsService: JobsService,
     protected inputService: InputService,
