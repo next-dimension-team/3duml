@@ -105,11 +105,12 @@ export class SequenceDiagramController {
    */
   protected editLayerAfterDoubleClick(): void {
     this.inputService.onDoubleClick((event) => {
-      if (event.model.type == 'Layer') {
+      // Works only in "View" mode
+      if (!this.menuComponent.editMode && event.model.type == 'Layer') {
         // Set editing layer
         this.sequenceDiagramComponent.editingLayer = event.model.component.interactionFragmentModel;
         // Open edit mode
-        this.menuComponent.editMode = !this.menuComponent.editMode;
+        this.menuComponent.editMode = true;
       }
     });
   }

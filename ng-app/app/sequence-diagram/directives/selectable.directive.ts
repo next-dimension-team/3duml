@@ -20,10 +20,10 @@ export class SelectableDirective {
   protected appendDiagramCoordinates(event) {
     // Get the diagram DOM element
     let diagramElement = document.getElementById('page-content-wrapper');
-    
+
     // Get the diagram DOM element bounding rectangle
     let diagramRect = diagramElement.getBoundingClientRect();
-    
+
     // Append diagram coordinates to the event
     event.diagramX = event.offsetX - diagramRect.left;
     event.diagramY = event.offsetY - diagramRect.top;
@@ -35,7 +35,7 @@ export class SelectableDirective {
   protected prepareEvent(event) {
     event = this.cloneEvent(event);
     event = this.appendDiagramCoordinates(event);
-    
+
     return event;
   }
 
