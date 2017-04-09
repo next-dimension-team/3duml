@@ -118,6 +118,11 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
       if (this.controls) {
         this.controls.enabled = !this.editMode;
       }
+
+      // 3D scene can be scrolled in "Edit" mode
+      if (this.renderer) {
+        this.renderer.domElement.style.overflow = this.editMode ? 'visible' : 'hidden';
+      }
     }
   }
 
