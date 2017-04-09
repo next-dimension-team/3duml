@@ -217,6 +217,14 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
     this.renderer.render(this.scene, this.camera);
   }
 
+  public get layers(): Array<M.InteractionFragment> {
+    if (this.rootInteractionFragment) {
+      return this.rootInteractionFragment.children;
+    } else {
+      return [];
+    }
+  }
+
   /*
    * Refresh Diagram
    * 

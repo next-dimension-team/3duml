@@ -93,6 +93,11 @@ export class SequenceDiagramController {
       "Delete diagram", "Do you really want to delete diagram \"" + sequenceDiagram.name + "\" ?").componentInstance.onYes.subscribe((result) => {
         this.jobsService.start('deleteDiagram');
         this.datastore.deleteRecord(M.InteractionFragment, sequenceDiagram.fragment.id).subscribe(() => {
+          // Hide opened (deleted) diagram
+          if (this.sequenceDiagramComponent) {
+            this.sequenceDiagramComponent.rootInteractionFragment = null;
+          }
+          // Refresh menu component
           this.menuComponent.refresh(() => {
             this.jobsService.finish('deleteDiagram');
           });
