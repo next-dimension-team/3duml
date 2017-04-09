@@ -81,12 +81,11 @@ export class SequenceDiagramService {
   public initialize() {
     this.initializeDeleteOperation();
     this.initializeAddMessageOperation();
-    this.initializeRenameElement();
     this.initializeMoveLifeline();
     this.initializeVerticalMessageMove();
     this.initializeMoveMessageOperation();
   }
-  
+
 
   /**
    * Create Operation
@@ -95,10 +94,10 @@ export class SequenceDiagramService {
   protected movingLifeline: M.Lifeline;
   protected addingLifelineEvent: Event;
 
- 
+
 
   protected draggingLifeline: LifelineComponent = null;
-  
+
   public initializeMoveLifeline() {
     let moveBool = false;
     this.inputService.onMouseDown((event) => {
@@ -174,12 +173,7 @@ export class SequenceDiagramService {
     this.draggingLifeline = null;
   }
 
-  /**
-   * Rename Operation
-   */
-  protected renamingLayer = false;
-
-  protected initializeRenameElement() {
+  /*protected initializeRenameElement() {
 
     let editDialog;
 
@@ -187,7 +181,7 @@ export class SequenceDiagramService {
       switch (event.model.type) {
         case 'Message':
           let message = this.datastore.peekRecord(M.Message, event.model.id);
-          editDialog = this.dialogService.createEditDialog("Edit message", message, "Enter message name","message");
+          editDialog = this.dialogService.createEditDialog("Edit message", message, "Enter message name", "message");
           editDialog.componentInstance.onOk.subscribe(result => {
             message.name = result.name;
             message.sort = result.messageSort;
@@ -196,7 +190,7 @@ export class SequenceDiagramService {
           break;
         case 'Lifeline':
           let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
-          editDialog = this.dialogService.createEditDialog("Edit lifeline", lifeline, "Enter lifeline name","lifeline");
+          editDialog = this.dialogService.createEditDialog("Edit lifeline", lifeline, "Enter lifeline name", "lifeline");
           editDialog.componentInstance.onOk.subscribe(result => {
             lifeline.name = result.name;
             lifeline.save().subscribe();
@@ -204,7 +198,7 @@ export class SequenceDiagramService {
           break;
       }
     });
-  }
+  }*/
 
   /**
    * Delete Operation
