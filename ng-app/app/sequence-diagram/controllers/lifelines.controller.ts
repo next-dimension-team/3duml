@@ -1,4 +1,3 @@
-import { SequenceDiagramController } from './sequence-diagram.controller';
 import { Datastore } from '../../datastore';
 import { DialogService } from '../../dialog/services';
 import { MenuComponent } from '../../menu/components/menu.component';
@@ -7,6 +6,7 @@ import { LifelineComponent } from '../components/lifeline.component';
 import { SequenceDiagramComponent } from '../components/sequence-diagram.component';
 import { JobsService, SequenceDiagramService } from '../services';
 import { InputService } from '../services/input.service';
+import { SequenceDiagramController } from './sequence-diagram.controller';
 import { Injectable } from '@angular/core';
 
 @Injectable()
@@ -223,8 +223,6 @@ export class LifelinesController {
         });
       });
   }
-
-
 
   /*
    * Pomocná funkcia upravuje atribút 'order' na lifeline
