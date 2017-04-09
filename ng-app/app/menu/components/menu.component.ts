@@ -81,6 +81,9 @@ export class MenuComponent implements OnInit {
   protected menuReloadSource = new BehaviorSubject<any>(null);
   protected menuReload$ = this.menuReloadSource.asObservable();
 
+  /*
+   * Refresh menu component
+   */
   public refresh(callback?: any): void {
     this.jobsService.start('menu.component.refresh');
     this.menuReloadSource.next(null);
@@ -88,12 +91,4 @@ export class MenuComponent implements OnInit {
     this.jobsService.finish('menu.component.refresh');
   }
 
-
-
-
-
-  // Delete operations
-  protected deleteComponent() {
-    this.sequenceDiagramService.performDelete();
-  }
 }
