@@ -94,24 +94,24 @@
             </md-list-item>
 
              <!-- Create Lifeline -->
-            <md-list-item>
+            <md-list-item *ngIf="sequenceDiagramController.editingLayer">
                 <button md-button class="list-item-button" (click)="lifelinesController.createLifeline()">
                     <md-icon>add</md-icon> Create Lifeline
                 </button>
             </md-list-item>
 
              <!-- Delete Operation -->
-            <h3 md-subheader>DELETE</h3>
+            <h3 md-subheader *ngIf="sequenceDiagramController.editingLayer">DELETE</h3>
 
              <!-- Delete Element -->
-            <md-list-item>
+            <md-list-item *ngIf="sequenceDiagramController.editingLayer">
                 <button md-button class="list-item-button" (click)="sequenceDiagramController.deleteInProgress = true">
                     <md-icon>delete</md-icon> Delete Element
                 </button>
             </md-list-item>
 
              <!-- Delete Layer -->
-            <md-list-item>
+            <md-list-item *ngIf="sequenceDiagramController.editingLayer">
                 <button md-button class="list-item-button" (click)="layersController.deleteLayer()">
                     <md-icon>remove_from_queue</md-icon> Delete Layer
                 </button>
