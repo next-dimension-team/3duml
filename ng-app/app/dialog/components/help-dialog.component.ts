@@ -23,5 +23,5 @@ export class HelpDialogComponent {
   public message3: string;
   onOk = new EventEmitter();
 
-  constructor( public dialog: MdDialogRef<any>) { }
+  constructor(public dialog: MdDialogRef<any>) { }
 }

@@ -24,5 +24,5 @@ export class InputDialogComponent {
   public placeholder: string;
   onOk = new EventEmitter();
 
-  constructor( public dialog: MdDialogRef<any>) { }
+  constructor(public dialog: MdDialogRef<any>) { }
 }

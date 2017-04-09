@@ -1,12 +1,5 @@
 import { DialogService } from '../../dialog/services';
-import { LayersController, LifelinesController, SequenceDiagramController } from '../../sequence-diagram/controllers';
-import { MessagesController } from '../../sequence-diagram/controllers/messages.controller';
-import * as M from '../../sequence-diagram/models';
-import { JobsService } from '../../sequence-diagram/services';
-import { SequenceDiagramService } from '../../sequence-diagram/services';
-import { InputService } from '../../sequence-diagram/services/input.service';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Component, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-help',
@@ -16,9 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 
 export class HelpComponent {
 
-  constructor(protected dialogService: DialogService) {
-    //
-  }
+  constructor(protected dialogService: DialogService) { }
 
   /*
    * Diagram Help
@@ -84,5 +75,4 @@ export class HelpComponent {
   public showDeleteMessagerHelp(): void {
     this.dialogService.createHelpDialog("Delete Message Help", "TODO");
   }
-
 }

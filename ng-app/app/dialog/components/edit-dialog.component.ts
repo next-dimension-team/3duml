@@ -60,7 +60,7 @@ export class EditDialogComponent {
     this.dialog.close();
   }
 
-  constructor( public dialog: MdDialogRef<any>, private cdr: ChangeDetectorRef) { }
+  constructor(public dialog: MdDialogRef<any>, private cdr: ChangeDetectorRef) { }
 
   ngAfterViewInit() {
 
