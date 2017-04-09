@@ -3,7 +3,7 @@ import { DialogService } from '../../dialog/services';
 import { MenuComponent } from '../../menu/components/menu.component';
 import * as M from '../../sequence-diagram/models';
 import { SequenceDiagramComponent } from '../components/sequence-diagram.component';
-import { JobsService, SequenceDiagramService } from '../services';
+import { JobsService, InputService, SequenceDiagramService } from '../services';
 import { Injectable } from '@angular/core';
 
 @Injectable()
@@ -18,9 +18,13 @@ export class SequenceDiagramController {
   constructor(
     protected sequenceDiagramService: SequenceDiagramService,
     protected dialogService: DialogService,
+    protected inputService: InputService,
     protected jobsService: JobsService,
     protected datastore: Datastore
-  ) {}
+  ) {
+    // Initialize operations
+    this.editLayerAfterDoubleClick();
+  }
 
   /*
    * Create Diagram
@@ -67,6 +71,21 @@ export class SequenceDiagramController {
           });
         });
       });
+  }
+
+  /*
+   * Open Selected Layer in the Edit Mode
+   */
+  protected editLayerAfterDoubleClick(): void {
+    this.inputService.onDoubleClick((event) => {
+      // Works only in "View" mode
+      if (!this.menuComponent.editMode && event.model.type == 'Layer') {
+        // Set editing layer
+        this.sequenceDiagramComponent.editingLayer = event.model.component.interactionFragmentModel;
+        // Open edit mode
+        this.menuComponent.editMode = true;
+      }
+    });
   }
 
 }

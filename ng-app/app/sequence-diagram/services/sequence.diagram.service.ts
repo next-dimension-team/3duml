@@ -56,7 +56,6 @@ export class SequenceDiagramService {
     this.initializeRenameElement();
     this.initializeMoveLifeline();
     this.initializeVerticalMessageMove();
-    this.initializeEditLayerAfterDoubleClick();
     this.initializeMoveMessageOperation();
   }
 
@@ -545,21 +544,6 @@ export class SequenceDiagramService {
         }
       }
     }
-  }
-
-  // TODO: toto treba prekodit
-  protected initializeEditLayerAfterDoubleClick() {
-    this.inputService.onDoubleClick((event) => {
-      if (event.model.type == 'Layer') {
-        this.sequenceDiagramComponent.editingLayer = event.model.component.interactionFragmentModel;
-        // Open edit mode
-        var e = document.createEvent('MouseEvents');
-        e.initEvent('click', true, true); // All events created as bubbling and cancelable.
-        e.synthetic = true; // allow detection of synthetic events
-        // The second parameter says go ahead with the default action
-        document.querySelector('.mat-tab-label.mat-ripple:last-child').dispatchEvent(e, true);
-      }
-    });
   }
 
   protected initializeMoveMessageOperation() {
