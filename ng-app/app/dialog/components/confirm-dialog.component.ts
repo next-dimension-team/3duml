@@ -15,5 +15,5 @@ export class ConfirmDialogComponent {
   onYes = new EventEmitter();
   onNo = new EventEmitter();
 
-  constructor( public dialog: MdDialogRef<any>) { }
+  constructor(public dialog: MdDialogRef<any>) { }
 }

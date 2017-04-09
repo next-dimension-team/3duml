@@ -15,7 +15,8 @@ import { MdDialogRef } from '@angular/material';
         placeholder="{{placeholder}}"
         (keyup.enter)="onOk.emit(input.value); dialog.close()">
       </md-input-container>
-      <button md-button (click)="onOk.emit(input.value); dialog.close()">OK</button>`
+      <button md-button (click)="onOk.emit(input.value); dialog.close()"><md-icon>done</md-icon> OK</button>
+      <button md-button (click)="onNo.emit(); dialog.close()"><md-icon>close</md-icon> Cancel</button>`
 })
 export class InputDialogComponent {
 
@@ -23,6 +24,7 @@ export class InputDialogComponent {
   public message: string;
   public placeholder: string;
   onOk = new EventEmitter();
+  onNo = new EventEmitter();
 
-  constructor( public dialog: MdDialogRef<any>) { }
+  constructor(public dialog: MdDialogRef<any>) { }
 }
