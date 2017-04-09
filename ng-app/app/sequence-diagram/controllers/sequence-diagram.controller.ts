@@ -146,15 +146,9 @@ export class SequenceDiagramController {
             this.messagesController.deleteMessage(message);
             break;
 
-          case 'Lifeline':
+          case 'LifelineTitle':
             let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
-            this.dialogService.createConfirmDialog(
-              "Delete lifeline", "Do you really want to delete lifeline \"" + lifeline.name + "\" ?").componentInstance.onYes.subscribe(result => {
-                this.relaxLifelinesOrder(lifeline);
-                this.datastore.deleteRecord(M.Lifeline, lifeline.id).subscribe(() => {
-                  this.sequenceDiagramComponent.refresh();
-                });
-              });
+            this.lifelinesController.deleteLifeline(lifeline);
             break;
         }
 
@@ -163,30 +157,5 @@ export class SequenceDiagramController {
       }
     });
   }
-
-  /*
-   * Funkcia upravuje atribút 'order' na lifeline
-   * 
-   * Ak je order lifeliny väčší ako order vymazanej
-   * lifeliny bude dekrementovaný.
-   */
-  protected relaxLifelinesOrder(lifeline: M.Lifeline) {
-    let lifelinesInInteraction = lifeline.interaction.lifelines;
-    for (let lifeline of lifelinesInInteraction) {
-      if (lifeline.order > lifeline.order) {
-        lifeline.order--;
-        // Start job
-        this.jobsService.start('relaxLifelinesOrder.' + lifeline.id);
-        lifeline.save().subscribe(() => {
-          // Finish job
-          this.jobsService.finish('relaxLifelinesOrder.' + lifeline.id);
-        });
-      }
-    }
-  }
-
-
-
-
 
 }
