@@ -68,7 +68,7 @@ export class HelpComponent {
   public showDeleteLayerHelp(): void {
     this.dialogService.createHelpDialog('Delete Layer Help', [
       ['1', 'Scroll-on with mouse wheel to Layer in EDIT MODE','.mat-tab-label:last-child'],
-      ['2', 'Click-on DELETE LAYER icon in DELETE sub-menu', '[data-help="deteButton"]'],
+      ['2', 'Click-on DELETE LAYER icon in DELETE sub-menu', '[data-help="deleteElement"]'],
       ['3', 'Confirm DELETE operation']
     ]);
   }
