@@ -40,8 +40,8 @@ export class LifelinesController {
    * 
    */
   public createLifeline(): void {
-    this.dialogService.createInputDialog("Create lifeline", "", "Enter name of new lifeline")
-      .componentInstance.onOk.subscribe(name => {
+    this.dialogService.createEditDialog("Create lifeline", "", "Enter name of new lifeline", "lifeline")
+      .componentInstance.onOk.subscribe(result => {
 
         this.jobsService.start('createLifeline');
 
@@ -57,7 +57,7 @@ export class LifelinesController {
 
         // Vytvoríme lifelinu úplne nakonci
         this.datastore.createRecord(M.Lifeline, {
-          name: name,
+          name: result.name,
           order: maxOrder + 1,
           interaction: this.sequenceDiagramComponent.editingLayer.fragmentable
         }).save().subscribe(() => {

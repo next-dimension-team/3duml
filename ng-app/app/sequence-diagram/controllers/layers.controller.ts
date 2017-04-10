@@ -32,13 +32,13 @@ export class LayersController {
    * 
    */
   public createLayer(): void {
-    this.dialogService.createInputDialog("Creating layer", "", "Enter name of new layer.")
-      .componentInstance.onOk.subscribe(name => {
+    this.dialogService.createEditDialog("Creating layer", "", "Enter name of new layer.", "layer")
+      .componentInstance.onOk.subscribe(result => {
 
         this.jobsService.start('createLayer');
 
         let layer = this.datastore.createRecord(M.Interaction, {
-          name: name
+          name: result.name
         });
 
         layer.save().subscribe((layer: M.Interaction) => {

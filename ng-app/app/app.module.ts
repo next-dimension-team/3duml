@@ -9,7 +9,6 @@ import { ConfigService } from './config';
 import { Datastore } from './datastore';
 import { ConfirmDialogComponent } from './dialog/components/confirm-dialog.component';
 import { EditDialogComponent } from './dialog/components/edit-dialog.component';
-import { InputDialogComponent } from './dialog/components/input-dialog.component';
 import { DialogService } from './dialog/services';
 import { ENV_PROVIDERS } from './environment';
 import { MenuComponent } from './menu/components/menu.component';
@@ -76,7 +75,6 @@ type StoreType = {
     InteractionOperandComponent,
     LayerComponent,
     InteractionFragmentComponent,
-    InputDialogComponent,
     EditDialogComponent,
     ConfirmDialogComponent,
     ConfigPipe,
@@ -93,7 +91,6 @@ type StoreType = {
   ],
   entryComponents: [
     EditDialogComponent,
-    InputDialogComponent,
     ConfirmDialogComponent
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection

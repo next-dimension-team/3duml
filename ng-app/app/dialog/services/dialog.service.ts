@@ -13,14 +13,6 @@ export class DialogService {
     //
   }
 
-  public createInputDialog(title?: string, message?: string, placeholder?: string): MdDialogRef<any> {
-    let dialogRef: MdDialogRef<any> = this.dialog.open(InputDialogComponent);
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.message = message;
-    dialogRef.componentInstance.placeholder = placeholder;
-    return dialogRef;
-  }
-
   public createConfirmDialog(title?: string, message?: string): MdDialogRef<any> {
     let dialogRef: MdDialogRef<any> = this.dialog.open(ConfirmDialogComponent);
     dialogRef.componentInstance.title = title;
