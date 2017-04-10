@@ -23,9 +23,10 @@ import { MdDialogRef } from '@angular/material';
         <md-option *ngFor="let item of items" [value]="item">{{item}}</md-option>
       </md-select>
     </div>
-    <br>
-    <button md-button [disabled]="inputEmpty(input.value)" (click)="submitInput(input.value, selectedItem)">OK</button>
-    <button md-button (click)="onNo.emit(); dialog.close()"><md-icon>close</md-icon> Cancel</button>`
+    <div class="input-item">
+      <button md-button [disabled]="inputEmpty(input.value)" (click)="submitInput(input.value, selectedItem)"><md-icon>done</md-icon> OK</button>
+      <button md-button (click)="onNo.emit(); dialog.close()"><md-icon>close</md-icon> Cancel</button>
+    </div>`
 })
 
 // treba pridat parameter s tym aka je sprava (ci async alebo sync)
@@ -41,9 +42,9 @@ export class EditDialogComponent {
   public items = ["synchCall", "asynchCall"];
   public selectedItem: string;
 
-  inputEmpty(input : string): boolean {
+  inputEmpty(input: string): boolean {
 
-    if (input.length == 0){
+    if (input.length == 0) {
       return true;
     } else {
       return false;
@@ -56,7 +57,7 @@ export class EditDialogComponent {
       return;
     }
 
-    this.onOk.emit({name, messageSort}); 
+    this.onOk.emit({ name, messageSort });
     this.dialog.close();
   }
 
@@ -64,8 +65,12 @@ export class EditDialogComponent {
 
   ngAfterViewInit() {
 
-    if (this.elementType == "message"){
-      this.selectedItem = this.element.sort ; 
+    if (this.elementType == "message") {
+      if (this.element.sort == null) {
+        this.selectedItem = this.items[0];
+      } else {
+        this.selectedItem = this.element.sort;
+      }
     }
     this.cdr.detectChanges();
   }

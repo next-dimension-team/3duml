@@ -42,15 +42,15 @@ export class SequenceDiagramController {
    * Create Diagram
    */
   public createDiagram(): void {
-    this.dialogService.createInputDialog("Creating diagram", "", "Enter name of new digram.")
-      .componentInstance.onOk.subscribe(name => {
+    this.dialogService.createEditDialog("Creating diagram", "", "Enter name of new digram.", "diagram")
+      .componentInstance.onOk.subscribe(result => {
 
         // Start job
         this.jobsService.start('createDiagram');
 
         // Create interaction
         this.datastore.createRecord(M.Interaction, {
-          name: name
+          name: result.name
         }).save().subscribe((interaction: M.Interaction) => {
 
           // Create interaction fragment
@@ -93,6 +93,11 @@ export class SequenceDiagramController {
       "Delete diagram", "Do you really want to delete diagram \"" + sequenceDiagram.name + "\" ?").componentInstance.onYes.subscribe((result) => {
         this.jobsService.start('deleteDiagram');
         this.datastore.deleteRecord(M.InteractionFragment, sequenceDiagram.fragment.id).subscribe(() => {
+          // Hide opened (deleted) diagram
+          if (this.sequenceDiagramComponent) {
+            this.sequenceDiagramComponent.rootInteractionFragment = null;
+          }
+          // Refresh menu component
           this.menuComponent.refresh(() => {
             this.jobsService.finish('deleteDiagram');
           });

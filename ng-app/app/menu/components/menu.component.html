@@ -33,7 +33,9 @@
                 <md-card>
                     
                     <!-- Rename Diagram -->
-                    <md-card-content (dblclick)="sequenceDiagramController.renameDiagram(sequenceDiagram)">
+                    <md-card-content
+                      (click)="openSequenceDiagram(sequenceDiagram)"
+                      (dblclick)="sequenceDiagramController.renameDiagram(sequenceDiagram)">
                         <h3>{{sequenceDiagram.name}}</h3>
                     </md-card-content>
 

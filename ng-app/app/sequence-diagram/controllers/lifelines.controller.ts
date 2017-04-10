@@ -40,8 +40,8 @@ export class LifelinesController {
    * 
    */
   public createLifeline(): void {
-    this.dialogService.createInputDialog("Create lifeline", "", "Enter name of new lifeline")
-      .componentInstance.onOk.subscribe(name => {
+    this.dialogService.createEditDialog("Create lifeline", "", "Enter name of new lifeline", "lifeline")
+      .componentInstance.onOk.subscribe(result => {
 
         this.jobsService.start('createLifeline');
 
@@ -57,7 +57,7 @@ export class LifelinesController {
 
         // Vytvoríme lifelinu úplne nakonci
         this.datastore.createRecord(M.Lifeline, {
-          name: name,
+          name: result.name,
           order: maxOrder + 1,
           interaction: this.sequenceDiagramComponent.editingLayer.fragmentable
         }).save().subscribe(() => {
@@ -127,16 +127,19 @@ export class LifelinesController {
         let lifelinesInInteraction = interaction.lifelines;
         let lifelineOrder = draggingLifelineModel.order;
 
+        // Pozicia 1 je medzi suradnicami 0-125px
         let position = 0, count = 1;
         let orderBot = 0, orderTop = 125;
         let diagramX = 0;
 
-        // TODO: komentár k tomuto
+        // Najdi poziciu, na ktoru som pustil lifeline
         while (position == 0) {
+          // Lifeline som pustil niekde medzi suradnicami horneho a dolneho ohranicenia pozicie
           if (event.diagramX < orderTop && event.diagramX > orderBot) {
             position = count;
             diagramX = orderTop;
             break;
+          // Ak nie, posuniem hranice o 400px (vzdialenost medzi lifeline)
           } else {
             count++;
             orderBot = orderTop;
@@ -144,19 +147,20 @@ export class LifelinesController {
           }
         }
 
-        // TODO: komentár k tomuto
+        // Ak lifeline posuniem hocikam na koniec, pozicia bude vzdy iba o 1 vyssia ako pocet lifeline
         if (position > lifelinesInInteraction.length) {
           position = lifelinesInInteraction.length + 1;
         }
 
-        // TODO: komentár k tomuto
-        if (position > draggingLifelineModel.order && lifelinesInInteraction.length > 2) {
+        // Osetrenie pripadu, kedy su iba dve lifeline
+        if (position > draggingLifelineModel.order && lifelinesInInteraction.length > 1) {
           position--;
         }
 
-        // TODO: komentár k tomuto
+        // Zafixujeme polohu lifeline 
         if (position == draggingLifelineModel.order) {
           draggingLifelineComponent.left = (position - 1) * 400;
+          // Prestaneme hybat s lifeline
           draggingLifelineComponent = null;
           return;
         }
@@ -166,27 +170,33 @@ export class LifelinesController {
 
         let originalOrder = draggingLifelineModel.order;
 
-        // TODO: komentár k tomuto
+        // Opakujem pre vsetky lifeline ktore su v interakcii
         for (let lifeline of lifelinesInInteraction) {
+          // Lifeline, ktoru posuvam prehodim na jej nove miesto a ulozim do DB
           if (lifeline.id == draggingLifelineModel.id) {
             lifeline.order = position;
             this.jobsService.start('reorderLifeline.lifeline.' + lifeline.id);
+            // Ulozime lifeline na jej nove miesto
             lifeline.save().subscribe(() => {
               this.jobsService.finish('reorderLifeline.lifeline.' + lifeline.id);
             });
             continue;
           }
+          // Lifeline musim posunut o 1 dolava, aby za nu mohla ist nova
           else if (lifeline.order >= originalOrder && lifeline.order <= position) {
             lifeline.order--;
             this.jobsService.start('reorderLifeline.lifeline.' + lifeline.id);
+            // Ulozime lifeline s o 1 nizsou poziciou do DB
             lifeline.save().subscribe(() => {
               this.jobsService.finish('reorderLifeline.lifeline.' + lifeline.id);
             });
             continue;
           }
+          // Posunul som lifeline pred tuto, teda musim ju posunut o 1 do prava
           else if (lifeline.order < originalOrder && lifeline.order >= position) {
             lifeline.order++;
             this.jobsService.start('reorderLifeline.lifeline.' + lifeline.id);
+            // Ulozime lifeline s o 1 vacsou poziciou do DB
             lifeline.save().subscribe(() => {
               this.jobsService.finish('reorderLifeline.lifeline.' + lifeline.id);
             });
@@ -213,6 +223,30 @@ export class LifelinesController {
     this.dialogService.createConfirmDialog(
       "Delete lifeline", "Do you really want to delete lifeline \"" + lifeline.name + "\" ?").componentInstance.onYes.subscribe(result => {
         this._relaxLifelinesOrder(lifeline);
+        //Vyberieme vsetky Occurence Specifications na lifeline
+        let occurences = lifeline.occurrenceSpecifications;
+        let occurencesToDelete = [];
+        for (let occurence of occurences) {
+          // Oznacime occurence specifications, ktore su na lifeline na zmazanie 
+          occurencesToDelete.push(occurence);
+          let messages = occurence.sendingEventMessages;
+          for (let message of messages) {
+            // Pridame occ spec na prijimacej strane message
+            occurencesToDelete.push(message.receiveEvent);
+          }
+          messages = occurence.receivingEventMessages;
+          for (let message of messages) {
+            // Pridame occ spec na odosielacej strane message
+            occurencesToDelete.push(message.sendEvent);
+          }
+        }
+        // Zmaz vsetky occurence specification, ktore su ovplyvnenie zmazanim lifeline
+        for (let occurence of occurencesToDelete) {
+          this.jobsService.start('deleteOccurrenceSpecification.occurrenceSpecification.' + occurence.id);
+          this.datastore.deleteRecord(M.OccurrenceSpecification, occurence.id).subscribe(() => {
+            this.jobsService.finish('deleteOccurrenceSpecification.occurrenceSpecification.' + occurence.id);
+          });
+        }
         // Start job
         this.jobsService.start('deleteLifeline');
         this.datastore.deleteRecord(M.Lifeline, lifeline.id).subscribe(() => {
@@ -230,10 +264,10 @@ export class LifelinesController {
    * Ak je order lifeliny väčší ako order vymazanej
    * lifeliny bude dekrementovaný.
    */
-  protected _relaxLifelinesOrder(lifeline: M.Lifeline) {
-    let lifelinesInInteraction = lifeline.interaction.lifelines;
+  protected _relaxLifelinesOrder(lifelineNew: M.Lifeline) {
+    let lifelinesInInteraction = lifelineNew.interaction.lifelines;
     for (let lifeline of lifelinesInInteraction) {
-      if (lifeline.order > lifeline.order) {
+      if (lifeline.order > lifelineNew.order) {
         lifeline.order--;
         // Start job
         this.jobsService.start('relaxLifelinesOrder.' + lifeline.id);

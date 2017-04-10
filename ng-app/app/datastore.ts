@@ -7,7 +7,8 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 @JsonApiDatastoreConfig({
-  baseUrl: process.env.API_URL + 'api/v1/',
+  /*baseUrl: process.env.API_URL + 'api/v1/'*/
+  baseUrl: '/api/v1/',
   models: {
     'combined-fragments': M.CombinedFragment,
     'execution-specifications': M.ExecutionSpecification,

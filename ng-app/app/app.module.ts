@@ -9,7 +9,6 @@ import { ConfigService } from './config';
 import { Datastore } from './datastore';
 import { ConfirmDialogComponent } from './dialog/components/confirm-dialog.component';
 import { EditDialogComponent } from './dialog/components/edit-dialog.component';
-import { InputDialogComponent } from './dialog/components/input-dialog.component';
 import { HelpDialogComponent } from './dialog/components/help-dialog.component';
 import { DialogService } from './dialog/services';
 import { ENV_PROVIDERS } from './environment';
@@ -79,7 +78,6 @@ type StoreType = {
     InteractionOperandComponent,
     LayerComponent,
     InteractionFragmentComponent,
-    InputDialogComponent,
     EditDialogComponent,
     ConfirmDialogComponent,
     HelpDialogComponent,
@@ -97,7 +95,6 @@ type StoreType = {
   ],
   entryComponents: [
     EditDialogComponent,
-    InputDialogComponent,
     ConfirmDialogComponent,
     HelpDialogComponent
   ],
