@@ -300,11 +300,11 @@ input {
 }
 
 .sequence-diagram .lifeline .executions .execution {
-  z-index: 20;
+  z-index: 100;
 }
 
 .sequence-diagram .lifeline .points .point {
-  z-index: 21;
+  z-index: 101;
 }
 
 .sequence-diagram .fragment {
@@ -312,7 +312,7 @@ input {
 }
 
 .sequence-diagram .lifeline {
-  z-index: 40;
+  /*  z-index: 40; */
 }
 
 .sequence-diagram .fragment .title {

@@ -13,6 +13,7 @@
         <script type="text/javascript" src="{!! mix('polyfills.bundle.js', 'build') !!}"></script>
         <script type="text/javascript" src="{!! mix('vendor.bundle.js', 'build') !!}"></script>
         <script type="text/javascript" src="{!! mix('main.bundle.js', 'build') !!}"></script>
+        <script src="https://use.fontawesome.com/2909e4f973.js"></script>
     </head>
     <body>
 		<app-root>Loading...</app-root>

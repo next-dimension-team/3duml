@@ -19,6 +19,11 @@ import { InteractionOperandComponent } from './sequence-diagram/components/inter
 import { LayerComponent } from './sequence-diagram/components/layer.component';
 import { LifelineComponent } from './sequence-diagram/components/lifeline.component';
 import { MessageComponent } from './sequence-diagram/components/message.component';
+import { FragmentPulleyComponent } from './sequence-diagram/components/fragment-pulley.component';
+import { FragmentsController } from './sequence-diagram/controllers/fragments.controller';
+
+// Component for menu
+import { InputDialogComponent } from './menu/components/input-dialog.component';
 import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
 import { LayersController, LifelinesController, SequenceDiagramController } from './sequence-diagram/controllers';
 import { MessagesController } from './sequence-diagram/controllers/messages.controller';
@@ -49,7 +54,8 @@ const APP_CONTROLLERS = [
   SequenceDiagramController,
   LayersController,
   LifelinesController,
-  MessagesController
+  MessagesController,
+  FragmentsController
 ]
 
 type StoreType = {
@@ -76,6 +82,8 @@ type StoreType = {
     LayerComponent,
     InteractionFragmentComponent,
     EditDialogComponent,
+    FragmentPulleyComponent,
+    InputDialogComponent,
     ConfirmDialogComponent,
     ConfigPipe,
 

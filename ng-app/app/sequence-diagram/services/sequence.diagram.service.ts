@@ -46,5 +46,4 @@ export class SequenceDiagramService {
       (fragments: M.InteractionFragment[]) => _.find(fragments, ['id', id])
       );
   }
-
 }

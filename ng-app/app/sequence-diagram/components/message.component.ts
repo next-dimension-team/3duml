@@ -1,11 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import * as M from '../models';
 
 @Component({
   selector: 'app-message',
   templateUrl: './message.component.html'
 })
-export class MessageComponent {
+export class MessageComponent implements OnInit {
 
   // Konstantu vytiahnut niekam do konfigu
   protected VZDIALENOST_LAJFLAJN = 400;
@@ -34,6 +34,11 @@ export class MessageComponent {
   public set top(currentTop: number) {
     this.staticTop = currentTop;
   }
+
+  public ngOnInit() {
+    this.messageModel.componentObject = this;
+  }
+
 
   // TODO: implementovat logiku
   protected get left() {

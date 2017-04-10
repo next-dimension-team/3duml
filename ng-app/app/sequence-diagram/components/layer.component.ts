@@ -77,6 +77,7 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       type: interactionFragmentModel.fragmentable.constructor.name,
       interactionFragmentModel: interactionFragmentModel,
       model: interactionFragmentModel.fragmentable,
+      messages: interactionFragmentModel.recursiveMessagesOneLevel,
       children: [],
 
       // TODO
@@ -84,22 +85,86 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       height: null,
       left: null,
       top: null,
+
+      leftmost_lifeline: null,
+      rightmost_lifeline: null,
+
+      padding: 0,
     };
+
+    interactionFragmentModel.componentObject = self;
+
+    let leftmost_lifeline: M.Lifeline = null;
+    let rightmost_lifeline: M.Lifeline = null;
+
+    for (let child of children) {
+      if (!leftmost_lifeline || child.leftmost_lifeline.order < leftmost_lifeline.order) {
+        leftmost_lifeline = child.leftmost_lifeline;
+      }
+      
+      if (!rightmost_lifeline || child.leftmost_lifeline.order > rightmost_lifeline.order) {
+        rightmost_lifeline = child.leftmost_lifeline;
+      }
+
+      if (!leftmost_lifeline || child.rightmost_lifeline.order < leftmost_lifeline.order) {
+        leftmost_lifeline = child.rightmost_lifeline;
+      }
+
+      if (!rightmost_lifeline || child.rightmost_lifeline.order > rightmost_lifeline.order) {
+        rightmost_lifeline = child.rightmost_lifeline;
+      }
+    }
+
+    // find out leftmost message
+    for (let message of self.messages) {
+      let send_lifeline: M.Lifeline = message.sendEvent.covered;
+      let receive_lifeline: M.Lifeline = message.receiveEvent.covered;
+
+      if (!leftmost_lifeline || send_lifeline.order < leftmost_lifeline.order) {
+        leftmost_lifeline = send_lifeline;
+      }
+      
+      if (!rightmost_lifeline || send_lifeline.order > rightmost_lifeline.order) {
+        rightmost_lifeline = send_lifeline;
+      }
+
+      if (!leftmost_lifeline || receive_lifeline.order < leftmost_lifeline.order) {
+        leftmost_lifeline = receive_lifeline;
+      }
+
+      if (!rightmost_lifeline || receive_lifeline.order > rightmost_lifeline.order) {
+        rightmost_lifeline = receive_lifeline;
+      }
+    }
+
+    self.leftmost_lifeline = leftmost_lifeline;
+    self.rightmost_lifeline = rightmost_lifeline;
+
+    // propagate padding
+    for (let child of children) {
+      if (self.leftmost_lifeline == child.leftmost_lifeline || self.rightmost_lifeline == child.rightmost_lifeline) {
+        self.padding = Math.max(child.padding, self.padding);
+      }
+    }
 
     // Combined Fragment
     if (self.type == 'CombinedFragment') {
       let envelope = this.envelopeFragment(interactionFragmentModel);
-      self.width = 0;
-      self.left = 0;
+      
       self.top = (envelope.min * this.VYSKA_ZUBKU) + this.VYSKA_HLAVICKY_LAJFLAJNY;
 
       for (let childOperand of children) {
         for (let childOperandInteraction of childOperand.children) {
           for (let childOperandInteractionFragments of childOperandInteraction.children) {
+            childOperandInteractionFragments.left = 15 + (childOperandInteractionFragments.leftmost_lifeline.order - self.leftmost_lifeline.order) * this.config.get('lifeline.gap');
             childOperandInteractionFragments.top -= self.top;
           }
         }
       }
+
+      self.padding = self.padding + 15;
+      self.width = this.config.get('lifeline.gap') * (self.rightmost_lifeline.order - self.leftmost_lifeline.order) + 2 * self.padding;
+      self.left = this.config.get('lifeline.width')/2 - self.padding + (self.leftmost_lifeline.order - 1) * this.config.get('lifeline.gap');
     }
 
     // Interaction Operand

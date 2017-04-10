@@ -1,0 +1,12 @@
+<div 
+  [style.left]="left + '%'"
+  [style.top]="top + '%'"
+  [selectable]="{type: 'FragmentPulley', component: this}"
+>
+
+  <div *ngIf="left == 0"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i></div>
+  <div *ngIf="top == 0"><i class="fa fa-chevron-circle-up" aria-hidden="true"></i></div>
+  <div style="left: -11px" *ngIf="left == 100"><i class="fa fa-chevron-circle-right" aria-hidden="true"></i></div>
+  <div style="top: -13px" *ngIf="top == 100"><i class="fa fa-chevron-circle-down" aria-hidden="true"></i></div>
+
+</div>
