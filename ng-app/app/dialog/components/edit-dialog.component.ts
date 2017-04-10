@@ -44,7 +44,7 @@ export class EditDialogComponent {
 
   inputEmpty(input: string): boolean {
 
-    if (input.length == 0) {
+    if (input.trim().length == 0) {
       return true;
     } else {
       return false;
