@@ -23,7 +23,7 @@ import { MdDialogRef } from '@angular/material';
         <md-option *ngFor="let item of items" [value]="item">{{item}}</md-option>
       </md-select>
     </div>
-    <div>
+    <div class="input-item">
       <button md-button [disabled]="inputEmpty(input.value)" (click)="submitInput(input.value, selectedItem)"><md-icon>done</md-icon> OK</button>
       <button md-button (click)="onNo.emit(); dialog.close()"><md-icon>close</md-icon> Cancel</button>
     </div>`
