@@ -1,0 +1,14 @@
+.help-item {
+  padding: 3px 15px;
+}
+
+.help-item:hover {
+  background-color: #efefef;
+  cursor: default;
+}
+
+.highlighted {
+  outline: red solid 6px!important;
+  background-color: red!important;
+  color: #fff!important;
+} 
