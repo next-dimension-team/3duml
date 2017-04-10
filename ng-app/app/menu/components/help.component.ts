@@ -22,74 +22,55 @@ export class HelpComponent {
   }
 
   public showViewDiagramHelp(): void {
-   /* this.dialogService.createHelpDialog('View Diagram Help',
-      '1', 
-      'Click-on VIEW MODE', 
-      '2', 
-      'Go-to LIST OF DIAGRAMS', 
-      '3', 
-      'Click-on SELECT icon or Diagram name',
-    );*/
+    this.dialogService.createHelpDialog('View Diagram Help', [
+      ['1', 'Click-on VIEW MODE', '.mat-tab-label:first-child'],
+      ['2', 'Go-to LIST OF DIAGRAMS', '[data-help="listOfDiagrams"]'],
+      ['3', 'Click-on SELECT icon or Diagram name', '[data-help="selectButton"]']
+    ]);
   }
 
   public showEditDiagramHelp(): void {
-    /*this.dialogService.createHelpDialog('Edit Diagram Help',
-      '1', 
-      'Select Diagram', 
-      '2', 
-      'Go-to EDIT MODE',
-      'Alternative', 
-      'Double-click on layer in VIEW MODE',
-    );*/
+    this.dialogService.createHelpDialog('Edit Diagram Help', [
+      ['1', 'Select Diagram', '.mat-tab-label:first-child'],
+      ['2', 'Go-to EDIT MODE', '.mat-tab-label:last-child'],
+      ['Alternative', 'Double-click on layer in VIEW MODE']
+    ]);
   }
 
   public showDeleteDiagramHelp(): void {
-    /*this.dialogService.createHelpDialog('Delete Diagram Help', 
-      '1', 
-      'Click-on VIEW MODE', 
-      '2', 
-      'Go-to LIST OF DIAGRAMS', 
-      '3', 
-      'Click-on DELETE icon in Diagram sub-menu',
-    );*/
+    this.dialogService.createHelpDialog('Delete Diagram Help', [
+      ['1', 'Click-on VIEW MODE', '.mat-tab-label:first-child'],
+      ['2', 'Go-to LIST OF DIAGRAMS', '[data-help="listOfDiagrams"]'],
+      ['3', 'Click-on DELETE icon in Diagram sub-menu', '[data-help="deleteButton"]']
+    ]);
   }
 
   /*
    * Layer Help
    */
   public showCreateLayerHelp(): void {
-    /*this.dialogService.createHelpDialog('Create Layer Help', 
-      '1', 
-      'Select Diagram', 
-      '2', 
-      'Go-to EDIT MODE', 
-      '3', 
-      'Click-on CREATE LAYER in CREATE sub-menu',
-      '4', 
-      'Fill the form and click-on OK',
-    );*/
+    this.dialogService.createHelpDialog('Create Layer Help', [
+      ['1', 'Select Diagram', '.mat-tab-label:first-child'],
+      ['2', 'Go-to EDIT MODE', '.mat-tab-label:last-child'],
+      ['3', 'Click-on CREATE LAYER in CREATE sub-menu', '[data-help="createLayer"]'],
+      ['4', 'Fill the form and click-on OK']
+    ]);
   }
 
   public showEditLayerHelp(): void {
-    /*this.dialogService.createHelpDialog('Rename Layer Help', 
-      '1', 
-      'Scroll-on Layer in EDIT MODE', 
-      '2', 
-      'Double-click on Layer name (top-left corner)', 
-      '3', 
-      'Fill the form and click-on OK',
-    );*/
+    this.dialogService.createHelpDialog('Rename Layer Help', [
+      ['1', 'Scroll-on with mouse wheel to Layer in EDIT MODE'],
+      ['2', 'Double-click on Layer name (top-left corner)', '[data-help="layerTitle"]'],
+      ['3', 'Fill the form and click-on OK']
+    ]);
   }
 
   public showDeleteLayerHelp(): void {
-    /*this.dialogService.createHelpDialog('Delete Layer Help', 
-      '1', 
-      'Scroll-on Layer in EDIT MODE', 
-      '2', 
-      'Click-on DELETE LAYER icon in DELETE sub-menu', 
-      '3', 
-      'Confirm delete operation',
-    );*/
+    this.dialogService.createHelpDialog('Delete Layer Help', [
+      ['1', 'Scroll-on with mouse wheel to Layer in EDIT MODE','.mat-tab-label:last-child'],
+      ['2', 'Click-on DELETE LAYER icon in DELETE sub-menu', '[data-help="deteButton"]'],
+      ['3', 'Confirm DELETE operation']
+    ]);
   }
 
   /*

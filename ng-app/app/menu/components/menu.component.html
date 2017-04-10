@@ -23,7 +23,7 @@
             <!-- List of Sequence Diagrams -->
             <li
                 *ngIf="sequenceDiagrams && sequenceDiagrams.length > 0"
-                class="section-heading">
+                class="section-heading" data-help="listOfDiagrams">
                 List of Diagrams
             </li>
             <li
@@ -40,12 +40,14 @@
                     <md-card-actions>
 
                         <!-- Open Diagram -->
-                        <button md-button (click)="openSequenceDiagram(sequenceDiagram)">
+                        <button md-button (click)="openSequenceDiagram(sequenceDiagram)" data-help="selectButton">
                             <md-icon>touch_app</md-icon> Select
                         </button>
 
                         <!-- Delete Diagram -->
-                        <button md-button (click)="sequenceDiagramController.deleteDiagram(sequenceDiagram)">
+                        <button 
+                            md-button (click)="sequenceDiagramController.deleteDiagram(sequenceDiagram)"
+                            data-help="deleteButton">
                             <md-icon>delete</md-icon> Delete
                         </button>
 
@@ -57,7 +59,7 @@
         </ul>
     </md-tab>
 
-    <md-tab [disabled]="openedSequenceDiagram == null" label="Edit" class="menu-tab">
+    <md-tab [disabled]="openedSequenceDiagram == null" label="Edit" class="menu-tab" data-help="editMode">
         
         <md-list>
             
@@ -66,7 +68,10 @@
 
              <!-- Create Layer -->
             <md-list-item>
-                <button md-button class="list-item-button" (click)="layersController.createLayer()">
+                <button 
+                    md-button class="list-item-button" 
+                    (click)="layersController.createLayer()"
+                    data-help="createLayer">
                     <md-icon>library_add</md-icon> Create Layer
                 </button>
             </md-list-item>
