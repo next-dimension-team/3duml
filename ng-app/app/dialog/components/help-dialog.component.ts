@@ -5,7 +5,7 @@ import { MdDialogRef } from '@angular/material';
   selector: 'app-help-dialog',
   template: `<h2 >{{title}}</h2>
       <h3>{{messageHeader1}}</h3>
-      <p>{{message1}}</p>
+      <p (mouseover)="outline('createDiagram')">{{message1}}</p>
       <h3>{{messageHeader2}}</h3>
       <p>{{message2}}</p>
       <h3>{{messageHeader3}}</h3>
@@ -32,4 +32,12 @@ export class HelpDialogComponent {
   onOk = new EventEmitter();
 
   constructor(public dialog: MdDialogRef<any>) { }
+
+  public outline(id: string) {
+    let elements = document.querySelectorAll('[data-help="' + id + '"]');
+    for (let i = 0; i < elements.length; i++) {
+      let element = elements[i];
+      console.log(element);
+    }
+  }
 }
