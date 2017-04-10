@@ -23,9 +23,10 @@ import { MdDialogRef } from '@angular/material';
         <md-option *ngFor="let item of items" [value]="item">{{item}}</md-option>
       </md-select>
     </div>
-    <br>
-    <button md-button [disabled]="inputEmpty(input.value)" (click)="submitInput(input.value, selectedItem)"><md-icon>done</md-icon> OK</button>
-    <button md-button (click)="onNo.emit(); dialog.close()"><md-icon>close</md-icon> Cancel</button>`
+    <div>
+      <button md-button [disabled]="inputEmpty(input.value)" (click)="submitInput(input.value, selectedItem)"><md-icon>done</md-icon> OK</button>
+      <button md-button (click)="onNo.emit(); dialog.close()"><md-icon>close</md-icon> Cancel</button>
+    </div>`
 })
 
 // treba pridat parameter s tym aka je sprava (ci async alebo sync)
@@ -65,7 +66,11 @@ export class EditDialogComponent {
   ngAfterViewInit() {
 
     if (this.elementType == "message") {
-      this.selectedItem = this.element.sort;
+      if (this.element.sort == null) {
+        this.selectedItem = this.items[0];
+      } else {
+        this.selectedItem = this.element.sort;
+      }
     }
     this.cdr.detectChanges();
   }

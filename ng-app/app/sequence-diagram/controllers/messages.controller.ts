@@ -74,6 +74,7 @@ export class MessagesController {
     let time = Math.round(sourceLifeline.model.time);
     let maxTimeValue = 0;
     let messageName;
+    let messageSort;
 
     // Najprv vypocitam ci su za nasou ktoru chcem pridat nejake message, ak ano, zmenim occurenci
     // Takto to funguje spravne
@@ -87,9 +88,10 @@ export class MessagesController {
       time = maxTimeValue + 1;
     }*/
 
-    this.dialogService.createInputDialog(
-      "Creating message", "", "Enter message name").componentInstance.onOk.subscribe((result) => {
-        messageName = result;
+    this.dialogService.createEditDialog(
+      "Creating message", "", "Enter message name", "message").componentInstance.onOk.subscribe((result) => {
+        messageName = result.name;
+        messageSort = result.messageSort;
 
         let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
           time: time,
@@ -107,9 +109,8 @@ export class MessagesController {
 
           destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
             this.datastore.createRecord(M.Message, {
-              // TODO nazvat message ako chcem
-              name: result,
-              sort: "synchCall",
+              name: messageName,
+              sort: messageSort,
               // TODO zmenit dynamicky na interaction / fragment v ktorom som
               interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
               sendEvent: sourceOccurence,
