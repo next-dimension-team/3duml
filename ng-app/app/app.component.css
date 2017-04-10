@@ -5,7 +5,8 @@
   height: 100vh;
   border-right: 5px solid #3f51b5;
   position: fixed;
-  z-index: 200;
+  z-index: 999;
+
   background-color: #fff;
 }
 

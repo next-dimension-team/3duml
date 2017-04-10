@@ -6,7 +6,9 @@
   [style.width]="layerWidth + 'px'">
 
   <div
-    class="layer-title" (dblclick)="layersController.renameLayer(interactionFragmentModel.fragmentable)">
+    class="layer-title"
+    data-help="layerTitle"
+    (dblclick)="layersController.renameLayer(interactionFragmentModel.fragmentable)">
     {{interactionFragmentModel.fragmentable.name}}
   </div>
 

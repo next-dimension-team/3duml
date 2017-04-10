@@ -1,40 +1,18 @@
 <md-toolbar color="primary">
-    <span>3D UML</span>
-    <span class="spacer"></span>
-    <!--
-  <button md-icon-button [mdMenuTriggerFor]="menu">
-      <md-icon>more_vert</md-icon>
-    </button>
-    <md-menu #menu="mdMenu">
-        <button md-menu-item>
-        <md-icon>autorenew</md-icon>
-        <span>Refresh</span>
-      </button>
-        <button md-menu-item>
-        <md-icon>save</md-icon>
-        <span>Save all diagrams</span>
-      </button>
-        <button md-menu-item disabled>
-        <md-icon>announcement</md-icon>
-        <span>Issues</span>
-      </button>
-        <button md-menu-item>
-        <md-icon>info</md-icon>
-        <span>Informations</span>
-      </button>
-    </md-menu>
-    -->
+	<span>3D UML</span>
+	<span class="spacer"></span>
+	<app-help></app-help>
 </md-toolbar>
 
 <md-tab-group (selectChange)="changeTab($event)" [selectedIndex]="selectedTabIndex">
     
-    <md-tab label="View" class="menu-tab">
+    <md-tab label="View" class="menu-tab" data-help="viewMode">
         <ul class="sidebar-nav">
 
             <!-- Create Diagram -->
             <li>
                 <md-card>
-                    <md-card-actions>
+                    <md-card-actions data-help="createDiagram">
                         <button md-button class="list-item-button" (click)="sequenceDiagramController.createDiagram()">
                             <md-icon>add_to_queue</md-icon> Create Diagram
                         </button>
@@ -45,7 +23,7 @@
             <!-- List of Sequence Diagrams -->
             <li
                 *ngIf="sequenceDiagrams && sequenceDiagrams.length > 0"
-                class="section-heading">
+                class="section-heading" data-help="listOfDiagrams">
                 List of Diagrams
             </li>
             <li
@@ -64,12 +42,14 @@
                     <md-card-actions>
 
                         <!-- Open Diagram -->
-                        <button md-button (click)="openSequenceDiagram(sequenceDiagram)">
+                        <button md-button (click)="openSequenceDiagram(sequenceDiagram)" data-help="selectButton">
                             <md-icon>touch_app</md-icon> Select
                         </button>
 
                         <!-- Delete Diagram -->
-                        <button md-button (click)="sequenceDiagramController.deleteDiagram(sequenceDiagram)">
+                        <button 
+                            md-button (click)="sequenceDiagramController.deleteDiagram(sequenceDiagram)"
+                            data-help="deleteButton">
                             <md-icon>delete</md-icon> Delete
                         </button>
 
@@ -81,7 +61,7 @@
         </ul>
     </md-tab>
 
-    <md-tab [disabled]="openedSequenceDiagram == null" label="Edit" class="menu-tab">
+    <md-tab [disabled]="openedSequenceDiagram == null" label="Edit" class="menu-tab" data-help="editMode">
         
         <md-list>
             
@@ -90,7 +70,10 @@
 
              <!-- Create Layer -->
             <md-list-item>
-                <button md-button class="list-item-button" (click)="layersController.createLayer()">
+                <button 
+                    md-button class="list-item-button" 
+                    (click)="layersController.createLayer()"
+                    data-help="createLayer">
                     <md-icon>library_add</md-icon> Create Layer
                 </button>
             </md-list-item>
@@ -107,7 +90,10 @@
 
              <!-- Delete Element -->
             <md-list-item *ngIf="editingLayer">
-                <button md-button class="list-item-button" (click)="sequenceDiagramController.deleteInProgress = true">
+                <button md-button 
+                    class="list-item-button" 
+                    (click)="sequenceDiagramController.deleteInProgress = true"
+                    data-help="deleteElement">
                     <md-icon>delete</md-icon> Delete Element
                 </button>
             </md-list-item>
