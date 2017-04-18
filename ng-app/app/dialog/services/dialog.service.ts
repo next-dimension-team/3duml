@@ -36,5 +36,4 @@ export class DialogService {
     dialogRef.componentInstance.items = items;
     return dialogRef;
   }
-
 }

@@ -22,6 +22,8 @@ export class MessagesController {
   /* Menu Component Instance */
   public menuComponent: MenuComponent = null;
 
+  public lastMessage = false;
+
   constructor(
     protected dialogService: DialogService,
     protected jobsService: JobsService,
@@ -88,55 +90,72 @@ export class MessagesController {
       time = maxTimeValue + 1;
     }*/
 
-    this.dialogService.createEditDialog(
-      "Creating message", "", "Enter message name", "message").componentInstance.onOk.subscribe((result) => {
-        messageName = result.name;
-        messageSort = result.messageSort;
+    // Ak mame v layeri na posledom mieste message, nedovolime pridat.
+    if (this.lastMessage) {
+      this.dialogService.createConfirmDialog(
+        "Error", "Cannot create message, because you have the last message. " +
+        "Please move the last message on layer elsewhere or delete it \"").componentInstance.onYes.subscribe(result => { });
+    } else {
+      this.dialogService.createEditDialog(
+        "Creating message", "", "Enter message name", "message").componentInstance.onOk.subscribe((result) => {
+          messageName = result.name;
+          messageSort = result.messageSort;
 
-        let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
-          time: time,
-          covered: sourceLifelineModel
-        });
-
-        // Start job
-        this.jobsService.start('_createMessage');
-
-        sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
-          let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+          let sourceOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
             time: time,
-            covered: destinationLifelineModel
+            covered: sourceLifelineModel
           });
 
-          destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
-            this.datastore.createRecord(M.Message, {
-              name: messageName,
-              sort: messageSort,
-              // TODO zmenit dynamicky na interaction / fragment v ktorom som
-              interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
-              sendEvent: sourceOccurence,
-              receiveEvent: destinationOccurence
-            }).save().subscribe((message: M.Message) => {
-              this.sequenceDiagramComponent.refresh(() => {
-                // Finish job
-                this.jobsService.finish('_createMessage');
+          // Start job
+          this.jobsService.start('_createMessage');
+
+          sourceOccurence.save().subscribe((sourceOccurence: M.OccurrenceSpecification) => {
+            let destinationOccurence = this.datastore.createRecord(M.OccurrenceSpecification, {
+              time: time,
+              covered: destinationLifelineModel
+            });
+
+            destinationOccurence.save().subscribe((destinationOccurence: M.OccurrenceSpecification) => {
+              this.datastore.createRecord(M.Message, {
+                name: messageName,
+                sort: messageSort,
+                // TODO zmenit dynamicky na interaction / fragment v ktorom som
+                interaction: this.datastore.peekRecord(M.Interaction, sourceLifelineModel.interaction.id),
+                sendEvent: sourceOccurence,
+                receiveEvent: destinationOccurence
+              }).save().subscribe((message: M.Message) => {
+                this.sequenceDiagramComponent.refresh(() => {
+                  // Finish job
+                  this.jobsService.finish('_createMessage');
+                });
               });
             });
           });
         });
-      });
+    }
   }
 
   /*
    * Pomocná metóda
    * 
-   * TODO: napisat komentar co tato metoda robi
+   * Vypocita, kam treba odskocit. V pripade, ze mame v layeri last message, tak nemozeme pridat message.
    */
   protected _calculateTimeOnMessageCreate(currentInteraction: M.Interaction, time: number,
     sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline) {
 
+    this.lastMessage = false;
     let move = false;
     let maxTimeValue = 0;
     let lifelinesInCurrentLayer = currentInteraction.lifelines;
+
+    // Zistime pri pridavani, ci mame poslednu message v layeri
+    for (let lifeline of lifelinesInCurrentLayer) {
+      for (let occurrence of lifeline.occurrenceSpecifications) {
+        if (occurrence.time >= 20) {
+          this.lastMessage = true;
+        }
+      }
+    }
 
     // Prechadzam vsetky lifeliny v aktualnom platne
     for (let lifeline of lifelinesInCurrentLayer) {
@@ -153,6 +172,8 @@ export class MessagesController {
 
     // Napad: ak sme nenasli taku messageu ze musime pod nou daco posuvat, tak nastavim maxTimeValue a dame ju navrch
     if (!move) {
+      // Mozme vytvorit message, lebo neposkakujeme
+      this.lastMessage = false;
       for (let lifeline of lifelinesInCurrentLayer) {
         for (let occurrence of lifeline.occurrenceSpecifications) {
           if (occurrence.time > maxTimeValue) {
@@ -163,7 +184,7 @@ export class MessagesController {
     }
 
     // Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej
-    if (move) {
+    if (move && !this.lastMessage) {
       for (let lifeline of lifelinesInCurrentLayer) {
         for (let occurrence of lifeline.occurrenceSpecifications) {
           if (occurrence.time >= time) {
@@ -318,6 +339,17 @@ export class MessagesController {
         // Move send event
         if (changed) {
           this.jobsService.start('verticalMessageMove.sendEvent');
+          //Ak posunieme message dalej ako je polovica hlavicky lifeline
+          //tak skoci na svoje predosle miesto, ak tesne nad prvu message tak sa vymenia 
+          if (draggingMessage.messageModel.sendEvent.time < 1 && draggingMessage.messageModel.sendEvent.time > -1) {
+            draggingMessage.messageModel.sendEvent.time = 1;
+          } else if (draggingMessage.messageModel.sendEvent.time <= -1) {
+            draggingMessage.messageModel.sendEvent.time = originalSendEventTime;
+          } else if (draggingMessage.messageModel.sendEvent.time == 20) {
+            draggingMessage.messageModel.sendEvent.time = 20;
+          } else if (draggingMessage.messageModel.sendEvent.time >= 21) {
+            draggingMessage.messageModel.sendEvent.time = originalSendEventTime;
+          }
           draggingMessage.messageModel.sendEvent.save().subscribe(() => {
             this.jobsService.finish('verticalMessageMove.sendEvent');
           });
@@ -326,13 +358,25 @@ export class MessagesController {
         // Move receive event
         if (changed) {
           this.jobsService.start('verticalMessageMove.receiveEvent');
+          //Ak posunieme message dalej ako je polovica hlavicky lifeline
+          //tak skoci na svoje predosle miesto, ak tesne nad prvu message tak sa vymenia  
+          if (draggingMessage.messageModel.receiveEvent.time < 1 &&
+            draggingMessage.messageModel.receiveEvent.time > -1) {
+            draggingMessage.messageModel.receiveEvent.time = 1;
+          } else if (draggingMessage.messageModel.receiveEvent.time <= -1) {
+            draggingMessage.messageModel.receiveEvent.time = originalReceiveEventTime;
+          } else if (draggingMessage.messageModel.receiveEvent.time == 20) {
+            draggingMessage.messageModel.receiveEvent.time = 20;
+          } else if (draggingMessage.messageModel.receiveEvent.time >= 21) {
+            draggingMessage.messageModel.receiveEvent.time = originalReceiveEventTime;
+          }
           draggingMessage.messageModel.receiveEvent.save().subscribe(() => {
             this.jobsService.finish('verticalMessageMove.receiveEvent');
           });
         }
 
         this._calculateTimeOnMessageUpdate(draggingMessage.messageModel.sendEvent.covered.interaction,
-          draggingMessage.messageModel.sendEvent, draggingMessage.messageModel.receiveEvent);
+          draggingMessage.messageModel.sendEvent, draggingMessage.messageModel.receiveEvent, originalSendEventTime);
 
         draggingMessage.top = null;
         draggingMessage = null;
@@ -343,32 +387,57 @@ export class MessagesController {
   /*
    * Pomocná metóda
    * 
-   * TODO: napisat komentar co tato metoda robi
+   * Poskakovanie message-ov pri tom, ak pohybujem message vertikalne.
    */
   protected _calculateTimeOnMessageUpdate(currentInteraction: M.Interaction,
-    sourceOccurence: M.OccurrenceSpecification, destinationOccurence: M.OccurrenceSpecification) {
+    sourceOccurence: M.OccurrenceSpecification, destinationOccurence: M.OccurrenceSpecification,
+    originalSendEventTime: any) {
 
+    this.lastMessage = false;
     let move = false;
     let maxTimeValue = 0;
     let lifelinesInCurrentLayer = currentInteraction.lifelines;
     let time = sourceOccurence.time;
 
-    //  Prechadzam vsetky lifeliny v aktualnom platne
+    // Prechadzam vsetky lifeliny v aktualnom platne a hladam poslednu message
     for (let lifeline of lifelinesInCurrentLayer) {
       for (let occurrence of lifeline.occurrenceSpecifications) {
         if (occurrence.time == time &&
           ((sourceOccurence.id != occurrence.id) && (destinationOccurence.id != occurrence.id))) {
           move = true;
-          break;
         }
-        if (move) {
-          break;
+        // Najdeme ci mame poslednu message v layeri
+        if (occurrence.time >= 20 &&
+          ((sourceOccurence.id != occurrence.id) && (destinationOccurence.id != occurrence.id))) {
+          this.lastMessage = true;
         }
       }
     }
 
-    // Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej
-    if (move) {
+    // Ak mame poslednu message a treba poskakovat, tak v tom pripade sa budu iba dve message vymienat vzajomne
+    // a nie poskakovat vsetky :)
+    if (this.lastMessage && move) {
+      for (let lifeline of lifelinesInCurrentLayer) {
+        for (let occurrence of lifeline.occurrenceSpecifications) {
+          if (occurrence.time == time &&
+            ((sourceOccurence.id != occurrence.id) && (destinationOccurence.id != occurrence.id))) {
+            let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+            occurenceForChange.time = originalSendEventTime;
+
+            // Start job
+            this.jobsService.start('verticalMessageMove.calculateTimeOnMessageUpdate.' + occurenceForChange.id);
+            occurenceForChange.save().subscribe(() => {
+              // Finish job
+              this.jobsService.finish('verticalMessageMove.calculateTimeOnMessageUpdate.' + occurenceForChange.id);
+            });
+            break;
+          }
+        }
+      }
+    }
+
+    // Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej, ak nemame poslednu message
+    if (move && !this.lastMessage) {
       for (let lifeline of lifelinesInCurrentLayer) {
         for (let occurrence of lifeline.occurrenceSpecifications) {
           if (occurrence.time >= time &&
