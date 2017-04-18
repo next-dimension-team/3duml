@@ -1,4 +1,4 @@
-import { JsonApiModel, JsonApiModelConfig, JsonApiDatastore, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
+import { JsonApiModel, JsonApiModelConfig, JsonApiDatastore, Attribute, HasMany, BelongsTo } from '../../../jsonapi';
 import * as M from './';
 import * as _ from 'lodash';
 

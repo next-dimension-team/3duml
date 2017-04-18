@@ -1,6 +1,6 @@
 import * as M from './sequence-diagram/models';
 
-import { JsonApiDatastore, JsonApiDatastoreConfig } from 'angular2-jsonapi';
+import { JsonApiDatastore, JsonApiDatastoreConfig } from '../jsonapi';
 
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';

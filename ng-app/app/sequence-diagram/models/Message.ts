@@ -1,4 +1,4 @@
-import { JsonApiModel, JsonApiModelConfig, Attribute, BelongsTo } from 'angular2-jsonapi';
+import { JsonApiModel, JsonApiModelConfig, Attribute, BelongsTo } from '../../../jsonapi';
 import { OccurrenceSpecification } from './OccurrenceSpecification';
 import { Interaction } from './Interaction';
 

@@ -186,7 +186,6 @@ module.exports = function (options) {
             '@angularclass/hmr',
             'rxjs',
             '@angular/material',
-            'angular2-jsonapi',
             'three',
             'three.css',
             'three-orbit-controls'

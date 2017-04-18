@@ -32,7 +32,7 @@ import { HttpModule } from '@angular/http';
 import { MaterialModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { createInputTransfer, createNewHosts, removeNgStyles } from '@angularclass/hmr';
-import { JsonApiModule } from 'angular2-jsonapi';
+import { JsonApiModule } from '../jsonapi';
 
 // Application wide providers
 const APP_PROVIDERS = [

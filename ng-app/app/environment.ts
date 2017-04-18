@@ -17,7 +17,7 @@ let PROVIDERS: any[] = [
 let _decorateModuleRef = <T>(value: T): T => { return value; };
 
 // Enable prod mode always
-enableProdMode();
+//enableProdMode();
 
 if ('production' === ENV) {
 

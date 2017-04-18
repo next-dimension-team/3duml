@@ -1,4 +1,4 @@
-import { JsonApiModel, JsonApiModelConfig, Attribute, HasMany, BelongsTo } from 'angular2-jsonapi';
+import { JsonApiModel, JsonApiModelConfig, Attribute, HasMany, BelongsTo } from '../../../jsonapi';
 import { OccurrenceSpecification } from './OccurrenceSpecification';
 import * as M from './';
 
