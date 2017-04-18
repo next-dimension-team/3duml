@@ -3,6 +3,7 @@ import * as M from './sequence-diagram/models';
 import { Component } from '@angular/core';
 import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
 import { SequenceDiagramService } from './sequence-diagram/services';
+import { StoreResource } from 'ngrx-json-api';
 
 @Component({
   selector: 'app-root',
@@ -11,16 +12,17 @@ import { SequenceDiagramService } from './sequence-diagram/services';
 })
 export class AppComponent {
 
-  public openedSequenceDiagram: M.InteractionFragment;
+  public openedSequenceDiagram: StoreResource;
 
   constructor(
-    protected sequenceDiagramService: SequenceDiagramService) {
+    protected sequenceDiagramService: SequenceDiagramService
+  ) {
     //
   }
 
-  public openSequenceDiagram(diagram: M.Interaction) {
+  public openSequenceDiagram(diagram: StoreResource) {
     this.sequenceDiagramService.loadSequenceDiagramTree(diagram).subscribe(
-      (interactionFragment: M.InteractionFragment) => this.openedSequenceDiagram = interactionFragment
+      (interactionFragment: StoreResource) => this.openedSequenceDiagram = interactionFragment
     );
   }
 }

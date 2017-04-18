@@ -7,6 +7,7 @@ import { SequenceDiagramService } from '../../sequence-diagram/services';
 import { InputService } from '../../sequence-diagram/services/input.service';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { StoreResource } from 'ngrx-json-api';
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -41,7 +42,7 @@ export class MenuComponent implements OnInit {
   }
 
   // Load sequence diagrams
-  protected sequenceDiagrams: M.Interaction[];
+  protected sequenceDiagrams: StoreResource[];
 
   public ngOnInit() {
     this.menuReload$.subscribe(
@@ -51,7 +52,7 @@ export class MenuComponent implements OnInit {
 
   protected loadSequenceDiagrams() {
     this.sequenceDiagramService.getSequenceDiagrams().subscribe(
-      (diagrams: M.Interaction[]) => {
+      (diagrams: StoreResource[]) => {
         this.sequenceDiagrams = diagrams;
       }
     );
@@ -74,9 +75,9 @@ export class MenuComponent implements OnInit {
   }
 
   // Open operations
-  protected openedSequenceDiagram: M.Interaction;
+  protected openedSequenceDiagram: StoreResource;
 
-  public openSequenceDiagram(sequenceDiagram: M.Interaction) {
+  public openSequenceDiagram(sequenceDiagram: StoreResource) {
     this.openedSequenceDiagram = sequenceDiagram;
     this.onOpenSequenceDiagram.emit(sequenceDiagram);
   }

@@ -33,6 +33,9 @@ import { MaterialModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { createInputTransfer, createNewHosts, removeNgStyles } from '@angularclass/hmr';
 import { JsonApiModule } from 'angular2-jsonapi';
+import { NgrxJsonApiStoreReducer, NgrxJsonApiModule } from 'ngrx-json-api';
+import { StoreModule } from '@ngrx/store';
+import { resourceDefinitions } from './resources';
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -91,7 +94,13 @@ type StoreType = {
     FormsModule,
     HttpModule,
     JsonApiModule,
-    MaterialModule
+    MaterialModule,
+    NgrxJsonApiModule.configure({
+      apiUrl: '/api/v1',
+      resourceDefinitions: resourceDefinitions,
+      storeLocation: 'api'
+    }),
+    StoreModule.provideStore({ api: NgrxJsonApiStoreReducer })
   ],
   entryComponents: [
     EditDialogComponent,

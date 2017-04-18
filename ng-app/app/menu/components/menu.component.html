@@ -1,112 +1,98 @@
 <md-toolbar color="primary">
-	<span>3D UML</span>
-	<span class="spacer"></span>
-	<app-help></app-help>
+  <span>3D UML</span>
+  <span class="spacer"></span>
+  <app-help></app-help>
 </md-toolbar>
 
 <md-tab-group (selectChange)="changeTab($event)" [selectedIndex]="selectedTabIndex">
-    
-    <md-tab label="View" class="menu-tab" data-help="viewMode">
-        <ul class="sidebar-nav">
 
-            <!-- Create Diagram -->
-            <li>
-                <md-card>
-                    <md-card-actions data-help="createDiagram">
-                        <button md-button class="list-item-button" (click)="sequenceDiagramController.createDiagram()">
+  <md-tab label="View" class="menu-tab" data-help="viewMode">
+    <ul class="sidebar-nav">
+
+      <!-- Create Diagram -->
+      <li>
+        <md-card>
+          <md-card-actions data-help="createDiagram">
+            <button md-button class="list-item-button" (click)="sequenceDiagramController.createDiagram()">
                             <md-icon>add_to_queue</md-icon> Create Diagram
                         </button>
-                    </md-card-actions>
-                </md-card>
-            </li>
+          </md-card-actions>
+        </md-card>
+      </li>
 
-            <!-- List of Sequence Diagrams -->
-            <li
-                *ngIf="sequenceDiagrams && sequenceDiagrams.length > 0"
-                class="section-heading" data-help="listOfDiagrams">
-                List of Diagrams
-            </li>
-            <li
-              *ngFor="let sequenceDiagram of sequenceDiagrams"
-              [class.active]="sequenceDiagram == openedSequenceDiagram">
-                
-                <md-card>
-                    
-                    <!-- Rename Diagram -->
-                    <md-card-content
-                      (click)="openSequenceDiagram(sequenceDiagram)"
-                      (dblclick)="sequenceDiagramController.renameDiagram(sequenceDiagram)">
-                        <h3>{{sequenceDiagram.name}}</h3>
-                    </md-card-content>
+      <!-- List of Sequence Diagrams -->
+      <li *ngIf="sequenceDiagrams && sequenceDiagrams.length > 0" class="section-heading" data-help="listOfDiagrams">
+        List of Diagrams
+      </li>
+      <li *ngFor="let sequenceDiagram of sequenceDiagrams" [class.active]="sequenceDiagram == openedSequenceDiagram">
 
-                    <md-card-actions>
+        <md-card>
 
-                        <!-- Open Diagram -->
-                        <button md-button (click)="openSequenceDiagram(sequenceDiagram)" data-help="selectButton">
+          <!-- Rename Diagram -->
+          <md-card-content (click)="openSequenceDiagram(sequenceDiagram)" (dblclick)="sequenceDiagramController.renameDiagram(sequenceDiagram)">
+            <h3>{{sequenceDiagram.attributes.name}}</h3>
+          </md-card-content>
+
+          <md-card-actions>
+
+            <!-- Open Diagram -->
+            <button md-button (click)="openSequenceDiagram(sequenceDiagram)" data-help="selectButton">
                             <md-icon>touch_app</md-icon> Select
                         </button>
 
-                        <!-- Delete Diagram -->
-                        <button 
-                            md-button (click)="sequenceDiagramController.deleteDiagram(sequenceDiagram)"
-                            data-help="deleteButton">
+            <!-- Delete Diagram -->
+            <button md-button (click)="sequenceDiagramController.deleteDiagram(sequenceDiagram)" data-help="deleteButton">
                             <md-icon>delete</md-icon> Delete
                         </button>
 
-                    </md-card-actions>
+          </md-card-actions>
 
-                </md-card>
+        </md-card>
 
-            </li>
-        </ul>
-    </md-tab>
+      </li>
+    </ul>
+  </md-tab>
 
-    <md-tab [disabled]="openedSequenceDiagram == null" label="Edit" class="menu-tab" data-help="editMode">
-        
-        <md-list>
-            
-             <!-- Create Operations -->
-            <h3 md-subheader>CREATE</h3>
+  <md-tab [disabled]="openedSequenceDiagram == null" label="Edit" class="menu-tab" data-help="editMode">
 
-             <!-- Create Layer -->
-            <md-list-item>
-                <button 
-                    md-button class="list-item-button" 
-                    (click)="layersController.createLayer()"
-                    data-help="createLayer">
+    <md-list>
+
+      <!-- Create Operations -->
+      <h3 md-subheader>CREATE</h3>
+
+      <!-- Create Layer -->
+      <md-list-item>
+        <button md-button class="list-item-button" (click)="layersController.createLayer()" data-help="createLayer">
                     <md-icon>library_add</md-icon> Create Layer
                 </button>
-            </md-list-item>
+      </md-list-item>
 
-             <!-- Create Lifeline -->
-            <md-list-item *ngIf="editingLayer">
-                <button md-button class="list-item-button" (click)="lifelinesController.createLifeline()">
+      <!-- Create Lifeline -->
+      <md-list-item *ngIf="editingLayer">
+        <button md-button class="list-item-button" (click)="lifelinesController.createLifeline()">
                     <md-icon>add</md-icon> Create Lifeline
                 </button>
-            </md-list-item>
+      </md-list-item>
 
-             <!-- Delete Operation -->
-            <h3 md-subheader *ngIf="editingLayer">DELETE</h3>
+      <!-- Delete Operation -->
+      <h3 md-subheader *ngIf="editingLayer">DELETE</h3>
 
-             <!-- Delete Element -->
-            <md-list-item *ngIf="editingLayer">
-                <button md-button 
-                    class="list-item-button" 
-                    (click)="sequenceDiagramController.deleteInProgress = true"
-                    data-help="deleteElement">
+      <!-- Delete Element -->
+      <md-list-item *ngIf="editingLayer">
+        <button md-button class="list-item-button" (click)="sequenceDiagramController.deleteInProgress = true" data-help="deleteElement">
                     <md-icon>delete</md-icon> Delete Element
                 </button>
-            </md-list-item>
+      </md-list-item>
 
-             <!-- Delete Layer -->
-            <md-list-item *ngIf="editingLayer">
-                <button md-button class="list-item-button" (click)="layersController.deleteLayer()">
+      <!-- Delete Layer -->
+      <md-list-item *ngIf="editingLayer">
+        <button md-button class="list-item-button" (click)="layersController.deleteLayer()">
                     <md-icon>remove_from_queue</md-icon> Delete Layer
                 </button>
-            </md-list-item>
+      </md-list-item>
 
-        </md-list>
-        
-    </md-tab>
+    </md-list>
+
+  </md-tab>
 
 </md-tab-group>
