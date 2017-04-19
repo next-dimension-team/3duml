@@ -1,4 +1,4 @@
-import { Component, EventEmitter, ChangeDetectorRef } from '@angular/core'
+import { Component, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { MdDialogRef } from '@angular/material';
 
 @Component({
@@ -36,22 +36,22 @@ export class EditDialogComponent {
   public title: string;
   public message: string;
   public element: any;
-  onOk = new EventEmitter();
-  onNo = new EventEmitter();
+  public onOk = new EventEmitter();
+  public onNo = new EventEmitter();
   public elementType: string;
-  public items = ["synchCall", "asynchCall"];
+  public items = ['synchCall', 'asynchCall'];
   public selectedItem: string;
 
-  inputEmpty(input: string): boolean {
+  protected inputEmpty(input: string): boolean {
 
-    if (input.trim().length == 0) {
+    if (input.trim().length === 0) {
       return true;
     } else {
       return false;
     }
   }
 
-  submitInput(name: string, messageSort: string): void {
+  protected submitInput(name: string, messageSort: string): void {
 
     if (this.inputEmpty(name)) {
       return;
@@ -63,9 +63,9 @@ export class EditDialogComponent {
 
   constructor(public dialog: MdDialogRef<any>, private cdr: ChangeDetectorRef) { }
 
-  ngAfterViewInit() {
+  protected ngAfterViewInit() {
 
-    if (this.elementType == "message") {
+    if (this.elementType === 'message') {
       if (this.element.sort == null) {
         this.selectedItem = this.items[0];
       } else {

@@ -44,10 +44,10 @@ export class MessagesController {
     let destinationLifelineEvent = null;
 
     this.inputService.onLeftClick((event) => {
-      if (event.model.type == 'LifelinePoint') {
+      if (event.model.type === 'LifelinePoint') {
         if (sourceLifelineEvent) {
           destinationLifelineEvent = event;
-          if (sourceLifelineEvent.model.lifelineID == destinationLifelineEvent.model.lifelineID) {
+          if (sourceLifelineEvent.model.lifelineID === destinationLifelineEvent.model.lifelineID) {
             sourceLifelineEvent = destinationLifelineEvent;
           } else {
             this._createMessage(sourceLifelineEvent, destinationLifelineEvent);
@@ -89,7 +89,7 @@ export class MessagesController {
     }*/
 
     this.dialogService.createEditDialog(
-      "Creating message", "", "Enter message name", "message").componentInstance.onOk.subscribe((result) => {
+      'Creating message', '', 'Enter message name', 'message').componentInstance.onOk.subscribe((result) => {
         messageName = result.name;
         messageSort = result.messageSort;
 
@@ -141,7 +141,7 @@ export class MessagesController {
     // Prechadzam vsetky lifeliny v aktualnom platne
     for (let lifeline of lifelinesInCurrentLayer) {
       for (let occurrence of lifeline.occurrenceSpecifications) {
-        if (occurrence.time == time) {
+        if (occurrence.time === time) {
           move = true;
           break;
         }
@@ -184,11 +184,11 @@ export class MessagesController {
   protected editMessage() {
     this.inputService.onDoubleClick((event) => {
       // Did we double-clicked on lifeline in edit mode ?
-      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type == 'Message') {
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type === 'Message') {
         // Get lifeline model
         let message = this.datastore.peekRecord(M.Message, event.model.id);
         // Open dialog
-        this.dialogService.createEditDialog("Edit message", message, "Enter message name", "message").componentInstance.onOk.subscribe((result) => {
+        this.dialogService.createEditDialog('Edit message', message, 'Enter message name', 'message').componentInstance.onOk.subscribe((result) => {
           // Start job
           this.jobsService.start('renameMessage');
           // Rename lifeline
@@ -222,7 +222,7 @@ export class MessagesController {
       if (!this.menuComponent.editMode) return;
       */
 
-      if (event.model.type == 'LifelinePoint') {
+      if (event.model.type === 'LifelinePoint') {
         if (messageMove) {
           /*
            * TODO: Manualna uprava JSON
@@ -269,7 +269,7 @@ export class MessagesController {
           lifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.lifelineID);
           // Prejdem occurrence specifications a zistim ci taky uz je t.j., ci uz na tom time je message
           for (let occurrence of lifelineModel.occurrenceSpecifications) {
-            if (occurrence.time == event.model.time) {
+            if (occurrence.time === event.model.time) {
               messageMove = true;
               // Tu mam occurrence z DB na ktorom je message
               occurrenceSpecification = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
@@ -288,7 +288,7 @@ export class MessagesController {
     let draggingMessage: MessageComponent = null;
 
     this.inputService.onMouseDown((event) => {
-      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type == 'Message') {
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type === 'Message') {
         draggingMessage = event.model.component;
       }
     });
@@ -393,7 +393,7 @@ export class MessagesController {
    */
   public deleteMessage(message: M.Message): void {
     this.dialogService.createConfirmDialog(
-      "Delete message", "Do you really want to delete message \"" + message.name + "\" ?").componentInstance.onYes.subscribe(result => {
+      'Delete message', 'Do you really want to delete message \'' + message.name + '\' ?').componentInstance.onYes.subscribe(result => {
         this._calculateTimeOnMessageDelete(message);
         this.datastore.deleteRecord(M.Message, message.id).subscribe(() => {
           this.sequenceDiagramComponent.refresh();

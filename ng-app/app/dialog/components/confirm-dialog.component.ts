@@ -1,4 +1,4 @@
-import { Component, EventEmitter } from '@angular/core'
+import { Component, EventEmitter } from '@angular/core';
 import { MdDialogRef } from '@angular/material';
 
 @Component({
@@ -12,8 +12,8 @@ export class ConfirmDialogComponent {
 
   public title: string;
   public message: string;
-  onYes = new EventEmitter();
-  onNo = new EventEmitter();
+  public onYes = new EventEmitter();
+  public onNo = new EventEmitter();
 
   constructor(public dialog: MdDialogRef<any>) { }
 }

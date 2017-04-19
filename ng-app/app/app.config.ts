@@ -6,23 +6,23 @@ export interface IAppConfig {
   layer: {
     gap: number,
     padding: number
-  },
+  };
   lifeline: {
     width: number,
     gap: number
-  },
+  };
   camera: {
     fov: number,
     near: number,
     far: number,
     z: number
-  },
+  };
   controls: {
     minPolarAngle: number;
     maxPolarAngle: number;
     minAzimuthAngle: number;
     maxAzimuthAngle: number;
-  }
+  };
 }
 
 export const AppConfig: IAppConfig = {

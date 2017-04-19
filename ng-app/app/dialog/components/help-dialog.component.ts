@@ -1,5 +1,5 @@
 import { NgFor } from '@angular/common/src/directives/ng_for';
-import { Component, EventEmitter } from '@angular/core'
+import { Component, EventEmitter } from '@angular/core';
 import { MdDialogRef } from '@angular/material';
 
 @Component({
@@ -19,12 +19,14 @@ export class HelpDialogComponent {
 
   public title: string;
   public items: Array<any> = [];
-  onOk = new EventEmitter();
+  public onOk = new EventEmitter();
 
   constructor(public dialog: MdDialogRef<any>) { }
 
   public outline(selector: string) {
-    if (!selector) return;
+    if (!selector) {
+      return;
+    }
     let elements = document.querySelectorAll(selector);
     for (let i = 0; i < elements.length; i++) {
       let element = elements[i];
