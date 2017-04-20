@@ -227,7 +227,7 @@ export class LifelinesController {
   /*
    * Delete Lifeline
    */
-  protected deleteLifeline(lifeline: M.Lifeline): void {
+  public deleteLifeline(lifeline: M.Lifeline): void {
     this.dialogService.createConfirmDialog(
       'Delete lifeline', 'Do you really want to delete lifeline \'' + lifeline.name + '\' ?')
       .componentInstance.onYes.subscribe((result) => {
