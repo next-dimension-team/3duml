@@ -18,6 +18,9 @@ export class SequenceDiagramController {
   /* Menu Component Instance */
   public menuComponent: MenuComponent = null;
 
+  /* Delete operation variable */
+  public deleteInProgress: boolean = false;
+
   constructor(
     protected sequenceDiagramService: SequenceDiagramService,
     protected lifelinesController: LifelinesController,
@@ -42,8 +45,9 @@ export class SequenceDiagramController {
    * Create Diagram
    */
   public createDiagram(): void {
-    this.dialogService.createEditDialog("Creating diagram", "", "Enter name of new digram.", "diagram")
-      .componentInstance.onOk.subscribe(result => {
+    this.dialogService.createEditDialog(
+      'Creating diagram', '', 'Enter name of new digram.', 'diagram')
+      .componentInstance.onOk.subscribe((result) => {
 
         // Start job
         this.jobsService.start('createDiagram');
@@ -66,8 +70,7 @@ export class SequenceDiagramController {
             });
           });
         });
-
-      })
+      });
   }
 
   /*
@@ -75,7 +78,7 @@ export class SequenceDiagramController {
    */
   public renameDiagram(sequenceDiagram: M.Interaction): void {
     this.dialogService.createEditDialog(
-      "Edit Diagram", sequenceDiagram, "Enter Diagram name", "diagram")
+      'Edit Diagram', sequenceDiagram, 'Enter Diagram name', 'diagram')
       .componentInstance.onOk.subscribe((result) => {
         this.jobsService.start('renameDiagram');
         sequenceDiagram.name = result.name;
@@ -90,18 +93,20 @@ export class SequenceDiagramController {
    */
   public deleteDiagram(sequenceDiagram: M.Interaction) {
     this.dialogService.createConfirmDialog(
-      "Delete diagram", "Do you really want to delete diagram \"" + sequenceDiagram.name + "\" ?").componentInstance.onYes.subscribe((result) => {
+      'Delete diagram', 'Do you really want to delete diagram \'' + sequenceDiagram.name + '\' ?')
+      .componentInstance.onYes.subscribe((result) => {
         this.jobsService.start('deleteDiagram');
-        this.datastore.deleteRecord(M.InteractionFragment, sequenceDiagram.fragment.id).subscribe(() => {
-          // Hide opened (deleted) diagram
-          if (this.sequenceDiagramComponent) {
-            this.sequenceDiagramComponent.rootInteractionFragment = null;
-          }
-          // Refresh menu component
-          this.menuComponent.refresh(() => {
-            this.jobsService.finish('deleteDiagram');
+        this.datastore.deleteRecord(M.InteractionFragment, sequenceDiagram.fragment.id)
+          .subscribe(() => {
+            // Hide opened (deleted) diagram
+            if (this.sequenceDiagramComponent) {
+              this.sequenceDiagramComponent.rootInteractionFragment = null;
+            }
+            // Refresh menu component
+            this.menuComponent.refresh(() => {
+              this.jobsService.finish('deleteDiagram');
+            });
           });
-        });
       });
   }
 
@@ -111,7 +116,7 @@ export class SequenceDiagramController {
   protected editLayerAfterDoubleClick(): void {
     this.inputService.onDoubleClick((event) => {
       // Works only in "View" mode
-      if (!this.menuComponent.editMode && event.model.type == 'Layer') {
+      if (!this.menuComponent.editMode && event.model.type === 'Layer') {
         // Set editing layer
         this.sequenceDiagramComponent.editingLayer = event.model.component.interactionFragmentModel;
         // Open edit mode
@@ -123,8 +128,6 @@ export class SequenceDiagramController {
   /*
    * Start delete operation
    */
-  public deleteInProgress: boolean = false;
-
   protected deleteElement(): void {
 
     let menuComponentCallbackInitialized: boolean = false;
@@ -154,6 +157,9 @@ export class SequenceDiagramController {
           case 'LifelineTitle':
             let lifeline = this.datastore.peekRecord(M.Lifeline, event.model.id);
             this.lifelinesController.deleteLifeline(lifeline);
+            break;
+
+          default:
             break;
         }
 

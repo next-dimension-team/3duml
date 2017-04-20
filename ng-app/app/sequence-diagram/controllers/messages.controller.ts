@@ -54,8 +54,7 @@ export class MessagesController {
             sourceLifelineEvent = null;
             destinationLifelineEvent = null;
           }
-        }
-        else {
+        } else {
           sourceLifelineEvent = event;
         }
       }
@@ -64,8 +63,8 @@ export class MessagesController {
 
   /*
    * Pomocná metóda
-   * 
-   * TODO: napisat komentar co tato metoda robi
+   *
+   * Vytvorenie message, ulozenie do DB
    */
   protected _createMessage(sourceLifeline, destinationLifeline) {
     let sourceLifelineModel = this.datastore.peekRecord(M.Lifeline, sourceLifeline.model.lifelineID);
@@ -128,8 +127,8 @@ export class MessagesController {
 
   /*
    * Pomocná metóda
-   * 
-   * TODO: napisat komentar co tato metoda robi
+   *
+   * Vypocitanie odksakovania messageov
    */
   protected _calculateTimeOnMessageCreate(currentInteraction: M.Interaction, time: number,
     sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline) {
@@ -264,8 +263,7 @@ export class MessagesController {
           });
 
           messageMove = false;
-        }
-        else {
+        } else {
           lifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.lifelineID);
           // Prejdem occurrence specifications a zistim ci taky uz je t.j., ci uz na tom time je message
           for (let occurrence of lifelineModel.occurrenceSpecifications) {

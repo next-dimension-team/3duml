@@ -27,13 +27,13 @@ export class LayersController {
 
   /*
    * Create Layer
-   * 
+   *
    * Táto funkcia vytvorí nové plátno v zadanom sekvenčnom diagrame.
-   * 
+   *
    */
   public createLayer(): void {
-    this.dialogService.createEditDialog("Creating layer", "", "Enter name of new layer.", "layer")
-      .componentInstance.onOk.subscribe(result => {
+    this.dialogService.createEditDialog('Creating layer', '', 'Enter name of new layer.', 'layer')
+      .componentInstance.onOk.subscribe((result) => {
 
         this.jobsService.start('createLayer');
 
@@ -41,9 +41,9 @@ export class LayersController {
           name: result.name
         });
 
-        layer.save().subscribe((layer: M.Interaction) => {
+        layer.save().subscribe((layers: M.Interaction) => {
           let interactionFragment = this.datastore.createRecord(M.InteractionFragment, {
-            fragmentable: layer,
+            fragmentable: layers,
             parent: this.sequenceDiagramComponent.rootInteractionFragment
           });
           interactionFragment.save().subscribe(() => {
@@ -52,8 +52,7 @@ export class LayersController {
             });
           });
         });
-
-      })
+      });
   }
 
   /*
@@ -61,8 +60,8 @@ export class LayersController {
    */
   public renameLayer(layer: M.Interaction): void {
     // Open dialog
-    this.dialogService.createEditDialog("Edit layer", layer, "Enter Layer name", "layer")
-      .componentInstance.onOk.subscribe(result => {
+    this.dialogService.createEditDialog('Edit layer', layer, 'Enter Layer name', 'layer')
+      .componentInstance.onOk.subscribe((result) => {
         // Start job
         this.jobsService.start('renameLayer');
         // Rename layer
@@ -76,25 +75,28 @@ export class LayersController {
 
   /*
    * Delete Layer
-   * 
+   *
    * Táto funkcia odstráni plátno ktoré sa práve edituje.
-   * 
+   *
    */
   public deleteLayer() {
     this.dialogService.createConfirmDialog(
-      "Delete layer", "Do you really want to delete layer \"" + this.sequenceDiagramComponent.editingLayer.fragmentable.name + "\" ?").componentInstance.onYes.subscribe(result => {
+      'Delete layer', 'Do you really want to delete layer \'' +
+      this.sequenceDiagramComponent.editingLayer.fragmentable.name + '\' ?').
+      componentInstance.onYes.subscribe((result) => {
 
         // Start job
         this.jobsService.start('deleteLayer');
 
         // Delete layer
-        this.datastore.deleteRecord(M.InteractionFragment, this.sequenceDiagramComponent.editingLayer.id).subscribe(() => {
-          this.sequenceDiagramComponent.refresh(() => {
+        this.datastore.deleteRecord(
+          M.InteractionFragment, this.sequenceDiagramComponent.editingLayer.id).subscribe(() => {
+            this.sequenceDiagramComponent.refresh(() => {
 
-            // Finish job
-            this.jobsService.finish('deleteLayer');
+              // Finish job
+              this.jobsService.finish('deleteLayer');
+            });
           });
-        });
       });
   }
 
