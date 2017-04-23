@@ -524,7 +524,7 @@ class ComplexSequenceDiagramSeeder extends Seeder
         $parIF->makeChildOf($parIO1F);
          $occurrenceSpecificationQ = tap(
             factory(OccurrenceSpecification::class)->make([
-                'time' => 15
+                'time' => 16
             ])
             ->covered()
             ->associate($lifelineB),
@@ -535,7 +535,7 @@ class ComplexSequenceDiagramSeeder extends Seeder
 
         $occurrenceSpecificationR = tap(
             factory(OccurrenceSpecification::class)->make([
-                'time' => 15
+                'time' => 16
             ])
             ->covered()
             ->associate($lifelineC),
@@ -555,7 +555,7 @@ class ComplexSequenceDiagramSeeder extends Seeder
             ->save();
          $occurrenceSpecificationS = tap(
             factory(OccurrenceSpecification::class)->make([
-                'time' => 16
+                'time' => 17
             ])
             ->covered()
             ->associate($lifelineB),
@@ -566,7 +566,7 @@ class ComplexSequenceDiagramSeeder extends Seeder
 
         $occurrenceSpecificationT = tap(
             factory(OccurrenceSpecification::class)->make([
-                'time' => 16
+                'time' => 17
             ])
             ->covered()
             ->associate($lifelineC),

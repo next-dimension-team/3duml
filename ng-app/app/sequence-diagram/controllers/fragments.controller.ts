@@ -287,7 +287,7 @@ export class FragmentsController {
 
       if (this.draggedPulley && this.menuComponent.editMode) {
         // get the delta of fragment pulling
-        let deltaY = event.movementY/4;
+        let deltaY = event.movementY/2;
 
         // clamp the effective delta to constraints
         let effectiveDeltaY = Math.min(Math.max(deltaY, this.pullDeltaMin - this.pullDeltaEffected), this.pullDeltaMax - this.pullDeltaEffected);
@@ -450,6 +450,7 @@ export class FragmentsController {
       if (this.draggedPulley && this.menuComponent.editMode) {
 
         let editedMessages = [];
+        let editedFragments = [];
 
         // change message ownership
 
@@ -499,10 +500,24 @@ export class FragmentsController {
             }
           }
 
-          // move fragments
-          /*for (let fragment of this.draggedOperand.interactionFragmentModel.children) {
-            console.log(fragment);
-          }*/
+          // move fragments - only when they are completely removed from their owner
+          for (let fragment of this.draggedOperand.interactionFragmentModel.children[0].children) {
+
+            if (fragment.componentObject.envelope.min > newMaxEnvelope || fragment.componentObject.envelope.max < newMinEnvelope) {
+              editedFragments.push(fragment);
+              fragment.parent = targetInteraction.fragment;
+              for (let message of fragment.recursiveMessages) {
+                if (this.draggedPulley.isTop) {
+                  message.sendEvent.time--;
+                  message.receiveEvent.time--;
+                } else if (this.draggedPulley.isBottom) {
+                  message.sendEvent.time++;
+                  message.receiveEvent.time++;
+                }
+              }
+            }
+            
+          }
 
         } else if (this.draggedOperand.height > this.draggedOperand.original_height) {// case when the dragged operand was made bigger
 
@@ -535,6 +550,20 @@ export class FragmentsController {
                   message.receiveEvent.time++;
                 }
               }
+
+              // move fragments - only when they are completely removed from their owner
+              for (let fragment of current_operand.interactionFragmentModel.children[0].children) {
+
+                if (fragment.componentObject.envelope.min > envelopeMax || fragment.componentObject.envelope.max < envelopeMin) {
+                  editedFragments.push(fragment);
+                  fragment.parent = targetInteraction.fragment;
+                  for (let message of fragment.recursiveMessages) {
+                    message.sendEvent.time++;
+                    message.receiveEvent.time++;
+                  }
+                }
+                
+              }
             }
 
             if (Math.abs(height_delta_sum) < this.draggedOperand.height - this.draggedOperand.original_height) {
@@ -551,6 +580,20 @@ export class FragmentsController {
                   message.receiveEvent.time++;
                   editedMessages.push(message);
                 }
+              }
+
+              // move fragments - only when they are completely removed from their owner
+              for (let fragment of this.affectedCombinedFragment.interactionFragmentModel.parent.children) {
+
+                if (fragment.componentObject.envelope.min < envelope_max && fragment.componentObject.envelope.max > envelope_min) {
+                  editedFragments.push(fragment);
+                  fragment.parent = targetInteraction.fragment;
+                  for (let message of fragment.recursiveMessages) {
+                    message.sendEvent.time++;
+                    message.receiveEvent.time++;
+                  }
+                }
+                
               }
             }
 
@@ -581,6 +624,20 @@ export class FragmentsController {
                   message.receiveEvent.time--;
                 }
               }
+
+              // move fragments - only when they are completely removed from their owner
+              for (let fragment of current_operand.interactionFragmentModel.children[0].children) {
+
+                if (fragment.componentObject.envelope.min > envelopeMax || fragment.componentObject.envelope.max < envelopeMin) {
+                  editedFragments.push(fragment);
+                  fragment.parent = targetInteraction.fragment;
+                  for (let message of fragment.recursiveMessages) {
+                    message.sendEvent.time--;
+                    message.receiveEvent.time--;
+                  }
+                }
+                
+              }
             }
 
             if (Math.abs(height_delta_sum) < this.draggedOperand.height - this.draggedOperand.original_height) {
@@ -598,6 +655,20 @@ export class FragmentsController {
                   editedMessages.push(message);
                 }
               }
+
+              // move fragments - only when they are completely removed from their owner
+              for (let fragment of this.affectedCombinedFragment.interactionFragmentModel.parent.children) {
+
+                if (fragment.componentObject.envelope.min < envelope_max && fragment.componentObject.envelope.max > envelope_min) {
+                  editedFragments.push(fragment);
+                  fragment.parent = targetInteraction.fragment;
+                  for (let message of fragment.recursiveMessages) {
+                    message.sendEvent.time--;
+                    message.receiveEvent.time--;
+                  }
+                }
+                
+              }
             }
           }
 
@@ -610,16 +681,58 @@ export class FragmentsController {
 
         let dragOp = this.draggedOperand;
 
-        let messages_finished = 0;
+        let saves_pending = 0;
+
+        let occurences = [];
+
+        let observables = [];
+
+        for (let fragment of editedFragments) {
+
+
+          // update enclosed messages recursively
+          for (let message of fragment.recursiveMessages) {
+            occurences.push(message.sendEvent);
+            occurences.push(message.receiveEvent);
+          }
+
+
+          // send update JSON manually because the library used does not support relationship updates
+
+          saves_pending++;
+
+          let headers = new Headers({
+            'Content-Type': 'application/vnd.api+json',
+            'Accept': 'application/vnd.api+json'
+          });
+
+          let options = new RequestOptions({ headers: headers });
+          let url = "/api/v1/interaction-fragments/" + fragment.id;
+
+          observables.push(this.http.patch(url, {
+            "data": {
+              "type": "interaction-fragments",
+              "id": fragment.id.toString(),
+              "relationships": {
+                "parent": {
+                  "data": {
+                    "type": "interaction-fragments",
+                    "id": fragment.parent.id.toString()
+                  }
+                }
+              }
+            }
+          }, options));
+        }
 
         for (let message of editedMessages) {
 
-          let requests_completed = 0;
+          occurences.push(message.sendEvent);
+          occurences.push(message.receiveEvent);
 
-          message.sendEvent.save();
-
-          message.receiveEvent.save();
           // send update JSON manually because the library used does not support relationship updates
+
+          saves_pending++;
 
           let headers = new Headers({
             'Content-Type': 'application/vnd.api+json',
@@ -629,7 +742,7 @@ export class FragmentsController {
           let options = new RequestOptions({ headers: headers });
           let url = "/api/v1/messages/" + message.id;
 
-          this.http.patch(url, {
+          observables.push(this.http.patch(url, {
             "data": {
               "type": "messages",
               "id": message.id.toString(),
@@ -642,24 +755,54 @@ export class FragmentsController {
                 }
               }
             }
-          }, options).subscribe(() => {
-            messages_finished++;
-            if (messages_finished == editedMessages.length) {
-
-              // Finish job
-              this.sequenceDiagramComponent.refresh(() => {
-                this.jobsService.finish('deformFragment.fragment.' + dragOp.id);
-              });
-            }
-          });
+          }, options));
 
         }
 
-        if (editedMessages.length == 0) {
+        for (let occurrence of occurences) {
+
+          saves_pending += 1;
+
+          let headers = new Headers({
+            'Content-Type': 'application/vnd.api+json',
+            'Accept': 'application/vnd.api+json'
+          });
+
+          let options = new RequestOptions({ headers: headers });
+          let url = "/api/v1/occurrence-specifications/" + occurrence.id;
+
+          observables.push(this.http.patch(url, {
+            "data": {
+              "type": "occurrence-specifications",
+              "id": occurrence.id.toString(),
+              "attributes": {
+                "time": occurrence.time.toString(),
+              }
+            }
+          }, options));
+
+        }
+
+        if (editedMessages.length == 0 && editedFragments.length == 0 && occurences.length == 0) {
           // Finish job
           this.sequenceDiagramComponent.refresh(() => {
               this.jobsService.finish('deformFragment.fragment.' + dragOp.id);
           });
+        } else {
+
+          let save_listen = () => {
+            saves_pending--;
+            if (saves_pending == 0) {
+              this.sequenceDiagramComponent.refresh(() => {
+                this.jobsService.finish('deformFragment.fragment.' + dragOp.id);
+              });
+            }
+          };
+
+          for (let observable of observables) {
+            observable.subscribe(save_listen);
+          }
+
         }
 
         this.draggedPulley = null;

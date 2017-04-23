@@ -165,7 +165,7 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       for (let childOperand of self.children) {
         for (let childOperandInteraction of childOperand.children) {
           for (let childOperandInteractionFragments of childOperandInteraction.children) {
-            childOperandInteractionFragments.left = 15 + (childOperandInteractionFragments.leftmost_lifeline.order - self.leftmost_lifeline.order) * this.config.get('lifeline.gap');
+            childOperandInteractionFragments.left = self.padding - childOperandInteractionFragments.padding + 15 + (childOperandInteractionFragments.leftmost_lifeline.order - self.leftmost_lifeline.order) * this.config.get('lifeline.gap');
             childOperandInteractionFragments.top -= self.top + heightToDeduce;
             childOperandInteractionFragments.original_top = childOperandInteractionFragments.top;
           }
