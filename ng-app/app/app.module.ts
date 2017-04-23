@@ -23,7 +23,6 @@ import { FragmentPulleyComponent } from './sequence-diagram/components/fragment-
 import { FragmentsController } from './sequence-diagram/controllers/fragments.controller';
 
 // Component for menu
-import { InputDialogComponent } from './menu/components/input-dialog.component';
 import { SequenceDiagramComponent } from './sequence-diagram/components/sequence-diagram.component';
 import { LayersController, LifelinesController, SequenceDiagramController } from './sequence-diagram/controllers';
 import { MessagesController } from './sequence-diagram/controllers/messages.controller';
@@ -83,7 +82,6 @@ type StoreType = {
     InteractionFragmentComponent,
     EditDialogComponent,
     FragmentPulleyComponent,
-    InputDialogComponent,
     ConfirmDialogComponent,
     ConfigPipe,
 

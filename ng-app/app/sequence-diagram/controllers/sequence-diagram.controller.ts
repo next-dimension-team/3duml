@@ -1,6 +1,7 @@
 import { LayersController } from './';
 import { MessagesController } from './messages.controller';
 import { LifelinesController } from './lifelines.controller';
+import { FragmentsController } from './fragments.controller';
 import { Datastore } from '../../datastore';
 import { DialogService } from '../../dialog/services';
 import { MenuComponent } from '../../menu/components/menu.component';
@@ -23,6 +24,7 @@ export class SequenceDiagramController {
     protected lifelinesController: LifelinesController,
     protected layersController: LayersController,
     protected messagesController: MessagesController,
+    protected fragmentsController: FragmentsController,
     protected dialogService: DialogService,
     protected inputService: InputService,
     protected jobsService: JobsService,
@@ -32,6 +34,7 @@ export class SequenceDiagramController {
     this.lifelinesController.sequenceDiagramController = this;
     this.layersController.sequenceDiagramController = this;
     this.messagesController.sequenceDiagramController = this;
+    this.fragmentsController.sequenceDiagramController = this;
 
     // Initialize operations
     this.editLayerAfterDoubleClick();

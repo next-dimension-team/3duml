@@ -63,16 +63,8 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
   // alebo do "fragments.renderer.ts" alebo tak neico
 
   r(interactionFragmentModel: M.InteractionFragment) {
-    // Child
-    let children = [];
-    for (let child of interactionFragmentModel.children) {
-      let childFragment = this.r(child);
-      if (childFragment) {
-        children.push(childFragment);
-      }
-    }
 
-    // Self
+    // Define Self
     let self = {
       type: interactionFragmentModel.fragmentable.constructor.name,
       interactionFragmentModel: interactionFragmentModel,
@@ -85,19 +77,34 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       height: null,
       left: null,
       top: null,
+      original_height: null,
+      original_top: null,
 
       leftmost_lifeline: null,
       rightmost_lifeline: null,
 
       padding: 0,
+      envelope: null,
     };
+
+    // Execute on children
+    for (let child of interactionFragmentModel.children) {
+      let childFragment = this.r(child);
+      if (childFragment) {
+        self.children.push(childFragment);
+      }
+    }
+
+    self.children.sort(function(a,b) {
+      return a.envelope.min - b.envelope.min;
+    });
 
     interactionFragmentModel.componentObject = self;
 
     let leftmost_lifeline: M.Lifeline = null;
     let rightmost_lifeline: M.Lifeline = null;
 
-    for (let child of children) {
+    for (let child of self.children) {
       if (!leftmost_lifeline || child.leftmost_lifeline.order < leftmost_lifeline.order) {
         leftmost_lifeline = child.leftmost_lifeline;
       }
@@ -141,7 +148,7 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
     self.rightmost_lifeline = rightmost_lifeline;
 
     // propagate padding
-    for (let child of children) {
+    for (let child of self.children) {
       if (self.leftmost_lifeline == child.leftmost_lifeline || self.rightmost_lifeline == child.rightmost_lifeline) {
         self.padding = Math.max(child.padding, self.padding);
       }
@@ -153,13 +160,18 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       
       self.top = (envelope.min * this.VYSKA_ZUBKU) + this.VYSKA_HLAVICKY_LAJFLAJNY;
 
-      for (let childOperand of children) {
+      let heightToDeduce = 0;
+
+      for (let childOperand of self.children) {
         for (let childOperandInteraction of childOperand.children) {
           for (let childOperandInteractionFragments of childOperandInteraction.children) {
             childOperandInteractionFragments.left = 15 + (childOperandInteractionFragments.leftmost_lifeline.order - self.leftmost_lifeline.order) * this.config.get('lifeline.gap');
-            childOperandInteractionFragments.top -= self.top;
+            childOperandInteractionFragments.top -= self.top + heightToDeduce;
+            childOperandInteractionFragments.original_top = childOperandInteractionFragments.top;
           }
         }
+        heightToDeduce += childOperand.height;
+        self.envelope = envelope;
       }
 
       self.padding = self.padding + 15;
@@ -170,10 +182,25 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
     // Interaction Operand
     else if (self.type == 'InteractionOperand') {
       let envelope = this.envelopeFragment(interactionFragmentModel);
-      self.height = (envelope.max - envelope.min) * this.VYSKA_ZUBKU;
+      let fragment_index = interactionFragmentModel.parent.children.indexOf(interactionFragmentModel);
+      if (fragment_index != 0) {
+        envelope.min = Math.min(envelope.min,interactionFragmentModel.parent.children[fragment_index - 1].componentObject.envelope.max);
+      }
+      self.envelope = envelope;
+      self.height = (envelope.max - envelope.min) * this.VYSKA_ZUBKU - 2/interactionFragmentModel.parent.children.length;
     }
 
-    self.children = children;
+    self.original_height = self.height;
+    self.original_top = self.top;
+
+    if (self.type == 'CombinedFragment') {
+      self.height = function(){
+        return self.children.reduce((acc,val) => {return acc + val.height;},0);
+      };
+      self.original_height = function(){
+        return self.children.reduce((acc,val) => {return acc + val.original_height;},0);
+      };
+    }
 
     return self;
   }

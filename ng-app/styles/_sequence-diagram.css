@@ -265,7 +265,7 @@ input {
 /* Fragments */
 .sequence-diagram .fragment {
   border: 1px solid rgba(0, 0, 0, 0.7);
-  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .sequence-diagram .fragment .title {
@@ -279,6 +279,7 @@ input {
 .sequence-diagram .fragment .operand {
   position: relative;
   border-bottom: 1px dashed rgba(0, 0, 0, 0.7);
+  box-sizing: border-box;
 }
 
 .sequence-diagram .fragment operand:last-child .operand {
@@ -329,6 +330,10 @@ input {
 
 .sequence-diagram .message .title {
   z-index: 71;
+}
+
+.sequence-diagram .fragment .operand .fragment-pulley {
+  z-index: 80;
 }
 
 .middle-error {

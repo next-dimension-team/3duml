@@ -15,19 +15,19 @@ export class FragmentPulleyComponent {
   @Input()
   public top: Number;
 
-  public isTop(): Boolean {
+  get isTop(): Boolean {
     return this.top == 0;
   }
 
-  public isBottom(): Boolean {
+  get isBottom(): Boolean {
     return this.top == 100;
   }
 
-  public isLeft(): Boolean {
+  get isLeft(): Boolean {
     return this.left == 0;
   }
 
-  public isRight(): Boolean {
+  get isRight(): Boolean {
     return this.left == 100;
   }
 

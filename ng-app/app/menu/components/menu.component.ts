@@ -1,5 +1,5 @@
 import { DialogService } from '../../dialog/services';
-import { LayersController, LifelinesController, SequenceDiagramController } from '../../sequence-diagram/controllers';
+import { LayersController, LifelinesController, SequenceDiagramController, FragmentsController } from '../../sequence-diagram/controllers';
 import { MessagesController } from '../../sequence-diagram/controllers/messages.controller';
 import * as M from '../../sequence-diagram/models';
 import { JobsService } from '../../sequence-diagram/services';
@@ -31,13 +31,15 @@ export class MenuComponent implements OnInit {
     protected sequenceDiagramController: SequenceDiagramController,
     protected lifelinesController: LifelinesController,
     protected layersController: LayersController,
-    protected messagesController: MessagesController
+    protected messagesController: MessagesController,
+    protected fragmentsController: FragmentsController
   ) {
     // Set self to services and controllers
     this.sequenceDiagramController.menuComponent = this;
     this.lifelinesController.menuComponent = this;
     this.layersController.menuComponent = this;
     this.messagesController.menuComponent = this;
+    this.fragmentsController.menuComponent = this;
   }
 
   // Load sequence diagrams
