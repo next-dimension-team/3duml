@@ -135,7 +135,7 @@ export class LifelinesController {
         // Najdi poziciu, na ktoru som pustil lifeline
         while (position == 0) {
           // Lifeline som pustil niekde medzi suradnicami horneho a dolneho ohranicenia pozicie
-          if (event.diagramX < orderTop && event.diagramX > orderBot) {
+          if (event.diagramX < orderTop && event.diagramX >= orderBot) {
             position = count;
             diagramX = orderTop;
             break;

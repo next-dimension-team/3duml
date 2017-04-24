@@ -106,7 +106,14 @@ input {
   width: 120px;
   height: 880px;
   overflow: hidden;
+  
+/*  transition: all 2s; */
 }
+
+/*
+.sequence-diagram .lifeline .moving {
+  }
+*/
 
 .sequence-diagram .lifeline .title {
   width: 88px;
