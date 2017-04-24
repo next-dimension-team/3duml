@@ -22,7 +22,7 @@ export class MessagesController {
   /* Menu Component Instance */
   public menuComponent: MenuComponent = null;
 
-  public lastMessage = false;
+  public isLastMessage = false;
 
   constructor(
     protected dialogService: DialogService,
@@ -91,7 +91,7 @@ export class MessagesController {
     }*/
 
     // Ak mame v layeri na posledom mieste message, nedovolime pridat.
-    if (this.lastMessage) {
+    if (this.isLastMessage) {
       this.dialogService.createConfirmDialog(
         "Error", "Cannot create message, because you have the last message. " +
         "Please move the last message on layer elsewhere or delete it \"").componentInstance.onYes.subscribe(result => { });
@@ -143,7 +143,7 @@ export class MessagesController {
   protected _calculateTimeOnMessageCreate(currentInteraction: M.Interaction, time: number,
     sourceLifelineModel: M.Lifeline, destinationLifelineModel: M.Lifeline) {
 
-    this.lastMessage = false;
+    this.isLastMessage = false;
     let move = false;
     let maxTimeValue = 0;
     let lifelinesInCurrentLayer = currentInteraction.lifelines;
@@ -152,7 +152,7 @@ export class MessagesController {
     for (let lifeline of lifelinesInCurrentLayer) {
       for (let occurrence of lifeline.occurrenceSpecifications) {
         if (occurrence.time >= 20) {
-          this.lastMessage = true;
+          this.isLastMessage = true;
         }
       }
     }
@@ -173,7 +173,7 @@ export class MessagesController {
     // Napad: ak sme nenasli taku messageu ze musime pod nou daco posuvat, tak nastavim maxTimeValue a dame ju navrch
     if (!move) {
       // Mozme vytvorit message, lebo neposkakujeme
-      this.lastMessage = false;
+      this.isLastMessage = false;
       for (let lifeline of lifelinesInCurrentLayer) {
         for (let occurrence of lifeline.occurrenceSpecifications) {
           if (occurrence.time > maxTimeValue) {
@@ -184,7 +184,7 @@ export class MessagesController {
     }
 
     // Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej
-    if (move && !this.lastMessage) {
+    if (move && !this.isLastMessage) {
       for (let lifeline of lifelinesInCurrentLayer) {
         for (let occurrence of lifeline.occurrenceSpecifications) {
           if (occurrence.time >= time) {
@@ -234,17 +234,37 @@ export class MessagesController {
   protected changeSendAndReceiveMessageEvents() {
     let messageMove = false;
     let lifelineModel;
-    let occurrenceSpecification;
+    let firstOccurrenceSpecification = null;
+    let secondOccurrenceSpecification = null;
+    let isSameOccurence = false;
+    let firstLifelineClicked;
 
     this.inputService.onRightClick((event) => {
-
       /*
       // Funguje iba v "edit" móde
       if (!this.menuComponent.editMode) return;
       */
 
       if (event.model.type == 'LifelinePoint') {
+
         if (messageMove) {
+          secondOccurrenceSpecification = null;
+          isSameOccurence = false;
+          lifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.lifelineID);
+          for (let occurrence of lifelineModel.occurrenceSpecifications) {
+            if (occurrence.time == event.model.time) {
+              // Tu mam occurrence z DB na ktorom je message
+              secondOccurrenceSpecification = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+              break;
+            }
+          }
+          // Zisti ci klikame na source a destination na tej istej lifeline na ktorej uz je occurrence pre message
+          if (secondOccurrenceSpecification != null) {
+            if (lifelineModel.id == secondOccurrenceSpecification.covered.id ||
+              lifelineModel.id == firstOccurrenceSpecification.covered.id) {
+              isSameOccurence = true;
+            }
+          }
           /*
            * TODO: Manualna uprava JSON
            * 
@@ -252,38 +272,98 @@ export class MessagesController {
            * Preto vytvárame JSON ručne a posielaem ho na backend aby sme dokázali
            * zmeniť vzťahy modelov.
            */
-          lifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.lifelineID);
-          let headers = new Headers({
-            'Content-Type': 'application/vnd.api+json',
-            'Accept': 'application/vnd.api+json'
-          });
+          // Ak nemame rovnaku occurrencu kliknutu a sme iba horizontalne (cize time je rovnaky)
+          // tak iba zmen jeden occurrence
+          if (!isSameOccurence && (event.model.time == firstOccurrenceSpecification.time)) {
+            let headers = new Headers({
+              'Content-Type': 'application/vnd.api+json',
+              'Accept': 'application/vnd.api+json'
+            });
 
-          let options = new RequestOptions({ headers: headers });
-          let url = "/api/v1/occurrence-specifications/" + occurrenceSpecification.id;
-          occurrenceSpecification.time = event.model.time;
-          occurrenceSpecification.covered = lifelineModel;
-          // Start job
-          this.jobsService.start('changeSendAndReceiveMessageEvents');
-          this.http.patch(url, {
-            "data": {
-              "type": "occurrence-specifications",
-              "id": occurrenceSpecification.id.toString(),
-              "relationships": {
-                "covered": {
-                  "data": {
-                    "type": "lifelines",
-                    "id": lifelineModel.id.toString()
+            let options = new RequestOptions({ headers: headers });
+            let url = "/api/v1/occurrence-specifications/" + firstOccurrenceSpecification.id;
+            firstOccurrenceSpecification.time = event.model.time;
+            firstOccurrenceSpecification.covered = lifelineModel;
+            // Start job
+            this.jobsService.start('changeSendAndReceiveMessageEvents');
+            this.http.patch(url, {
+              "data": {
+                "type": "occurrence-specifications",
+                "id": firstOccurrenceSpecification.id.toString(),
+                "relationships": {
+                  "covered": {
+                    "data": {
+                      "type": "lifelines",
+                      "id": lifelineModel.id.toString()
+                    }
                   }
                 }
               }
-            }
-          }, options).subscribe(() => {
-            this.sequenceDiagramComponent.refresh(() => {
-              // Finish job
-              this.jobsService.finish('changeSendAndReceiveMessageEvents');
+            }, options).subscribe(() => {
+              this.sequenceDiagramComponent.refresh(() => {
+                // Finish job
+                this.jobsService.finish('changeSendAndReceiveMessageEvents');
+              });
             });
-          });
 
+            // Ak klikame na occurrence na tej lifeline na ktorej uz je bud source alebo destination danej message
+            // a samozrejme source sa nerovna destination a cas musi byt iba horizontalny
+            // tak vtedy swapni source a destination
+          } else if (isSameOccurence &&
+            firstOccurrenceSpecification.id != secondOccurrenceSpecification.id &&
+            (event.model.time == firstOccurrenceSpecification.time)) {
+            let headers = new Headers({
+              'Content-Type': 'application/vnd.api+json',
+              'Accept': 'application/vnd.api+json'
+            });
+
+            let options = new RequestOptions({ headers: headers });
+            let urlFirst = "/api/v1/occurrence-specifications/" + firstOccurrenceSpecification.id;
+            let urlSecond = "/api/v1/occurrence-specifications/" + secondOccurrenceSpecification.id;
+            secondOccurrenceSpecification.time = event.model.time;
+            secondOccurrenceSpecification.covered = firstLifelineClicked;
+            firstOccurrenceSpecification.time = event.model.time;
+            firstOccurrenceSpecification.covered = lifelineModel;
+
+            //Zmenim source na destination a destination na source
+            // Start job
+            this.jobsService.start('changeSendAndReceiveMessageEvents');
+            this.http.patch(urlSecond, {
+              "data": {
+                "type": "occurrence-specifications",
+                "id": secondOccurrenceSpecification.id.toString(),
+                "relationships": {
+                  "covered": {
+                    "data": {
+                      "type": "lifelines",
+                      "id": firstLifelineClicked.id.toString()
+                    }
+                  }
+                }
+              }
+            }, options).subscribe(() => {
+              this.http.patch(urlFirst, {
+                "data": {
+                  "type": "occurrence-specifications",
+                  "id": firstOccurrenceSpecification.id.toString(),
+                  "relationships": {
+                    "covered": {
+                      "data": {
+                        "type": "lifelines",
+                        "id": lifelineModel.id.toString()
+                      }
+                    }
+                  }
+                }
+              }, options).subscribe(() => {
+                this.sequenceDiagramComponent.refresh(() => {
+                  // Finish job
+                  this.jobsService.finish('changeSendAndReceiveMessageEvents');
+                });
+              });
+            });
+            isSameOccurence = false;
+          }
           messageMove = false;
         }
         else {
@@ -293,7 +373,8 @@ export class MessagesController {
             if (occurrence.time == event.model.time) {
               messageMove = true;
               // Tu mam occurrence z DB na ktorom je message
-              occurrenceSpecification = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+              firstOccurrenceSpecification = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
+              firstLifelineClicked = firstOccurrenceSpecification.covered;
               break;
             }
           }
@@ -306,6 +387,8 @@ export class MessagesController {
    * Vertical Message Move
    */
   public verticalMessageMove() {
+
+    this.isLastMessage = false;
     let draggingMessage: MessageComponent = null;
 
     this.inputService.onMouseDown((event) => {
@@ -393,7 +476,7 @@ export class MessagesController {
     sourceOccurence: M.OccurrenceSpecification, destinationOccurence: M.OccurrenceSpecification,
     originalSendEventTime: any) {
 
-    this.lastMessage = false;
+    this.isLastMessage = false;
     let move = false;
     let maxTimeValue = 0;
     let lifelinesInCurrentLayer = currentInteraction.lifelines;
@@ -409,14 +492,14 @@ export class MessagesController {
         // Najdeme ci mame poslednu message v layeri
         if (occurrence.time >= 20 &&
           ((sourceOccurence.id != occurrence.id) && (destinationOccurence.id != occurrence.id))) {
-          this.lastMessage = true;
+          this.isLastMessage = true;
         }
       }
     }
 
     // Ak mame poslednu message a treba poskakovat, tak v tom pripade sa budu iba dve message vymienat vzajomne
     // a nie poskakovat vsetky :)
-    if (this.lastMessage && move) {
+    if (this.isLastMessage && move) {
       for (let lifeline of lifelinesInCurrentLayer) {
         for (let occurrence of lifeline.occurrenceSpecifications) {
           if (occurrence.time == time &&
@@ -437,7 +520,7 @@ export class MessagesController {
     }
 
     // Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej, ak nemame poslednu message
-    if (move && !this.lastMessage) {
+    if (move && !this.isLastMessage) {
       for (let lifeline of lifelinesInCurrentLayer) {
         for (let occurrence of lifeline.occurrenceSpecifications) {
           if (occurrence.time >= time &&
