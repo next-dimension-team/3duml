@@ -6,6 +6,7 @@
 
   <div
     class="title"
+    data-help="lifelineHeader"
     [selectable]="{type: 'LifelineTitle', id: lifelineModel.id, component: this}">
     <span>{{lifelineModel.name}}</span>
   </div>
@@ -25,6 +26,7 @@
   <div class="points">
     <div
       *ngFor="let point of points"
+      data-help="point"
       class="point"
       [class.hidden]="point.hidden"
       [selectable]="{type: 'LifelinePoint', lifelineID: lifelineModel.id, time: point.time}">
