@@ -84,7 +84,8 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
       rightmost_lifeline: null,
 
       padding: 0,
-      envelope: null,
+      envelope: null, 
+      nativeComponent: null
     };
 
     // Execute on children
@@ -100,6 +101,7 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
     });
 
     interactionFragmentModel.componentObject = self;
+    self.nativeComponent = this;
 
     let leftmost_lifeline: M.Lifeline = null;
     let rightmost_lifeline: M.Lifeline = null;

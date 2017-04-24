@@ -4,7 +4,9 @@
   [selectable]="{type: 'InteractionOperand', id: fragment.model.id}"
   [style.height]="fragment.height + 'px'"
 >
-  <div class="constraint">{{fragment.model.constraint}}</div>
+  <div
+    [selectable]="{type: 'InteractionConstraint', component: fragment}"
+    class="constraint">{{fragment.model.constraint}}</div>
 
   <ng-content></ng-content>
 

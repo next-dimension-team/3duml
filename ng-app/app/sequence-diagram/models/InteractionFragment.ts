@@ -47,14 +47,14 @@ export class InteractionFragment extends JsonApiModel {
   }
 
   get children(): InteractionFragment[] {
-    if (this._children) {
-      return this._children;
+    if (!this._children) {
+      this._children = _.map(
+        this._childrenKeys,
+        (key: string) => this.__datastore.peekRecord(InteractionFragment, key)
+      );
     }
 
-    return _.map(
-      this._childrenKeys,
-      (key: string) => this.__datastore.peekRecord(InteractionFragment, key)
-    );
+    return this._children;
   }
 
   /*

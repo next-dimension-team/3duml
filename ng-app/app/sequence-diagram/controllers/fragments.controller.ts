@@ -12,6 +12,7 @@ import { SequenceDiagramComponent } from '../components/sequence-diagram.compone
 import { SequenceDiagramController } from './sequence-diagram.controller';
 import { ConfigService } from '../../config';
 import { Headers, Http, RequestOptions } from '@angular/http';
+import { LayerComponent } from '../components/layer.component';
 
 @Injectable()
 export class FragmentsController {
@@ -39,152 +40,6 @@ export class FragmentsController {
     this.moveFragment();
   }
 
-  /*protected draggedPulley: FragmentPulleyComponent = null;
-  protected draggedPulleyOperand: InteractionOperand = null;
-  protected draggedPulleyOtherOperand: InteractionOperand = null;
-  protected draggedPulleyCombinedFrag: CombinedFragment = null;
-  protected topDelta = 0;
-  protected bottomDelta = 0;
-
-  public deformFragment() {
-
-    // deform fragment init - set pulley being dragged and fragment being deformed
-    this.inputService.onMouseDown((event) => {
-
-      if (event.model.type == 'FragmentPulley') {
-
-        this.draggedPulley = event.model.component;
-        this.draggedPulleyOperand = this.draggedPulley.fragment;
-        this.draggedPulleyCombinedFrag = this.draggedPulleyOperand.interactionFragmentModel.parent.fragmentable;
-
-        this.topDelta = 0;
-        this.bottomDelta = 0;
-        
-        // find out which child is this fragment
-        let index = this.draggedPulleyCombinedFrag.fragment.children.indexOf(this.draggedPulleyOperand.interactionFragmentModel);
-
-        switch (this.draggedPulley.top) {
-          case 0: // pulling the top pulley
-          if (index == 0) { // if it is the first, there is no fragment in the way of pull
-            this.draggedPulleyOtherOperand = null;
-          } else {
-            this.draggedPulleyOtherOperand = this.draggedPulleyCombinedFrag.fragment.children[index - 1].fragmentable.fragment.componentObject;
-          }
-          break;
-          case 100: // pulling the bottom pulley
-          if (index == this.draggedPulleyCombinedFrag.fragment.children.length - 1) { // if it is the last, there is no fragment in the way of pull
-            this.draggedPulleyOtherOperand = null;
-          } else {
-            this.draggedPulleyOtherOperand = this.draggedPulleyCombinedFrag.fragment.children[index + 1].fragmentable.componentObject;
-          }
-          break;
-          case 50: // pulling a side pulley
-          this.draggedPulleyOtherOperand = null;
-          break;
-        }
-      }
-        
-    });
-
-    // deform fragment repeated action - update fragment position
-    this.inputService.onMouseMove((event) => {
-
-      if (this.draggedPulley && this.menuComponent.editMode) {
-        if (this.draggedPulley.isTop()) {
-          this.draggedPulleyOperand.height = this.draggedPulleyOperand.height - event.movementY/4;
-          this.topDelta += event.movementY/4;
-
-          // shrink the operand before if it exists, otherwise expand the combined fragment
-          if (this.draggedPulleyOtherOperand) {
-            this.draggedPulleyOtherOperand.height = this.draggedPulleyOtherOperand.height + event.movementY/4;
-          } else {
-            this.draggedPulleyCombinedFrag.fragment.componentObject.top = this.draggedPulleyCombinedFrag.fragment.componentObject.top + event.movementY/4;
-          }
-        }
-
-        if (this.draggedPulley.isBottom()) {
-          this.draggedPulleyOperand.height = this.draggedPulleyOperand.height + event.movementY/4;
-          this.bottomDelta += event.movementY/4;
-
-          
-          if (this.draggedPulleyOtherOperand) {
-            this.draggedPulleyOtherOperand.height = this.draggedPulleyOtherOperand.height - event.movementY/4;
-          }
-        }
-      }      
-
-    });
-
-    // deform fragment finish - update relationships and save
-    this.inputService.onMouseUp((event) => {
-
-      if (this.draggedPulley && this.menuComponent.editMode) {
-
-        
-        let component = this.draggedPulleyCombinedFrag.fragment.componentObject;
-        let top = component.top;
-
-        // find out absolute coordinates of fragment to compare with messages by moving up the component tree
-        while (component.interactionFragmentModel.parent && component.interactionFragmentModel.parent.parent) {
-
-          component = component.interactionFragmentModel.parent.componentObject;  
-
-          if (component.type == 'CombinedFragment') {
-            top += component.top;
-          }
-
-          if (component.type == 'InteractionOperand') {
-            let fragments_before = component.interactionFragmentModel.parent.children.indexOf(component.interactionFragmentModel);
-            for (let i = 0; i < fragments_before; i++) {
-              top += component.interactionFragmentModel.parent.children[i].componentObject.height;
-            }
-          }
-
-          
-        }
-
-        // iterate messages to check for ownership changes
-        for (let message of component.model.recursiveMessages) {
-
-          // if the message is now in the fragment
-          if (message.componentObject.top >= top && message.componentObject.top <= top + this.draggedPulleyOperand.height) {
-
-            // and it was not there before
-            if (!(message.componentObject.top >= top - this.topDelta && message.componentObject.top <= top + this.draggedPulleyOperand.height + this.bottomDelta)) {
-
-              // save the fragment change
-              message.interaction = this.draggedPulleyOperand.interactionFragmentModel.children[0].fragmentable;
-              console.log(message.hasDirtyAttributes && "Yes" || "No");
-              message.save().subscribe();
-
-              // TODO save message
-            }
-          }
-
-           // if the message is now not in the fragment
-          if (!(message.componentObject.top >= top && message.componentObject.top <= top + this.draggedPulleyOperand.height)) {
-
-            // and it was there before
-            if (message.componentObject.top >= top - this.topDelta && message.componentObject.top <= top + this.draggedPulleyOperand.height + this.bottomDelta) {
-              
-            }
-          }
-        }
-        //this.refresh();
-
-      }
-
-      this.draggedPulley = null;
-      this.draggedPulleyCombinedFrag = null;
-      this.draggedPulleyOperand = null;
-      this.draggedPulleyOtherOperand = null;
-
-      this.topDelta = 0;
-      this.bottomDelta = 0;
-
-    });
-  }*/
-
   protected draggedPulley: FragmentPulleyComponent = null;
   protected draggedOperand = null;
   protected affectedPreviousOperand = null;
@@ -197,6 +52,7 @@ export class FragmentsController {
   protected draggedOpIndex = -1;
   protected prevOpIndex = -1;
   protected nextOpIndex = -1;
+  protected VYSKA_ZUBKU = 40;
 
   public deformFragment() {
     this.dragInitialization();
@@ -205,7 +61,9 @@ export class FragmentsController {
   }
 
   public moveFragment() {
-
+    this.moveInitialization();
+    this.moveOngoing();
+    this.moveFinish();
   }
 
   protected dragInitialization() {
@@ -817,6 +675,149 @@ export class FragmentsController {
         this.draggedOpIndex = -1;
         this.prevOpIndex = -1;
         this.nextOpIndex = -1;
+
+      }
+    });
+  }
+
+  protected movedOperand = null;
+  protected movedOperandIndex = -1;
+  protected parentCombinedFragment = null;
+  protected moveDelta = 0;
+
+  protected moveInitialization() {
+
+    this.inputService.onMouseDown((event) => {
+      if (event.model.type == "InteractionConstraint" && this.menuComponent.editMode) {
+
+        this.movedOperand = event.model.component;
+        this.parentCombinedFragment = this.movedOperand.interactionFragmentModel.parent.componentObject;
+        this.movedOperandIndex = this.parentCombinedFragment.interactionFragmentModel.children.indexOf(this.movedOperand.interactionFragmentModel);
+        this.nextOpIndex = this.movedOperandIndex + 1;
+        this.prevOpIndex = this.movedOperandIndex - 1;
+        this.moveDelta = 0;
+
+        console.log(this.parentCombinedFragment.interactionFragmentModel.children);
+
+      }
+    });
+
+  }
+
+  protected moveOngoing() {
+    this.inputService.onMouseMove((event) => {
+      if (this.movedOperand && this.menuComponent.editMode) {
+
+        let delta = event.movementY/2;
+        this.moveDelta += delta;
+
+        let deltaEnvelope = (this.movedOperand.envelope.min + this.movedOperand.envelope.max)/2 + this.moveDelta/this.VYSKA_ZUBKU;
+
+        if (this.moveDelta > 0) {
+          // check fragment move downward
+          while (this.parentCombinedFragment.interactionFragmentModel.children.length > this.nextOpIndex
+                && this.parentCombinedFragment.interactionFragmentModel.children[this.nextOpIndex].componentObject.envelope.max < deltaEnvelope) {
+
+            let next_operand = this.parentCombinedFragment.interactionFragmentModel.children[this.nextOpIndex].componentObject;
+
+            this.moveDelta -= (next_operand.envelope.max - next_operand.envelope.min) * this.VYSKA_ZUBKU;
+
+            next_operand.envelope.min -= this.movedOperand.envelope.max - this.movedOperand.envelope.min;
+            next_operand.envelope.max -= this.movedOperand.envelope.max - this.movedOperand.envelope.min;
+
+            for (let message of next_operand.interactionFragmentModel.recursiveMessages) {
+              message.sendEvent.time -= this.movedOperand.envelope.max - this.movedOperand.envelope.min;
+              message.receiveEvent.time -= this.movedOperand.envelope.max - this.movedOperand.envelope.min;
+            }
+
+            this.movedOperand.envelope.min += next_operand.envelope.max - next_operand.envelope.min;
+            this.movedOperand.envelope.max += next_operand.envelope.max - next_operand.envelope.min;
+
+            for (let message of this.movedOperand.interactionFragmentModel.recursiveMessages) {
+              message.sendEvent.time += next_operand.envelope.max - next_operand.envelope.min;
+              message.receiveEvent.time += next_operand.envelope.max - next_operand.envelope.min;
+            }
+
+            this.parentCombinedFragment.interactionFragmentModel.children[this.movedOperandIndex] = next_operand.interactionFragmentModel;
+            this.parentCombinedFragment.interactionFragmentModel.children[this.nextOpIndex] = this.movedOperand.interactionFragmentModel;
+
+            this.nextOpIndex++;
+            this.movedOperandIndex++;
+            this.prevOpIndex++;
+
+            console.log(deltaEnvelope);
+            deltaEnvelope = (this.movedOperand.envelope.min + this.movedOperand.envelope.max)/2 + this.moveDelta/this.VYSKA_ZUBKU;
+            console.log(deltaEnvelope);
+
+            let current_fragment = this.movedOperand.interactionFragmentModel;
+
+            while (!(current_fragment.componentObject.nativeComponent instanceof LayerComponent)) {
+              current_fragment = current_fragment.parent;
+            }
+
+            current_fragment.componentObject.nativeComponent.ngOnChanges();
+
+          }
+        } else {
+          // check fragment move upward
+          while (0 <= this.prevOpIndex
+                && this.parentCombinedFragment.interactionFragmentModel.children[this.prevOpIndex].componentObject.envelope.min > deltaEnvelope) {
+
+            let prev_operand = this.parentCombinedFragment.interactionFragmentModel.children[this.prevOpIndex].componentObject;
+
+            this.moveDelta += (prev_operand.envelope.max - prev_operand.envelope.min) * this.VYSKA_ZUBKU;
+
+            prev_operand.envelope.min += this.movedOperand.envelope.max - this.movedOperand.envelope.min;
+            prev_operand.envelope.max += this.movedOperand.envelope.max - this.movedOperand.envelope.min;
+
+            for (let message of prev_operand.interactionFragmentModel.recursiveMessages) {
+              message.sendEvent.time += this.movedOperand.envelope.max - this.movedOperand.envelope.min;
+              message.receiveEvent.time += this.movedOperand.envelope.max - this.movedOperand.envelope.min;
+            }
+
+            this.movedOperand.envelope.min -= prev_operand.envelope.max - prev_operand.envelope.min;
+            this.movedOperand.envelope.max -= prev_operand.envelope.max - prev_operand.envelope.min;
+
+            for (let message of this.movedOperand.interactionFragmentModel.recursiveMessages) {
+              message.sendEvent.time -= prev_operand.envelope.max - prev_operand.envelope.min;
+              message.receiveEvent.time -= prev_operand.envelope.max - prev_operand.envelope.min;
+            }
+
+            this.parentCombinedFragment.interactionFragmentModel.children[this.movedOperandIndex] = prev_operand.interactionFragmentModel;
+            this.parentCombinedFragment.interactionFragmentModel.children[this.prevOpIndex] = this.movedOperand.interactionFragmentModel;
+
+            this.prevOpIndex--;
+            this.movedOperandIndex--;
+            this.nextOpIndex--;
+
+           console.log(deltaEnvelope);
+            deltaEnvelope = (this.movedOperand.envelope.min + this.movedOperand.envelope.max)/2 + this.moveDelta/this.VYSKA_ZUBKU;
+            console.log(deltaEnvelope);
+
+            let current_fragment = this.movedOperand.interactionFragmentModel;
+
+            while (!(current_fragment.componentObject.nativeComponent instanceof LayerComponent)) {
+              current_fragment = current_fragment.parent;
+            }
+
+            current_fragment.componentObject.nativeComponent.ngOnChanges();
+
+          }
+        }    
+      }
+    });
+  }
+
+  protected moveFinish() {
+    this.inputService.onMouseUp((event) => {
+      if (this.movedOperand && this.menuComponent.editMode) {
+
+        this.movedOperand = null;
+        this.movedOperandIndex = -1;
+        this.parentCombinedFragment = null;
+        this.nextOpIndex = -1;
+        this.prevOpIndex = -1;
+        this.moveDelta = 0;
 
       }
     });
