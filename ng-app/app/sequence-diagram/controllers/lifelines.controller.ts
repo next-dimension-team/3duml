@@ -125,6 +125,12 @@ export class LifelinesController {
 
         let interaction = draggingLifelineModel.interaction;
         let lifelinesInInteraction = interaction.lifelines;
+        if (lifelinesInInteraction.length == 1) {
+          draggingLifelineComponent.left = 0;
+          // Prestaneme hybat s lifeline
+          draggingLifelineComponent = null;`
+          return;
+        }
         let lifelineOrder = draggingLifelineModel.order;
 
         // Pozicia 1 je medzi suradnicami 0-125px
