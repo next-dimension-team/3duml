@@ -128,7 +128,7 @@ export class LifelinesController {
         if (lifelinesInInteraction.length == 1) {
           draggingLifelineComponent.left = 0;
           // Prestaneme hybat s lifeline
-          draggingLifelineComponent = null;`
+          draggingLifelineComponent = null;
           return;
         }
         let lifelineOrder = draggingLifelineModel.order;
