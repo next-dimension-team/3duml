@@ -102,6 +102,14 @@
                 </button>
             </md-list-item>
 
+            <!-- Switch between fragment and message creation -->
+            <md-list-item *ngIf="editingLayer">
+                <md-slide-toggle (click)="toggleAddMessageState()" [color]="'primary'" class="list-item-toggle">
+                    Add fragments
+                </md-slide-toggle>
+            </md-list-item>
+            
+
              <!-- Delete Operation -->
             <h3 md-subheader *ngIf="editingLayer">DELETE</h3>
 

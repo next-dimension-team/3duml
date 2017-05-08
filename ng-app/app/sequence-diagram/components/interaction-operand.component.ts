@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ElementRef } from '@angular/core';
 import * as M from '../models';
 
 @Component({
@@ -9,5 +9,9 @@ export class InteractionOperandComponent {
 
   @Input()
   public fragment: any;
+
+  constructor(public elementRef: ElementRef) {
+
+  }
 
 }

@@ -13,6 +13,7 @@ import { SequenceDiagramController } from './sequence-diagram.controller';
 import { ConfigService } from '../../config';
 import { Headers, Http, RequestOptions } from '@angular/http';
 import { LayerComponent } from '../components/layer.component';
+import * as M from '../../sequence-diagram/models';
 
 @Injectable()
 export class FragmentsController {
@@ -38,6 +39,18 @@ export class FragmentsController {
     // Initialize operations
     this.deformFragment();
     this.moveFragment();
+    this.createFragment();
+    this.layerize();
+    this.addOperand();
+    this.editFragmentText();
+  }
+
+  public registerMenuListeners() {
+    this.menuComponent.onModeChange.subscribe((editMode) => {
+      if (editMode) {
+        this.sequenceDiagramComponent.refresh();
+      }
+    });
   }
 
   protected draggedPulley: FragmentPulleyComponent = null;
@@ -54,22 +67,30 @@ export class FragmentsController {
   protected nextOpIndex = -1;
   protected VYSKA_ZUBKU = 40;
 
-  public deformFragment() {
+  protected deformFragment() {
     this.dragInitialization();
     this.dragOngoing();
     this.dragFinish();
   }
 
-  public moveFragment() {
+  protected moveFragment() {
     this.moveInitialization();
     this.moveOngoing();
     this.moveFinish();
   }
 
+  protected addOperand() {
+    this.addOperandOnFragmentPulley();
+  }
+
+  protected createFragment() {
+    this.createFragmentOnLifelinePoint();
+  }
+
   protected dragInitialization() {
     this.inputService.onMouseDown((event) => {
 
-      if (event.model.type == 'FragmentPulley' && this.menuComponent.editMode) {
+      if (event.model.type == 'FragmentPulley' && this.menuComponent.editMode && this.menuComponent.addingMessages) {
         // initialize dragged variables
         this.draggedPulley = event.model.component;
         this.draggedOperand = this.draggedPulley.fragment;
@@ -143,7 +164,7 @@ export class FragmentsController {
   protected dragOngoing() {
     this.inputService.onMouseMove((event) => {
 
-      if (this.draggedPulley && this.menuComponent.editMode) {
+      if (this.draggedPulley && this.menuComponent.editMode && this.menuComponent.addingMessages) {
         // get the delta of fragment pulling
         let deltaY = event.movementY/2;
 
@@ -397,8 +418,8 @@ export class FragmentsController {
               height_delta_sum += current_operand.height - current_operand.original_height;
 
               let envelopeMin = current_operand.envelope.min;
-              let envelopeMax = current_operand.envelope.max - (current_operand.envelope.max - current_operand.envelope.min)
-              * (current_operand.height / current_operand.original_height);
+              let envelopeMax = current_operand.envelope.min + ((current_operand.envelope.max - current_operand.envelope.min)
+              * (current_operand.height / current_operand.original_height));
 
               for (let message of current_operand.interactionFragmentModel.recursiveMessagesOneLevel) {
                 if (message.sendEvent.time < envelopeMin || message.sendEvent.time > envelopeMax && editedMessages.indexOf(message) === -1) {
@@ -432,7 +453,9 @@ export class FragmentsController {
               let envelope_max = this.affectedCombinedFragment.envelope.min;
 
               for (let message of this.affectedCombinedFragment.interactionFragmentModel.parent.recursiveMessagesOneLevel) {
-                if (message.sendEvent.time > envelope_min && message.sendEvent.time < envelope_max && editedMessages.indexOf(message) === -1) {
+                if (((message.sendEvent.covered.order >= this.draggedOperand.leftmost_lifeline.order && message.sendEvent.covered.order <= this.draggedOperand.rightmost_lifeline.order)
+                  || (message.receiveEvent.covered.order >= this.draggedOperand.leftmost_lifeline.order && message.receiveEvent.covered.order <= this.draggedOperand.rightmost_lifeline.order))
+                  && message.sendEvent.time > envelope_min && message.sendEvent.time < envelope_max && editedMessages.indexOf(message) === -1) {
                   message.interaction = targetInteraction;
                   message.sendEvent.time++;
                   message.receiveEvent.time++;
@@ -461,7 +484,7 @@ export class FragmentsController {
             let envelopeMin;
             let envelopeMax;
 
-            for (let i = this.draggedOpIndex + 1; i >= this.affectedCombinedFragment.interactionFragmentModel.children.size - 1; i++) {
+            for (let i = this.draggedOpIndex + 1; i <= this.affectedCombinedFragment.interactionFragmentModel.children.length - 1; i++) {
               let current_operand = this.affectedCombinedFragment.interactionFragmentModel.children[i].componentObject;
 
               if (current_operand.height >= current_operand.original_height) {
@@ -473,6 +496,7 @@ export class FragmentsController {
               let envelopeMin = current_operand.envelope.max - (current_operand.envelope.max - current_operand.envelope.min)
               * (current_operand.height / current_operand.original_height);
               let envelopeMax = current_operand.envelope.max;
+
 
               for (let message of current_operand.interactionFragmentModel.recursiveMessagesOneLevel) {
                 if (message.sendEvent.time < envelopeMin || message.sendEvent.time > envelopeMax && editedMessages.indexOf(message) === -1) {
@@ -503,10 +527,12 @@ export class FragmentsController {
 
               let envelope_min = this.affectedCombinedFragment.envelope.max
               let envelope_max = this.draggedOperand.envelope.min + (this.draggedOperand.envelope.max - this.draggedOperand.envelope.min) * 
-              (this.draggedOperand.height / this.draggedOperand.original_height);;
+              (this.draggedOperand.height / this.draggedOperand.original_height);
 
               for (let message of this.affectedCombinedFragment.interactionFragmentModel.parent.recursiveMessagesOneLevel) {
-                if (message.sendEvent.time > envelope_min && message.sendEvent.time < envelope_max && editedMessages.indexOf(message) === -1) {
+                if (((message.sendEvent.covered.order >= this.draggedOperand.leftmost_lifeline.order && message.sendEvent.covered.order <= this.draggedOperand.rightmost_lifeline.order)
+                  || (message.receiveEvent.covered.order >= this.draggedOperand.leftmost_lifeline.order && message.receiveEvent.covered.order <= this.draggedOperand.rightmost_lifeline.order))
+                  && message.sendEvent.time > envelope_min && message.sendEvent.time < envelope_max && editedMessages.indexOf(message) === -1) {
                   message.interaction = targetInteraction;
                   message.sendEvent.time--;
                   message.receiveEvent.time--;
@@ -531,8 +557,6 @@ export class FragmentsController {
           }
 
         }
-
-        // delete 0 height fragments
 
         // Start job
         this.jobsService.start('deformFragment.fragment.' + this.draggedOperand.id);
@@ -641,6 +665,11 @@ export class FragmentsController {
 
         }
 
+        let deletes = this.deleteEmptyFragments(this.affectedCombinedFragment);
+        saves_pending += deletes.length;
+
+        observables = observables.concat(deletes);
+
         if (editedMessages.length == 0 && editedFragments.length == 0 && occurences.length == 0) {
           // Finish job
           this.sequenceDiagramComponent.refresh(() => {
@@ -684,6 +713,7 @@ export class FragmentsController {
   protected movedOperandIndex = -1;
   protected parentCombinedFragment = null;
   protected moveDelta = 0;
+  protected originalIndex = -1;
 
   protected moveInitialization() {
 
@@ -696,8 +726,7 @@ export class FragmentsController {
         this.nextOpIndex = this.movedOperandIndex + 1;
         this.prevOpIndex = this.movedOperandIndex - 1;
         this.moveDelta = 0;
-
-        console.log(this.parentCombinedFragment.interactionFragmentModel.children);
+        this.originalIndex = this.movedOperandIndex;
 
       }
     });
@@ -790,7 +819,7 @@ export class FragmentsController {
             this.movedOperandIndex--;
             this.nextOpIndex--;
 
-           console.log(deltaEnvelope);
+            console.log(deltaEnvelope);
             deltaEnvelope = (this.movedOperand.envelope.min + this.movedOperand.envelope.max)/2 + this.moveDelta/this.VYSKA_ZUBKU;
             console.log(deltaEnvelope);
 
@@ -812,14 +841,1033 @@ export class FragmentsController {
     this.inputService.onMouseUp((event) => {
       if (this.movedOperand && this.menuComponent.editMode) {
 
+        /*let moved_fragment_id = this.movedOperand.interactionFragmentModel.id;
+
+        //this.jobsService.start('moveFragment.fragment.' + this.movedOperand.interactionFragmentModel.id);
+
+        let fragmentCount = Math.abs(this.movedOperandIndex - this.originalIndex) + 1;
+
+        for (let i = Math.min(this.movedOperandIndex,this.originalIndex); i <= Math.max(this.movedOperandIndex,this.originalIndex); i++) {
+
+          let current_frag = this.parentCombinedFragment.interactionFragmentModel.children[i];
+          let occurrence_count = current_frag.recursiveMessages * 2;
+
+          let saveListen = () => {
+            occurrence_count--;
+
+            if (occurrence_count == 0) {
+              current_frag.save().subscribe(()=>{
+                //fragmentCount--;
+
+                //if (fragmentCount == 0) {
+                //  this.jobsService.finish('moveFragment.fragment.' + moved_fragment_id);
+                //}
+              });
+            }
+          };
+
+          for (let message of this.parentCombinedFragment.interactionFragmentModel.children[i].recursiveMessages) {
+
+            for (let occurrence of [message.sendEvent, message.receiveEvent]) {
+
+              let headers = new Headers({
+                'Content-Type': 'application/vnd.api+json',
+                'Accept': 'application/vnd.api+json'
+              });
+
+              let options = new RequestOptions({ headers: headers });
+              let url = "/api/v1/occurrence-specifications/" + occurrence.id;
+
+              this.http.patch(url, {
+                "data": {
+                  "type": "occurrence-specifications",
+                  "id": occurrence.id.toString(),
+                  "attributes": {
+                    "time": occurrence.time.toString(),
+                  }
+                }
+              }, options).subscribe(saveListen);
+
+            }
+          }
+        }
+
+        /*if (fragmentCount == 0) {
+            this.jobsService.finish('moveFragment.fragment.' + moved_fragment_id);
+        }*/
+
         this.movedOperand = null;
         this.movedOperandIndex = -1;
         this.parentCombinedFragment = null;
         this.nextOpIndex = -1;
         this.prevOpIndex = -1;
         this.moveDelta = 0;
+        this.originalIndex = -1;
 
       }
     });
   }
+
+  protected clickedLifelineEvent = null;
+  
+
+  protected createFragmentOnLifelinePoint() {
+
+    this.inputService.onLeftClick((event) => {
+      if (event.model.type == 'LifelinePoint' && !this.menuComponent.addingMessages) {
+
+        if (!this.clickedLifelineEvent) {
+          this.clickedLifelineEvent = event;
+        } else {
+          let lifelines = [
+            this.datastore.peekRecord(M.Lifeline, this.clickedLifelineEvent.model.lifelineID),
+            this.datastore.peekRecord(M.Lifeline, event.model.lifelineID),
+          ].sort((a,b) => a.order - b.order);
+
+          let times = [
+            this.clickedLifelineEvent.model.time,
+            event.model.time
+          ].sort((a,b) => a - b);
+
+          let layer = lifelines[0].interaction;
+
+          let movedMessages = [];
+          let movedFragments = [];
+
+          let redo = true;
+
+          // repeat the collision check each time the collision box changes
+          while (redo) {
+
+            redo = false;
+            movedMessages = [];
+            movedFragments = [];
+
+            for (let message of layer.fragment.recursiveMessagesOneLevel) {
+
+              // check vertical belonging to collision box
+              if (message.sendEvent.time > times[0] && message.sendEvent.time < times[1] && message.receiveEvent.time > times[0] && message.receiveEvent.time < times[1]) {
+
+                // check horizontal belonging to collision box
+                let message_lifelines = [message.sendEvent.covered, message.receiveEvent.covered].sort((a,b) => a.order - b.order);
+
+                if ((message_lifelines[0].order >= lifelines[0].order && message_lifelines[0].order <= lifelines[1].order)
+                || (message_lifelines[1].order >= lifelines[0].order && message_lifelines[1].order <= lifelines[1].order)) {
+
+                  movedMessages.push(message);
+
+                  if (message_lifelines[0].order < lifelines[0].order) {
+                    lifelines[0] = message_lifelines[0];
+                    redo = true;
+                  }
+
+                  if (message_lifelines[1].order > lifelines[1].order) {
+                    lifelines[1] = message_lifelines[1];
+                    redo = true;
+                  }
+
+                  if (redo) {
+                    break;
+                  }
+                }
+              }
+            }
+            
+            // if a collision box size change was detected, redo collision check
+            if (redo) {
+              continue;
+            }
+
+            for (let fragment of layer.fragment.children) {
+
+              let fragment_lifelines = [fragment.componentObject.leftmost_lifeline, fragment.componentObject.rightmost_lifeline];
+              let fragment_envelope = [fragment.componentObject.envelope.min, fragment.componentObject.envelope.max];
+
+              // check vertical belonging to collision box
+              if ((fragment_envelope[0] >= times[0] && fragment_envelope[0] <= times[1])
+              || (fragment_envelope[1] >= times[0] && fragment_envelope[1] <= times[1])) {
+
+                if ((fragment_lifelines[0].order >= lifelines[0].order && fragment_lifelines[0].order <= lifelines[1].order)
+                || (fragment_lifelines[1].order >= lifelines[0].order && fragment_lifelines[1].order <= lifelines[1].order)) {
+
+                  movedFragments.push(fragment);
+
+                  if (fragment_lifelines[0].order < lifelines[0].order) {
+                    lifelines[0] = fragment_lifelines[0];
+                    redo = true;
+                  }
+
+                  if (fragment_lifelines[1].order > lifelines[1].order) {
+                    lifelines[1] = fragment_lifelines[1];
+                    redo = true;
+                  }
+
+                  if (fragment_envelope[0] < times[0]) {
+                    times[0] = fragment_envelope[0];
+                    redo = true;
+                  }
+
+                  if (fragment_envelope[1] > times[1]) {
+                    times[1] = fragment_envelope[1];
+                    redo = true;
+                  }
+
+                  if (redo) {
+                    break;
+                  }
+                }
+              }
+            }
+          }
+
+          if (movedFragments.length == 0 && movedMessages.length == 0) {
+            return;
+          }
+
+          let shiftedMessages = [];
+
+          for (let message of layer.fragment.recursiveMessages) {
+            if (message.sendEvent.time > times[1]) {
+              message.sendEvent.time += 2;
+              message.receiveEvent.time += 2;
+              shiftedMessages.push(message);
+            }
+          }
+
+          for (let message of movedMessages) {
+            message.sendEvent.time++;
+            message.receiveEvent.time++;
+            shiftedMessages.push(message);
+          }
+
+          for (let fragment of movedFragments) {
+            for (let message of fragment.recursiveMessages) {
+              message.sendEvent.time++;
+              message.receiveEvent.time++;
+              shiftedMessages.push(message);
+            }
+          }
+          
+          let now = Date.now();
+
+          // combined fragment
+          let new_combined = this.datastore.createRecord(M.CombinedFragment,{
+            name: "combined_fragment",
+            operator: "opt",
+            created_at: now,
+            updated_at: now,
+          });
+          let nc_ifrag = this.datastore.createRecord(M.InteractionFragment,{
+            name: "interaction_fragment",
+            created_at: now,
+            updated_at: now,
+          });
+
+          // interaction operand
+          let new_operand = this.datastore.createRecord(M.InteractionOperand,{
+            name: "interaction_operand",
+            constraint: "<<None>>",
+            created_at: now,
+            updated_at: now,
+          });
+          let no_ifrag = this.datastore.createRecord(M.InteractionFragment,{
+            name: "interaction_fragment",
+            created_at: now,
+            updated_at: now,
+          });
+
+          // interaction
+          let new_interaction = this.datastore.createRecord(M.Interaction,{
+            name: "interaction",
+            created_at: now,
+            updated_at: now,
+          });
+          let ni_ifrag = this.datastore.createRecord(M.InteractionFragment,{
+            name: "interaction_fragment",
+            created_at: now,
+            updated_at: now,
+          });
+
+          // start job
+          this.jobsService.start("createFragment");
+
+          let saves_pending = 3;
+
+          let saveRelationships = () => {
+
+            console.log("Objects linked");
+
+            for (let message of movedMessages) {
+              message.interaction = new_interaction;
+            }
+
+            for (let fragment of movedFragments) {
+              fragment.parent = new_interaction.fragment;
+            }
+
+            let observables = [];
+
+            let headers = new Headers({
+              'Content-Type': 'application/vnd.api+json',
+              'Accept': 'application/vnd.api+json'
+            });
+            let options = new RequestOptions({ headers: headers });
+            
+
+            for (let fragment of movedFragments) {
+              let url = "/api/v1/interaction-fragments/" + fragment.id;
+
+              observables.push(this.http.patch(url, {
+                "data": {
+                  "type": "interaction-fragments",
+                  "id": fragment.id.toString(),
+                  "relationships": {
+                    "parent": {
+                      "data": {
+                        "type": "interaction-fragments",
+                        "id": fragment.parent.id.toString()
+                      }
+                    }
+                  }
+                }
+              }, options));
+            }
+
+            for (let message of movedMessages) {
+              let url = "/api/v1/messages/" + message.id;
+
+              observables.push(this.http.patch(url, {
+                "data": {
+                  "type": "messages",
+                  "id": message.id.toString(),
+                  "relationships": {
+                    "interaction": {
+                      "data": {
+                        "type": "interactions",
+                        "id": message.interaction.id.toString()
+                      }
+                    }
+                  }
+                }
+              }, options));
+            }
+
+            for (let message of shiftedMessages) {
+
+              let occurences = [message.sendEvent, message.receiveEvent];
+
+              for (let occurrence of occurences) {
+                let url = "/api/v1/occurrence-specifications/" + occurrence.id;
+
+                observables.push(this.http.patch(url, {
+                  "data": {
+                    "type": "occurrence-specifications",
+                    "id": occurrence.id.toString(),
+                    "attributes": {
+                      "time": occurrence.time.toString(),
+                    }
+                  }
+                }, options));
+              }
+            }
+
+            saves_pending = observables.length;
+
+            let saveListen = () => {
+              saves_pending--;
+
+              if (saves_pending == 0) {
+                this.sequenceDiagramComponent.refresh(() => {
+                  this.jobsService.finish("createFragment");
+                });
+              }
+            }
+
+            for (let observable of observables) {
+              observable.subscribe(saveListen);
+            }
+
+          };
+
+          let saveObjects = () => {
+
+            console.log("Lower interaction fragment saved");
+
+            new_combined.fragment = nc_ifrag;
+            new_operand.fragment = no_ifrag;
+            new_interaction.fragment = ni_ifrag;
+
+            saves_pending = 6;
+
+            let headers = new Headers({
+            'Content-Type': 'application/vnd.api+json',
+            'Accept': 'application/vnd.api+json'
+            });
+            let options = new RequestOptions({ headers: headers });
+            
+
+            let url = "/api/v1/interaction-fragments/" + nc_ifrag.id;
+            this.http.patch(url, {
+              "data": {
+                "type": "interaction-fragments",
+                "id": nc_ifrag.id.toString(),
+                "relationships": {
+                  "parent": {
+                    "data": {
+                      "type": "interaction-fragments",
+                      "id": nc_ifrag.parent.id.toString()
+                    }
+                  },
+                  "fragmentable": {
+                    "data": {
+                      "type": "combined-fragments",
+                      "id": nc_ifrag.fragmentable.id.toString()
+                    }
+                  }
+                }
+              }
+            }, options).subscribe(() => {
+                saves_pending--
+                if (saves_pending == 0) {
+                  saveRelationships();
+                }
+            });
+
+            url = "/api/v1/interaction-fragments/" + no_ifrag.id;
+            this.http.patch(url, {
+              "data": {
+                "type": "interaction-fragments",
+                "id": no_ifrag.id.toString(),
+                "relationships": {
+                  "parent": {
+                    "data": {
+                      "type": "interaction-fragments",
+                      "id": no_ifrag.parent.id.toString()
+                    }
+                  },
+                  "fragmentable": {
+                    "data": {
+                      "type": "interaction-operands",
+                      "id": no_ifrag.fragmentable.id.toString()
+                    }
+                  }
+                }
+              }
+            }, options).subscribe(() => {
+                saves_pending--
+                if (saves_pending == 0) {
+                  saveRelationships();
+                }
+            });
+
+            url = "/api/v1/interaction-fragments/" + ni_ifrag.id;
+            this.http.patch(url, {
+              "data": {
+                "type": "interaction-fragments",
+                "id": ni_ifrag.id.toString(),
+                "relationships": {
+                  "parent": {
+                    "data": {
+                      "type": "interaction-fragments",
+                      "id": ni_ifrag.parent.id.toString()
+                    }
+                  },
+                  "fragmentable": {
+                    "data": {
+                      "type": "interactions",
+                      "id": ni_ifrag.fragmentable.id.toString()
+                    }
+                  }
+                }
+              }
+            }, options).subscribe(() => {
+                saves_pending--
+                if (saves_pending == 0) {
+                  saveRelationships();
+                }
+            });
+
+            url = "/api/v1/combined-fragments/" + new_combined.id;
+            this.http.patch(url, {
+              "data": {
+                "type": "combined-fragments",
+                "id": new_combined.id.toString(),
+                "relationships": {
+                  "fragment": {
+                    "data": {
+                      "type": "interaction-fragments",
+                      "id": new_combined.fragment.id.toString()
+                    }
+                  }
+                }
+              }
+            }, options).subscribe(() => {
+                saves_pending--
+                if (saves_pending == 0) {
+                  saveRelationships();
+                }
+            });
+
+            url = "/api/v1/interaction-operands/" + new_operand.id;
+            this.http.patch(url, {
+              "data": {
+                "type": "interaction-operands",
+                "id": new_operand.id.toString(),
+                "relationships": {
+                  "fragment": {
+                    "data": {
+                      "type": "interaction-fragments",
+                      "id": new_operand.fragment.id.toString()
+                    }
+                  }
+                }
+              }
+            }, options).subscribe(() => {
+                saves_pending--
+                if (saves_pending == 0) {
+                  saveRelationships();
+                }
+            });
+
+            url = "/api/v1/interactions/" + new_interaction.id;
+            this.http.patch(url, {
+              "data": {
+                "type": "interactions",
+                "id": new_interaction.id.toString(),
+                "relationships": {
+                  "fragment": {
+                    "data": {
+                      "type": "interaction-fragments",
+                      "id": new_interaction.fragment.id.toString()
+                    }
+                  }
+                }
+              }
+            }, options).subscribe(() => {
+                saves_pending--
+                if (saves_pending == 0) {
+                  saveRelationships();
+                }
+            });
+          };
+
+          let saveInteractionFragments = () => {
+
+            saves_pending--;
+
+            if (saves_pending == 0) {
+
+              console.log("Combined fragment saved");
+
+              nc_ifrag.fragmentable = new_combined;
+              no_ifrag.fragmentable = new_operand;
+              ni_ifrag.fragmentable = new_interaction;
+
+              nc_ifrag.parent = layer.fragment;
+              nc_ifrag.save().subscribe(() => {
+                console.log("Upper interaction fragment saved");
+                no_ifrag.parent = nc_ifrag;
+                no_ifrag.save().subscribe(() => {
+                  console.log("Middle interaction fragment saved");
+                  ni_ifrag.parent = no_ifrag;
+                  ni_ifrag.save().subscribe(saveObjects);
+                });
+              });
+            }
+          }
+
+          new_combined.save().subscribe(saveInteractionFragments);
+          new_operand.save().subscribe(saveInteractionFragments);
+          new_interaction.save().subscribe(saveInteractionFragments);
+          
+
+          this.clickedLifelineEvent = null;
+        }
+      }
+    });
+
+  }
+
+  protected layerizedCombinedFragments = [];
+  
+  protected fragmentBeingLayerized = null;
+
+  protected layerize() {
+
+    this.inputService.onRightClick((event) => {
+
+      if (!this.menuComponent.editMode && event.model.type =='CombinedFragment') {
+        
+        let combined_fragment = this.datastore.peekRecord(M.CombinedFragment, event.model.id);
+
+        // click bubble
+        if (this.fragmentBeingLayerized == null) {
+          this.fragmentBeingLayerized = combined_fragment;
+        }
+
+        if (!(combined_fragment.fragment.parent.fragmentable.isLayerInteraction ||
+         (combined_fragment.fragment.parent.parent && combined_fragment.fragment.parent.parent.parent && combined_fragment.fragment.parent.parent.parent.fragmentable.isLayerInteraction))) {
+          return;
+        }
+        
+
+        combined_fragment = this.fragmentBeingLayerized;
+        this.fragmentBeingLayerized = null;
+
+        if (this.layerizedCombinedFragments.indexOf(combined_fragment) != -1) {
+          // remove layerization
+
+          console.log(1);
+
+          combined_fragment.fragment.children.splice(0,combined_fragment.fragment.children.length,combined_fragment.fragment.original_children);
+
+          console.log(2);
+
+          this.layerizedCombinedFragments.splice(this.layerizedCombinedFragments.indexOf(combined_fragment),1);
+
+          console.log(3);
+
+          for (let i = 0; i < combined_fragment.fragment.children.length; i++) {
+            let fragment = combined_fragment.fragment.children[i];
+
+            console.log(fragment);
+          }
+
+        } else {
+          // apply layerization
+          if (combined_fragment.fragment.children.length == 1) {
+            return;
+          }
+
+          this.layerizedCombinedFragments.push(combined_fragment);
+
+          // get all fragments except the first one
+          let layerizable_fragments = combined_fragment.fragment.children.slice().sort((a,b) => a.componentObject.envelope.min - b.componentObject.envelope.min).slice(1);
+
+          let current_fragment = combined_fragment.fragment;
+
+          while  (!(current_fragment.fragmentable instanceof M.Interaction && current_fragment.fragmentable.isLayerInteraction)) {
+            current_fragment = current_fragment.parent;
+          }
+
+          // get lifelines of the parent layer
+          let lifelines_to_add = current_fragment.fragmentable.lifelines;
+
+          let i = this.sequenceDiagramComponent.rootInteractionFragment.children.indexOf(current_fragment) + 1;
+
+          combined_fragment.fragment.original_children = combined_fragment.fragment.children.slice();
+
+          // iterate layerizable fragments
+          for (let fragment of layerizable_fragments) {
+
+            // make and bind fake layer and interaction fragment
+            let new_layer = new M.Interaction(null);
+            new_layer.name = combined_fragment.operator + " " + fragment.fragmentable.constraint;
+            let nl_ifrag = new M.InteractionFragment(null);
+            new_layer.fragment = nl_ifrag;
+            nl_ifrag.fragmentable = new_layer;
+            nl_ifrag.parent = this.sequenceDiagramComponent.rootInteractionFragment;
+
+            // add lifelines
+            new_layer.lifelines = lifelines_to_add;
+
+            // add messages
+            for (let message of fragment.recursiveMessagesOneLevel) {
+              message.interaction = new_layer;
+              new_layer.messages.push(message);
+            }
+
+            // add fragments
+            for (let child_combined_fragment of fragment.children[0].children) {
+              new_layer.fragment.children.push(child_combined_fragment);
+            }
+
+            // add to sequence diagram
+            fragment.parent = nl_ifrag;
+            this.sequenceDiagramComponent.rootInteractionFragment.children.splice(i,0,nl_ifrag);
+            i++;
+          }
+
+          combined_fragment.fragment.children.splice(1,combined_fragment.fragment.children.length - 1);
+
+          current_fragment.componentObject.nativeComponent.ngOnChanges();
+          
+
+        }
+      }
+    });
+  }
+
+  protected addOperandOnFragmentPulley() {
+    this.inputService.onMouseDown((event) => {
+
+      if (event.model.type == 'FragmentPulley' && this.menuComponent.editMode && !this.menuComponent.addingMessages) {
+
+        // get the operand being split
+        let pulley = event.model.component;
+        let clickedOperand = pulley.fragment;
+        let clickedOperandInteraction = clickedOperand.interactionFragmentModel.children[0];
+
+        // end if there is no content to split between the new fragment and the old one
+        if (clickedOperandInteraction.children.length + clickedOperandInteraction.recursiveMessagesOneLevel.length <= 1) {
+          return;
+        }
+
+        let closest_message = null;
+        let closest_fragment  = null;
+
+        let click_time = pulley.isTop ? clickedOperand.envelope.min : clickedOperand.envelope.max;
+
+        for (let message of clickedOperandInteraction.recursiveMessagesOneLevel) {
+          if (closest_message == null || Math.abs(click_time - message.sendEvent.time) < Math.abs(click_time - closest_message.sendEvent.time)) {
+            closest_message = message;
+          }
+        }
+
+        for (let fragment of clickedOperandInteraction.children) {
+          if (closest_fragment == null || Math.abs(click_time - fragment.componentObject.envelope.min) < Math.abs(click_time - closest_fragment.componentObject.envelope.min)) {
+            closest_fragment = fragment;
+          }
+        }
+
+        let now = Date.now();
+
+        // operand
+        let new_operand = this.datastore.createRecord(M.InteractionOperand,{
+          name: "interaction_operand",
+          constraint: "<<None>>",
+          created_at: now,
+          updated_at: now,
+        });
+        let no_ifrag = this.datastore.createRecord(M.InteractionFragment,{
+          name: "interaction_fragment",
+          created_at: now,
+          updated_at: now,
+        });
+
+        // interaction
+        let new_interaction = this.datastore.createRecord(M.Interaction,{
+          name: "interaction",
+          created_at: now,
+          updated_at: now,
+        });
+        let ni_ifrag = this.datastore.createRecord(M.InteractionFragment,{
+          name: "interaction_fragment",
+          created_at: now,
+          updated_at: now,
+        });
+
+        if (!closest_fragment || (closest_message && Math.abs(click_time - closest_message.sendEvent.time) < Math.abs(click_time - closest_fragment.componentObject.envelope.min))) {
+          closest_message.interaction = new_interaction;
+          closest_fragment = null;
+        } else {
+          closest_fragment.parent = ni_ifrag;
+          closest_message = null;
+        }
+
+        this.jobsService.start("addOperand");
+
+        let saves_pending = 2;
+
+        let editedMessages = [];
+        let borderTime = closest_fragment ? pulley.isTop ? closest_fragment.componentObject.envelope.max : closest_fragment.componentObject.envelope.min : closest_message ? closest_message.sendEvent.time - 1 : Number.MAX_SAFE_INTEGER;
+
+        let current_fragment = clickedOperandInteraction;
+
+        while  (!(current_fragment.fragmentable instanceof M.Interaction && current_fragment.fragmentable.isLayerInteraction)) {
+          current_fragment = current_fragment.parent;
+        }
+
+        for (let message of current_fragment.recursiveMessages) {
+
+          if (borderTime < message.sendEvent.time) {
+            message.sendEvent.time++;
+            message.receiveEvent.time++;
+            editedMessages.push(message);
+          }
+
+        }
+
+        let saveTypes = () => {
+          saves_pending--;
+          if (saves_pending == 0) {
+
+            no_ifrag.fragmentable = new_operand;
+            no_ifrag.parent = clickedOperand.interactionFragmentModel.parent;
+            ni_ifrag.fragmentable = new_interaction;
+            ni_ifrag.parent = no_ifrag;
+
+            no_ifrag.save().subscribe(() => {
+              ni_ifrag.save().subscribe(() => {
+
+                new_operand.fragment = no_ifrag;
+                new_interaction.fragment = ni_ifrag;
+
+                let url;
+                let headers = new Headers({
+                'Content-Type': 'application/vnd.api+json',
+                'Accept': 'application/vnd.api+json'
+                });
+                let options = new RequestOptions({ headers: headers });
+
+                saves_pending = 4;
+
+                let saveRelationships = () => {
+
+                  let save_following_messages = () => {
+                    saves_pending--;
+
+                    if (saves_pending == 0) {
+                      this.jobsService.finish("addOperand");
+                      this.sequenceDiagramComponent.refresh();
+                    }
+                  };
+
+                  saves_pending = 1;
+
+                  if (closest_message) {
+                    let url = "/api/v1/messages/" + closest_message.id;
+
+                    this.http.patch(url, {
+                      "data": {
+                        "type": "messages",
+                        "id": closest_message.id.toString(),
+                        "relationships": {
+                          "interaction": {
+                            "data": {
+                              "type": "interactions",
+                              "id": closest_message.interaction.id.toString()
+                            }
+                          }
+                        }
+                      }
+                    }, options).subscribe(save_following_messages);
+                  }
+
+                  if (closest_fragment) {
+                    url = "/api/v1/interaction-fragments/" + closest_fragment.id;
+                    this.http.patch(url, {
+                      "data": {
+                        "type": "interaction-fragments",
+                        "id": closest_fragment.id.toString(),
+                        "relationships": {
+                          "parent": {
+                            "data": {
+                              "type": "interaction-fragments",
+                              "id": closest_fragment.parent.id.toString()
+                            }
+                          },
+                        }
+                      }
+                    }, options).subscribe(save_following_messages);
+                  }
+
+                  saves_pending += 2 * editedMessages.length;
+
+                  for (let message of editedMessages) {
+                    for (let occurrence of [message.sendEvent, message.receiveEvent]) {
+                      let url = "/api/v1/occurrence-specifications/" + occurrence.id;
+
+                      this.http.patch(url, {
+                        "data": {
+                          "type": "occurrence-specifications",
+                          "id": occurrence.id.toString(),
+                          "attributes": {
+                            "time": occurrence.time.toString(),
+                          }
+                        }
+                      }, options).subscribe(save_following_messages);
+                    }
+                  }
+
+                };
+
+                url = "/api/v1/interaction-fragments/" + no_ifrag.id;
+                this.http.patch(url, {
+                  "data": {
+                    "type": "interaction-fragments",
+                    "id": no_ifrag.id.toString(),
+                    "relationships": {
+                      "parent": {
+                        "data": {
+                          "type": "interaction-fragments",
+                          "id": no_ifrag.parent.id.toString()
+                        }
+                      },
+                      "fragmentable": {
+                        "data": {
+                          "type": "interaction-operands",
+                          "id": no_ifrag.fragmentable.id.toString()
+                        }
+                      }
+                    }
+                  }
+                }, options).subscribe(() => {
+                    saves_pending--
+                    if (saves_pending == 0) {
+                      saveRelationships();
+                    }
+                });
+
+                url = "/api/v1/interaction-fragments/" + ni_ifrag.id;
+                this.http.patch(url, {
+                  "data": {
+                    "type": "interaction-fragments",
+                    "id": ni_ifrag.id.toString(),
+                    "relationships": {
+                      "parent": {
+                        "data": {
+                          "type": "interaction-fragments",
+                          "id": ni_ifrag.parent.id.toString()
+                        }
+                      },
+                      "fragmentable": {
+                        "data": {
+                          "type": "interactions",
+                          "id": ni_ifrag.fragmentable.id.toString()
+                        }
+                      }
+                    }
+                  }
+                }, options).subscribe(() => {
+                    saves_pending--
+                    if (saves_pending == 0) {
+                      saveRelationships();
+                    }
+                });
+
+                url = "/api/v1/interaction-operands/" + new_operand.id;
+                this.http.patch(url, {
+                  "data": {
+                    "type": "interaction-operands",
+                    "id": new_operand.id.toString(),
+                    "relationships": {
+                      "fragment": {
+                        "data": {
+                          "type": "interaction-fragments",
+                          "id": new_operand.fragment.id.toString()
+                        }
+                      }
+                    }
+                  }
+                }, options).subscribe(() => {
+                    saves_pending--
+                    if (saves_pending == 0) {
+                      saveRelationships();
+                    }
+                });
+
+                url = "/api/v1/interactions/" + new_interaction.id;
+                this.http.patch(url, {
+                  "data": {
+                    "type": "interactions",
+                    "id": new_interaction.id.toString(),
+                    "relationships": {
+                      "fragment": {
+                        "data": {
+                          "type": "interaction-fragments",
+                          "id": new_interaction.fragment.id.toString()
+                        }
+                      }
+                    }
+                  }
+                }, options).subscribe(() => {
+                    saves_pending--
+                    if (saves_pending == 0) {
+                      saveRelationships();
+                    }
+                });
+              });
+
+            });
+          }
+        };
+
+        new_operand.save().subscribe(saveTypes);
+        new_interaction.save().subscribe(saveTypes);
+
+      }
+
+    });
+  }
+
+// generates observables for fragment deletion
+  public deleteEmptyFragments(combined_fragment) {
+
+    let observables = [];
+    // delete empty fragments
+    for (let fragment of combined_fragment.interactionFragmentModel.children) {
+      if (fragment.recursiveMessages.map((a) => a.interaction == fragment.children[0].fragmentable).reduce((acc, val)=> acc || val) == false) {
+        
+        //observables.push(this.datastore.deleteRecord(M.Interaction, fragment.children[0].fragmentable.id));
+        //observables.push(this.datastore.deleteRecord(M.InteractionOperand, fragment.fragmentable.id));
+
+        observables.push(this.datastore.deleteRecord(M.InteractionFragment, fragment.children[0].id));
+        observables.push(this.datastore.deleteRecord(M.InteractionFragment, fragment.id));
+        
+      }
+    }
+
+    if (observables.length == 2 * combined_fragment.interactionFragmentModel.children.length) {
+      observables.push(this.datastore.deleteRecord(M.InteractionFragment, combined_fragment.interactionFragmentModel.id));
+    }
+
+    return observables;
+  }
+
+  protected editedFragment = null;
+
+  protected editFragmentText() {
+
+    this.inputService.onDoubleClick((event) => {
+
+      let editedFragment = this.editedFragment;
+
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type == 'CombinedFragment' && this.editedFragment == null) {
+        this.editedFragment = this.datastore.peekRecord(M.CombinedFragment, event.model.id);
+      }
+
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type == 'InteractionOperand' && this.editedFragment == null) {
+        this.editedFragment = this.datastore.peekRecord(M.InteractionOperand, event.model.id);
+      }
+
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type == 'Layer' && this.editedFragment != null) {
+
+        if (this.editedFragment instanceof M.CombinedFragment) {
+          // Open dialog
+          this.dialogService.createEditDialog("Edit combined fragment", this.editedFragment, "Enter combined fragment operator", "combinedFragment")
+            .componentInstance.onOk.subscribe((result) => {
+            // Start job
+            this.jobsService.start('editCombinedFragmentOperator');
+            // Edit operand
+            editedFragment.operator = result.messageSort;
+            editedFragment.save().subscribe(() => {
+              // Finish job
+              this.jobsService.finish('editCombinedFragmentOperator');
+            });
+          });
+        } else {
+          // Open dialog
+          this.dialogService.createEditDialog("Edit interaction operand", {}, "Enter interaction operand constraint", "interactionOperand")
+            .componentInstance.onOk.subscribe((result) => {
+            // Start job
+            this.jobsService.start('editInteractionOperandConstraint');
+            // Edit operand
+            console.log(result.name);
+            editedFragment.constraint = result.name;
+            editedFragment.save().subscribe(() => {
+              // Finish job
+              this.jobsService.finish('editInteractionOperandConstraint');
+            });
+          });
+        }
+        
+        this.editedFragment = null;
+      }
+
+      
+    });
+
+  }
+  
 }

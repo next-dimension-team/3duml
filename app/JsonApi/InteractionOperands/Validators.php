@@ -21,8 +21,7 @@ class Validators extends AbstractValidatorProvider
         $required = ! is_null($record) ? 'sometimes|required' : 'required';
 
         return [
-            'name' => "{$required}|string|between:1,255",
-            'constraint' => "{$required}|string|between:1,255",
+            'name' => "{$required}|string|between:1,255"
         ];
     }
 

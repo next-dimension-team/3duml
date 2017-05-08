@@ -31,6 +31,8 @@ export class SequenceDiagramService {
   public loadSequenceDiagramTree(interaction: M.Interaction): Observable<M.InteractionFragment> {
     let id = interaction.fragment.id;
 
+    this.datastore.deleteCache();
+
     return this.datastore.query(M.InteractionFragment, {
       include: _.join([
         'fragmentable.lifelines',

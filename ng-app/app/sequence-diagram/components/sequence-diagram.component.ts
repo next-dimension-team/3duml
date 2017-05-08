@@ -201,9 +201,10 @@ export class SequenceDiagramComponent implements OnInit, OnChanges, AfterViewIni
 
   protected refreshLayers() {
     this.layerComponents.forEach(
-      (layer, index) => this.scene.add(
-        layer.object.translateZ(this.config.get('layer.gap') * -index)
-      )
+      (layer, index) => {
+        layer.object.position.setZ(0);
+        this.scene.add(layer.object.translateZ(this.config.get('layer.gap') * -index)
+      )}
     );
 
     this.controls.target = this.layerComponents.length > 0

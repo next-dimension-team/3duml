@@ -40,6 +40,7 @@ export class MenuComponent implements OnInit {
     this.layersController.menuComponent = this;
     this.messagesController.menuComponent = this;
     this.fragmentsController.menuComponent = this;
+    this.fragmentsController.registerMenuListeners();
   }
 
   // Load sequence diagrams
@@ -97,4 +98,15 @@ export class MenuComponent implements OnInit {
     this.jobsService.finish('menu.component.refresh');
   }
 
+  // Add message and add fragment state
+
+  private _addMessageState = false;
+
+  get addingMessages() {
+    return !this._addMessageState;
+  }
+
+  protected toggleAddMessageState() {
+    this._addMessageState = !this._addMessageState;
+  }
 }

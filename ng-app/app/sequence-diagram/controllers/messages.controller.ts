@@ -44,7 +44,7 @@ export class MessagesController {
     let destinationLifelineEvent = null;
 
     this.inputService.onLeftClick((event) => {
-      if (event.model.type == 'LifelinePoint') {
+      if (event.model.type == 'LifelinePoint' && this.menuComponent.addingMessages) {
         if (sourceLifelineEvent) {
           destinationLifelineEvent = event;
           if (sourceLifelineEvent.model.lifelineID == destinationLifelineEvent.model.lifelineID) {
@@ -162,14 +162,28 @@ export class MessagesController {
       }
     }
 
+    
+
     // Prechadzam vsetky lifeliny v layeri a posuvam vsetky occurenci o jedno dalej
     if (move) {
+
+      let saves_pending = 0;
+
+      let saveAndReload = () => {
+        saves_pending--;
+
+        if (saves_pending == 0) {
+          this.sequenceDiagramComponent.refresh();
+        }
+      };
+
       for (let lifeline of lifelinesInCurrentLayer) {
         for (let occurrence of lifeline.occurrenceSpecifications) {
           if (occurrence.time >= time) {
+            saves_pending++;
             let occurenceForChange = this.datastore.peekRecord(M.OccurrenceSpecification, occurrence.id);
             occurenceForChange.time = occurenceForChange.time + 1;
-            occurenceForChange.save().subscribe();
+            occurenceForChange.save().subscribe(saveAndReload);
           }
         }
       }
@@ -315,19 +329,36 @@ export class MessagesController {
           draggingMessage.messageModel.receiveEvent.time != originalReceiveEventTime
         );
 
+
+        let saves_pending = 0;
+        let saves_pend = false;
+
+        let saveAndReload = () => {
+          saves_pending--;
+
+          if (saves_pending == 0) {
+            this.sequenceDiagramComponent.refresh();
+          }
+        };
+
         // Move send event
         if (changed) {
           this.jobsService.start('verticalMessageMove.sendEvent');
+          saves_pending++;
+          saves_pend = true;
           draggingMessage.messageModel.sendEvent.save().subscribe(() => {
             this.jobsService.finish('verticalMessageMove.sendEvent');
+            saveAndReload();
           });
         }
 
         // Move receive event
         if (changed) {
           this.jobsService.start('verticalMessageMove.receiveEvent');
+          saves_pending++;
           draggingMessage.messageModel.receiveEvent.save().subscribe(() => {
             this.jobsService.finish('verticalMessageMove.receiveEvent');
+            saveAndReload();
           });
         }
 

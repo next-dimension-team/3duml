@@ -29,6 +29,22 @@ export class InteractionFragment extends JsonApiModel {
 
   private _childrenKeys: string[];
 
+  private _minTime: number;
+
+  get minTime(): number {
+    if (!this._minTime) {
+      this._minTime = Number.MAX_SAFE_INTEGER;
+
+      for (let message of this.recursiveMessages) {
+        if (this._minTime > Math.min(message.sendEvent.time,message.receiveEvent.time)) {
+          this._minTime = Math.min(message.sendEvent.time,message.receiveEvent.time);
+        }
+      }
+    }
+
+    return this._minTime;
+  }
+
   constructor(private __datastore: JsonApiDatastore, data?: any) {
     super(__datastore, data);
 
@@ -52,6 +68,10 @@ export class InteractionFragment extends JsonApiModel {
         this._childrenKeys,
         (key: string) => this.__datastore.peekRecord(InteractionFragment, key)
       );
+
+      this._children.sort(function(a: InteractionFragment,b: InteractionFragment) : number {
+        return  a.minTime - b.minTime;
+      });
     }
 
     return this._children;

@@ -5,7 +5,7 @@ import { MdDialogRef } from '@angular/material';
   selector: 'app-edit-dialog',
   template: `
     <h2>{{title}}</h2>
-    <div class="input-item">
+    <div class="input-item" [hidden]="elementType=='combinedFragment'">
     <md-input-container>
       <input
         #input
@@ -21,6 +21,11 @@ import { MdDialogRef } from '@angular/material';
     <div *ngIf="elementType=='message'" class="input-item">
       <md-select  placeholder="Enter message type" [(ngModel)]="selectedItem">
         <md-option *ngFor="let item of items" [value]="item">{{item}}</md-option>
+      </md-select>
+    </div>
+    <div *ngIf="elementType=='combinedFragment'" class="input-item">
+      <md-select  placeholder="Enter combined fragment operator" [(ngModel)]="selectedItem">
+        <md-option *ngFor="let item of fragmentTypes" [value]="item">{{item}}</md-option>
       </md-select>
     </div>
     <div class="input-item">
@@ -40,6 +45,7 @@ export class EditDialogComponent {
   onNo = new EventEmitter();
   public elementType: string;
   public items = ["synchCall", "asynchCall"];
+  public fragmentTypes = ['alt', 'opt', 'par', 'loop', 'critical', 'neg', 'assert', 'strict', 'seq', 'ignore', 'consider'];
   public selectedItem: string;
 
   inputEmpty(input: string): boolean {
@@ -57,7 +63,7 @@ export class EditDialogComponent {
       return;
     }
 
-    this.onOk.emit({ name, messageSort });
+    this.onOk.emit({ name: name == " " ? "" : name, messageSort });
     this.dialog.close();
   }
 
@@ -72,6 +78,16 @@ export class EditDialogComponent {
         this.selectedItem = this.element.sort;
       }
     }
+
+    if (this.elementType == "combinedFragment") {
+      if (this.element.operator == null) {
+        this.selectedItem = this.fragmentTypes[0];
+      } else {
+        this.selectedItem = this.element.operator;
+      }
+    }
+
+
     this.cdr.detectChanges();
   }
 
