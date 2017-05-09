@@ -452,7 +452,7 @@ export class FragmentsController {
               (this.draggedOperand.height / this.draggedOperand.original_height);
               let envelope_max = this.affectedCombinedFragment.envelope.min;
 
-              for (let message of this.affectedCombinedFragment.interactionFragmentModel.parent.recursiveMessagesOneLevel) {
+              /*for (let message of this.affectedCombinedFragment.interactionFragmentModel.parent.recursiveMessagesOneLevel) {
                 if (((message.sendEvent.covered.order >= this.draggedOperand.leftmost_lifeline.order && message.sendEvent.covered.order <= this.draggedOperand.rightmost_lifeline.order)
                   || (message.receiveEvent.covered.order >= this.draggedOperand.leftmost_lifeline.order && message.receiveEvent.covered.order <= this.draggedOperand.rightmost_lifeline.order))
                   && message.sendEvent.time > envelope_min && message.sendEvent.time < envelope_max && editedMessages.indexOf(message) === -1) {
@@ -475,6 +475,30 @@ export class FragmentsController {
                   }
                 }
                 
+              }*/
+
+              let expandedStuff = this.cyclicalCollisionDetection([this.draggedOperand.leftmost_lifeline, this.draggedOperand.rightmost_lifeline],
+                                                                  [envelope_min, envelope_max], this.affectedCombinedFragment.interactionFragmentModel.parent.fragmentable);
+
+              for (let message of expandedStuff[0]) {
+                message.interaction = targetInteraction;
+                message.sendEvent.time++;
+                message.receiveEvent.time++;
+                editedMessages.push(message);
+              }
+
+              for (let fragment of expandedStuff[1]) {
+
+                if (this.affectedCombinedFragment.interactionFragmentModel == fragment) {
+                  continue;
+                }
+
+                editedFragments.push(fragment);
+                fragment.parent = targetInteraction.fragment;
+                for (let message of fragment.recursiveMessages) {
+                  message.sendEvent.time++;
+                  message.receiveEvent.time++;
+                }
               }
             }
 
@@ -520,6 +544,7 @@ export class FragmentsController {
                 }
                 
               }
+
             }
 
             if (Math.abs(height_delta_sum) < this.draggedOperand.height - this.draggedOperand.original_height) {
@@ -529,30 +554,77 @@ export class FragmentsController {
               let envelope_max = this.draggedOperand.envelope.min + (this.draggedOperand.envelope.max - this.draggedOperand.envelope.min) * 
               (this.draggedOperand.height / this.draggedOperand.original_height);
 
-              for (let message of this.affectedCombinedFragment.interactionFragmentModel.parent.recursiveMessagesOneLevel) {
-                if (((message.sendEvent.covered.order >= this.draggedOperand.leftmost_lifeline.order && message.sendEvent.covered.order <= this.draggedOperand.rightmost_lifeline.order)
-                  || (message.receiveEvent.covered.order >= this.draggedOperand.leftmost_lifeline.order && message.receiveEvent.covered.order <= this.draggedOperand.rightmost_lifeline.order))
-                  && message.sendEvent.time > envelope_min && message.sendEvent.time < envelope_max && editedMessages.indexOf(message) === -1) {
-                  message.interaction = targetInteraction;
+              // for (let message of this.affectedCombinedFragment.interactionFragmentModel.parent.recursiveMessagesOneLevel) {
+              //   if (((message.sendEvent.covered.order >= this.draggedOperand.leftmost_lifeline.order && message.sendEvent.covered.order <= this.draggedOperand.rightmost_lifeline.order)
+              //     || (message.receiveEvent.covered.order >= this.draggedOperand.leftmost_lifeline.order && message.receiveEvent.covered.order <= this.draggedOperand.rightmost_lifeline.order))
+              //     && message.sendEvent.time > envelope_min && message.sendEvent.time < envelope_max && editedMessages.indexOf(message) === -1) {
+              //     message.interaction = targetInteraction;
+              //     message.sendEvent.time--;
+              //     message.receiveEvent.time--;
+              //     editedMessages.push(message);
+              //   }
+              // }
+
+              // // move fragments - only when they are completely removed from their owner
+              // for (let fragment of this.affectedCombinedFragment.interactionFragmentModel.parent.children) {
+
+              //   if (fragment.componentObject.envelope.min < envelope_max && fragment.componentObject.envelope.max > envelope_min) {
+              //     editedFragments.push(fragment);
+              //     fragment.parent = targetInteraction.fragment;
+              //     for (let message of fragment.recursiveMessages) {
+              //       message.sendEvent.time--;
+              //       message.receiveEvent.time--;
+              //     }
+              //   }
+                
+              // }
+
+              let expandedStuff = this.cyclicalCollisionDetection([this.draggedOperand.leftmost_lifeline, this.draggedOperand.rightmost_lifeline],
+                                                                  [envelope_min, envelope_max], this.affectedCombinedFragment.interactionFragmentModel.parent.fragmentable);
+
+              for (let message of expandedStuff[0]) {
+                message.interaction = targetInteraction;
+                message.sendEvent.time--;
+                message.receiveEvent.time--;
+                editedMessages.push(message);
+              }
+
+              for (let fragment of expandedStuff[1]) {
+
+                if (this.affectedCombinedFragment.interactionFragmentModel == fragment) {
+                  continue;
+                }
+
+                editedFragments.push(fragment);
+                fragment.parent = targetInteraction.fragment;
+                for (let message of fragment.recursiveMessages) {
                   message.sendEvent.time--;
                   message.receiveEvent.time--;
-                  editedMessages.push(message);
                 }
               }
 
-              // move fragments - only when they are completely removed from their owner
-              for (let fragment of this.affectedCombinedFragment.interactionFragmentModel.parent.children) {
+              // if (this.draggedOperand.leftmost_lifeline != expandedStuff[2][0] || this.draggedOperand.rightmost_lifeline != expandedStuff[2][1]) {
+              //   for (let rechecked_fragment of this.affectedCombinedFragment.interactionFragmntModel.children) {
+              //     if (rechecked_fragment.componentObject.height == 0 || rechecked_fragment == this.draggedOperand.interactionFragmentModel) {
+              //       continue;
+              //     }
 
-                if (fragment.componentObject.envelope.min < envelope_max && fragment.componentObject.envelope.max > envelope_min) {
-                  editedFragments.push(fragment);
-                  fragment.parent = targetInteraction.fragment;
-                  for (let message of fragment.recursiveMessages) {
-                    message.sendEvent.time--;
-                    message.receiveEvent.time--;
-                  }
-                }
-                
-              }
+              //     let recheck_expand = this.cyclicalCollisionDetection(expandedStuff[2],
+              //                                                         [rechecked_fragment.componentObject.envelope.min, rechecked_fragment.componentObject.envelope.max],
+              //                                                         this.affectedCombinedFragment.interactionFragmentModel.parent.fragmentable);
+
+              //     for (let message of recheck_expand[0]) {
+              //       if (message.interaction == this.affectedCombinedFragment.interactionFragmentModel.parent.fragmentable) {
+              //         message.interaction = rechecked_fragment.children[0].fragmentable;
+              //         editedMessages.push(message);
+              //       }
+              //     }
+
+              //     for (let fragment of recheck_expand[1]) {
+
+              //     }
+              //   }
+              // }
             }
           }
 
@@ -667,10 +739,9 @@ export class FragmentsController {
 
         let deletes = this.deleteEmptyFragments(this.affectedCombinedFragment);
         saves_pending += deletes.length;
-
         observables = observables.concat(deletes);
 
-        if (editedMessages.length == 0 && editedFragments.length == 0 && occurences.length == 0) {
+        if (observables.length == 0) {
           // Finish job
           this.sequenceDiagramComponent.refresh(() => {
               this.jobsService.finish('deformFragment.fragment.' + dragOp.id);
@@ -909,7 +980,106 @@ export class FragmentsController {
   }
 
   protected clickedLifelineEvent = null;
-  
+
+  protected cyclicalCollisionDetection(lifelines, times, parent_fragment) {
+    let movedMessages = [];
+    let movedFragments = [];
+
+    console.log(lifelines);
+    console.log(times);
+
+    let redo = true;
+
+    // repeat the collision check each time the collision box changes
+    while (redo) {
+
+      redo = false;
+      movedMessages = [];
+      movedFragments = [];
+
+      for (let message of parent_fragment.fragment.recursiveMessagesOneLevel) {
+
+        // check vertical belonging to collision box
+        if (message.sendEvent.time > times[0] && message.sendEvent.time < times[1] && message.receiveEvent.time > times[0] && message.receiveEvent.time < times[1]) {
+
+          // check horizontal belonging to collision box
+          let message_lifelines = [message.sendEvent.covered, message.receiveEvent.covered].sort((a,b) => a.order - b.order);
+
+          if ((message_lifelines[0].order >= lifelines[0].order && message_lifelines[0].order <= lifelines[1].order)
+          || (message_lifelines[1].order >= lifelines[0].order && message_lifelines[1].order <= lifelines[1].order)) {
+
+            movedMessages.push(message);
+
+            if (message_lifelines[0].order < lifelines[0].order) {
+              lifelines[0] = message_lifelines[0];
+              redo = true;
+            }
+
+            if (message_lifelines[1].order > lifelines[1].order) {
+              lifelines[1] = message_lifelines[1];
+              redo = true;
+            }
+
+            if (redo) {
+              break;
+            }
+          }
+        }
+      }
+      
+      // if a collision box size change was detected, redo collision check
+      if (redo) {
+        continue;
+      }
+
+      for (let fragment of parent_fragment.fragment.children) {
+
+        let fragment_lifelines = [fragment.componentObject.leftmost_lifeline, fragment.componentObject.rightmost_lifeline];
+        let fragment_envelope = [fragment.componentObject.envelope.min, fragment.componentObject.envelope.max];
+
+        // check vertical belonging to collision box
+        if ((fragment_envelope[0] >= times[0] && fragment_envelope[0] <= times[1])
+        || (fragment_envelope[1] >= times[0] && fragment_envelope[1] <= times[1])) {
+
+          if ((fragment_lifelines[0].order >= lifelines[0].order && fragment_lifelines[0].order <= lifelines[1].order)
+          || (fragment_lifelines[1].order >= lifelines[0].order && fragment_lifelines[1].order <= lifelines[1].order)) {
+
+            movedFragments.push(fragment);
+
+            if (fragment_lifelines[0].order < lifelines[0].order) {
+              lifelines[0] = fragment_lifelines[0];
+              redo = true;
+            }
+
+            if (fragment_lifelines[1].order > lifelines[1].order) {
+              lifelines[1] = fragment_lifelines[1];
+              redo = true;
+            }
+
+            if (fragment_envelope[0] < times[0]) {
+              times[0] = fragment_envelope[0];
+              redo = true;
+            }
+
+            if (fragment_envelope[1] > times[1]) {
+              times[1] = fragment_envelope[1];
+              redo = true;
+            }
+
+            if (redo) {
+              break;
+            }
+          }
+        }
+      }
+    }
+
+
+    console.log(lifelines);
+    console.log(times);
+
+    return [movedMessages, movedFragments, lifelines, times];
+  }
 
   protected createFragmentOnLifelinePoint() {
 
@@ -931,94 +1101,49 @@ export class FragmentsController {
 
           let layer = lifelines[0].interaction;
 
-          let movedMessages = [];
-          let movedFragments = [];
+          let active_fragment = layer.fragment;
 
-          let redo = true;
+          let fragments_clicked = [];
 
-          // repeat the collision check each time the collision box changes
-          while (redo) {
+          for (let i = 0; i < 2; i++) {
 
-            redo = false;
-            movedMessages = [];
-            movedFragments = [];
+            while (true) {
 
-            for (let message of layer.fragment.recursiveMessagesOneLevel) {
+              let last_checked_fragment = null;
 
-              // check vertical belonging to collision box
-              if (message.sendEvent.time > times[0] && message.sendEvent.time < times[1] && message.receiveEvent.time > times[0] && message.receiveEvent.time < times[1]) {
+              for (let checked_fragment of active_fragment.children) {
 
-                // check horizontal belonging to collision box
-                let message_lifelines = [message.sendEvent.covered, message.receiveEvent.covered].sort((a,b) => a.order - b.order);
+                console.log(checked_fragment);
 
-                if ((message_lifelines[0].order >= lifelines[0].order && message_lifelines[0].order <= lifelines[1].order)
-                || (message_lifelines[1].order >= lifelines[0].order && message_lifelines[1].order <= lifelines[1].order)) {
+                if (checked_fragment.componentObject.envelope.min < times[i] && checked_fragment.componentObject.envelope.max > times[i]) {
+                  last_checked_fragment = active_fragment = checked_fragment;
 
-                  movedMessages.push(message);
-
-                  if (message_lifelines[0].order < lifelines[0].order) {
-                    lifelines[0] = message_lifelines[0];
-                    redo = true;
+                  if (active_fragment.children[0].fragmentable instanceof M.Interaction) {
+                    last_checked_fragment = active_fragment = checked_fragment.children[0];
                   }
 
-                  if (message_lifelines[1].order > lifelines[1].order) {
-                    lifelines[1] = message_lifelines[1];
-                    redo = true;
-                  }
-
-                  if (redo) {
-                    break;
-                  }
+                  break;
                 }
+
               }
+
+              if (active_fragment != last_checked_fragment) {
+                break;
+              }            
             }
-            
-            // if a collision box size change was detected, redo collision check
-            if (redo) {
-              continue;
-            }
 
-            for (let fragment of layer.fragment.children) {
+            fragments_clicked.push(active_fragment);
 
-              let fragment_lifelines = [fragment.componentObject.leftmost_lifeline, fragment.componentObject.rightmost_lifeline];
-              let fragment_envelope = [fragment.componentObject.envelope.min, fragment.componentObject.envelope.max];
-
-              // check vertical belonging to collision box
-              if ((fragment_envelope[0] >= times[0] && fragment_envelope[0] <= times[1])
-              || (fragment_envelope[1] >= times[0] && fragment_envelope[1] <= times[1])) {
-
-                if ((fragment_lifelines[0].order >= lifelines[0].order && fragment_lifelines[0].order <= lifelines[1].order)
-                || (fragment_lifelines[1].order >= lifelines[0].order && fragment_lifelines[1].order <= lifelines[1].order)) {
-
-                  movedFragments.push(fragment);
-
-                  if (fragment_lifelines[0].order < lifelines[0].order) {
-                    lifelines[0] = fragment_lifelines[0];
-                    redo = true;
-                  }
-
-                  if (fragment_lifelines[1].order > lifelines[1].order) {
-                    lifelines[1] = fragment_lifelines[1];
-                    redo = true;
-                  }
-
-                  if (fragment_envelope[0] < times[0]) {
-                    times[0] = fragment_envelope[0];
-                    redo = true;
-                  }
-
-                  if (fragment_envelope[1] > times[1]) {
-                    times[1] = fragment_envelope[1];
-                    redo = true;
-                  }
-
-                  if (redo) {
-                    break;
-                  }
-                }
-              }
-            }
           }
+
+          if (fragments_clicked[0] != fragments_clicked[1]) {
+            return;
+          }
+
+          let moved_objects = this.cyclicalCollisionDetection(lifelines, times, fragments_clicked[0].fragmentable);
+
+          let movedFragments = moved_objects[1];
+          let movedMessages = moved_objects[0];
 
           if (movedFragments.length == 0 && movedMessages.length == 0) {
             return;
@@ -1363,7 +1488,7 @@ export class FragmentsController {
               no_ifrag.fragmentable = new_operand;
               ni_ifrag.fragmentable = new_interaction;
 
-              nc_ifrag.parent = layer.fragment;
+              nc_ifrag.parent = fragments_clicked[0];
               nc_ifrag.save().subscribe(() => {
                 console.log("Upper interaction fragment saved");
                 no_ifrag.parent = nc_ifrag;
@@ -1415,23 +1540,6 @@ export class FragmentsController {
         this.fragmentBeingLayerized = null;
 
         if (this.layerizedCombinedFragments.indexOf(combined_fragment) != -1) {
-          // remove layerization
-
-          console.log(1);
-
-          combined_fragment.fragment.children.splice(0,combined_fragment.fragment.children.length,combined_fragment.fragment.original_children);
-
-          console.log(2);
-
-          this.layerizedCombinedFragments.splice(this.layerizedCombinedFragments.indexOf(combined_fragment),1);
-
-          console.log(3);
-
-          for (let i = 0; i < combined_fragment.fragment.children.length; i++) {
-            let fragment = combined_fragment.fragment.children[i];
-
-            console.log(fragment);
-          }
 
         } else {
           // apply layerization
@@ -1801,7 +1909,6 @@ export class FragmentsController {
         
         //observables.push(this.datastore.deleteRecord(M.Interaction, fragment.children[0].fragmentable.id));
         //observables.push(this.datastore.deleteRecord(M.InteractionOperand, fragment.fragmentable.id));
-
         observables.push(this.datastore.deleteRecord(M.InteractionFragment, fragment.children[0].id));
         observables.push(this.datastore.deleteRecord(M.InteractionFragment, fragment.id));
         
@@ -1848,7 +1955,7 @@ export class FragmentsController {
           });
         } else {
           // Open dialog
-          this.dialogService.createEditDialog("Edit interaction operand", {}, "Enter interaction operand constraint", "interactionOperand")
+          this.dialogService.createEditDialog("Edit interaction operand", {}, "Enter interaction operand constraint(space for empty)", "interactionOperand")
             .componentInstance.onOk.subscribe((result) => {
             // Start job
             this.jobsService.start('editInteractionOperandConstraint');
