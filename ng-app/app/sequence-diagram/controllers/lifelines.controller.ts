@@ -101,9 +101,13 @@ export class LifelinesController {
     let dragging: boolean = false;
     let draggingLifelineModel: M.Lifeline;
     let draggingLifelineComponent: LifelineComponent = null;
+    let messageComponents = null;
 
     // Chytili sme lifelinu
     this.inputService.onMouseDown((event) => {
+      if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type == 'Layer') {
+        messageComponents = event.model.messageComponents;
+      }
       if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && event.model.type == 'LifelineTitle') {
         draggingLifelineComponent = event.model.component;
         draggingLifelineModel = this.datastore.peekRecord(M.Lifeline, event.model.id);
@@ -115,14 +119,73 @@ export class LifelinesController {
     this.inputService.onMouseMove((event) => {
       if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && dragging) {
         draggingLifelineComponent.left = event.diagramX - 125;
+        messageComponents.forEach(
+          (messageComponent, index) => {
+            //console.log(messageComponent);
+            //let messageModel = this.datastore.peekRecord(M.Message, messageComponent.id);
+            let sendLifeline, receiveLifeline, direction;
+            if (messageComponent.messageModel.sendEvent.covered.order > messageComponent.messageModel.receiveEvent.covered.order) {
+              sendLifeline = messageComponent.messageModel.receiveEvent.covered;
+              receiveLifeline = messageComponent.messageModel.sendEvent.covered
+              direction = 'right-to-left';
+            } else {
+              receiveLifeline = messageComponent.messageModel.receiveEvent.covered;
+              sendLifeline = messageComponent.messageModel.sendEvent.covered;
+              direction = 'left-to-right';
+            }
+            //console.log(direction);
+            if (sendLifeline.id == draggingLifelineModel.id || receiveLifeline.id == draggingLifelineModel.id) {
+              //chytil som lifeline na lavej strane
+              if (draggingLifelineModel.id == sendLifeline.id) {
+                if (draggingLifelineComponent.left < (receiveLifeline.order - 1) * 400) {
+                  messageComponent.left = event.diagramX - 125 + 60;
+                  messageComponent.length = Math.abs(draggingLifelineComponent.left - ((receiveLifeline.order - 1) * 400));
+                  if (direction == 'left-to-right' && draggingLifelineComponent.left - ((receiveLifeline.order - 1) * 400) > 0) {
+                    messageComponent.direction = 'right-to-left';
+                  } else if (draggingLifelineComponent.left - ((receiveLifeline.order - 1) * 400) > 0) {
+                    messageComponent.direction = 'left-to-right';
+                  }
+                  if (direction != messageComponent.direction && draggingLifelineComponent.left - ((receiveLifeline.order - 1) * 400) < 0) {
+                    messageComponent.direction = direction;
+                  }
+                } else {
+                  messageComponent.left = ((receiveLifeline.order - 1) * 400) + 60;
+                  messageComponent.length = Math.abs(draggingLifelineComponent.left - ((receiveLifeline.order - 1) * 400));
+                  if (direction == 'left-to-right' && draggingLifelineComponent.left - ((receiveLifeline.order - 1) * 400) > 0) {
+                    messageComponent.direction = 'right-to-left';
+                  } else if (draggingLifelineComponent.left - ((receiveLifeline.order - 1) * 400) > 0) {
+                    messageComponent.direction = 'left-to-right';
+                  }
+                  if (direction != messageComponent.direction && draggingLifelineComponent.left - ((receiveLifeline.order - 1) * 400) < 0) {
+                    messageComponent.direction = direction;
+                  }
+                }
+              } else {
+                if (direction != messageComponent.direction && draggingLifelineComponent.left - ((sendLifeline.order - 1) * 400) > 0) {
+                  messageComponent.direction = direction;
+                }
+                if (draggingLifelineComponent.left > (sendLifeline.order - 1) * 400) {
+                  messageComponent.length = Math.abs(draggingLifelineComponent.left - ((sendLifeline.order - 1) * 400));
+                } else {
+                  messageComponent.left = event.diagramX - 125 + 60;
+                  messageComponent.length = Math.abs(draggingLifelineComponent.left - ((sendLifeline.order - 1) * 400));
+                  if (direction == 'left-to-right' && draggingLifelineComponent.left - ((receiveLifeline.order - 1) * 400) < 0) {
+                    messageComponent.direction = 'right-to-left';
+                  } else if (draggingLifelineComponent.left - ((receiveLifeline.order - 1) * 400) < 0) {
+                    messageComponent.direction = 'left-to-right';
+                  }
+                }
+              }
+            }
+          }
+        )
       }
     });
 
     // Lifelinu som pustil na jej nové miesto
     this.inputService.onMouseUp((event) => {
       if (this.menuComponent.editMode && !this.sequenceDiagramController.deleteInProgress && dragging) {
-        dragging = false;
-
+        dragging = false
         let interaction = draggingLifelineModel.interaction;
         let lifelinesInInteraction = interaction.lifelines;
         if (lifelinesInInteraction.length == 1) {
@@ -132,7 +195,6 @@ export class LifelinesController {
           return;
         }
         let lifelineOrder = draggingLifelineModel.order;
-
         // Pozicia 1 je medzi suradnicami 0-125px
         let position = 0, count = 1;
         let orderBot = 0, orderTop = 125;
@@ -145,7 +207,7 @@ export class LifelinesController {
             position = count;
             diagramX = orderTop;
             break;
-          // Ak nie, posuniem hranice o 400px (vzdialenost medzi lifeline)
+            // Ak nie, posuniem hranice o 400px (vzdialenost medzi lifeline)
           } else {
             count++;
             orderBot = orderTop;
@@ -168,6 +230,13 @@ export class LifelinesController {
           draggingLifelineComponent.left = (position - 1) * 400;
           // Prestaneme hybat s lifeline
           draggingLifelineComponent = null;
+          messageComponents.forEach(
+            (messageComponent, index) => {
+              messageComponent.left = null;
+              messageComponent.length = null;
+              messageComponent.direction = null;
+            }
+          );
           return;
         }
 
@@ -213,6 +282,13 @@ export class LifelinesController {
         this.sequenceDiagramComponent.refresh(() => {
           // Finish job
           this.jobsService.finish('reorderLifeline');
+          messageComponents.forEach(
+            (messageComponent, index) => {
+              messageComponent.left = null;
+              messageComponent.length = null;
+              messageComponent.direction = null;
+            }
+          );
         });
 
         draggingLifelineComponent = null;

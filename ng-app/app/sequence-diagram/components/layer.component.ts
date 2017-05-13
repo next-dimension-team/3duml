@@ -2,7 +2,8 @@ import { ConfigService } from '../../config';
 import { SequenceDiagramService } from '../../sequence-diagram/services';
 import { LayersController } from '../controllers';
 import * as M from '../models';
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { MessageComponent } from './message.component';
+import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, QueryList, ViewChildren } from '@angular/core';
 import * as THREE from 'three';
 let { Object: CSS3DObject }: { Object: typeof THREE.CSS3DObject } = require('three.css')(THREE);
 
@@ -19,6 +20,9 @@ export class LayerComponent implements OnChanges, OnInit, OnDestroy {
 
   @Input()
   public interactionFragmentModel: M.InteractionFragment;
+
+  @ViewChildren('messageComponents')
+  protected messageComponents: QueryList<MessageComponent>;
 
   protected fragments = [];
 

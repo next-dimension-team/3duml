@@ -14,7 +14,7 @@
 
   <div
     class="layer"
-    [selectable]="{type: 'Layer', id: interactionFragmentModel.fragmentable.id, component: this}"
+    [selectable]="{type: 'Layer', id: interactionFragmentModel.fragmentable.id, component: this, messageComponents: messageComponents}"
     [style.width]="layerWidth + 'px'">
 
     <!-- Render sequence diagram -->
@@ -28,6 +28,7 @@
 
       <!-- Messages -->
       <app-message
+        #messageComponents
         *ngFor="let message of interactionFragmentModel.fragmentable.recursiveMessages"
         [messageModel]="message">
       </app-message>
