@@ -34,7 +34,7 @@
     "server:prod": "http-server public/build -c-1 --cors",
     "server:prod:ci": "http-server public/build -p 3000 -c-1 --cors",
     "server": "npm run server:dev",
-    "serve": "php artisan serve",
+    "serve": "php5.6 artisan serve",
     "start:hmr": "npm-run-all -p -r serve server:dev:hmr",
     "start": "npm-run-all -p -r serve server:dev",
     "test": "npm run lint && karma start",
