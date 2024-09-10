@@ -5,6 +5,14 @@
 
 ## Next Dimension Team
 
+### Demo Application Screenshots
+
+![](./demo/3d-1.png)
+
+---
+
+![](./demo/3d-2.png)
+
 ### Inštalácia na linuxe
 
 Potrebuejete mať nainštalované:
